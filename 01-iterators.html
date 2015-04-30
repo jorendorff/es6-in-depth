@@ -1,0 +1,210 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>How do you loop over the elements of an array? When JavaScript was introduced, twenty years ago, you would do it like this:</p>
+
+<code><pre>
+for (var index = 0; index &lt; myArray.length; index++) {
+  console.log(myArray[index]);
+}
+</pre></code>
+
+<p>Since ES5, you can use the built-in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach"><code>forEach</code></a> method:</p>
+
+<code><pre>
+myArray.forEach(function (value) {
+  console.log(value);
+});
+</pre></code>
+
+<p>This is a little shorter, but there is one minor drawback: you can’t break out of this loop using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break"><code>break</code></a> statement or return from the enclosing function using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return"><code>return</code></a> statement.</p>
+
+<p>It sure would be nice if there were just a <code>for</code>-loop syntax that looped over array elements.</p>
+
+<p>How about a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in"><code>for</code>-<code>in</code></a> loop?</p>
+
+<code><pre>
+for (var index in myArray) {    // don't actually do this
+  console.log(myArray[index]);
+}
+</pre></code>
+
+<p>This is a bad idea for several reasons:</p>
+
+<ul>
+
+<li>The values assigned to <code>index</code> in this code are the strings <code>"0"</code>, <code>"1"</code>, <code>"2"</code> and so on, not actual numbers. Since you probably don’t want string arithmetic (<code>"2" + 1 == "21"</code>), this is inconvenient at best.</li>
+
+<li>The loop body will execute not only for array elements, but also for any other <a href="https://developer.mozilla.org/en-US/docs/Glossary/Expando">expando</a> properties someone may have added. For example, if your array has an enumerable property <code>myArray.name</code>, then this loop will execute one extra time, with <code>index == "name"</code>. Even properties on the array’s prototype chain can be visited.</li>
+
+<li>Most astonishing of all, in some circumstances, this code can loop over the array elements in an arbitrary order.</li>
+
+</ul>
+
+<p>In short, <code>for</code>-<code>in</code> was designed to work on plain old <code>Object</code>s with string keys. For <code>Array</code>s, it’s not so great.</p>
+
+
+<h3>The mighty for-of loop</h3>
+
+<p>Remember last week I promised that ES6 would not break the JS code you’ve already written. Well, millions of Web sites depend on the behavior of <code>for</code>-<code>in</code>—yes, even its behavior on arrays. So there was never any question of “fixing” <code>for</code>-<code>in</code> to be more helpful when used with arrays. The only way for ES6 to improve matters was to add some kind of new loop syntax.</p>
+
+<p>And here it is:</p>
+
+<code><pre>
+for (var value of myArray) {
+  console.log(value);
+}
+</pre></code>
+
+<p>Hmm. After all that build-up, it doesn’t seem all that impressive, does it? Well, we’ll see whether <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of"><code>for</code>-<code>of</code></a> has any neat tricks up its sleeve. For now, just note that:</p>
+
+<ul>
+
+<li>this is the most concise, direct syntax yet for looping through array elements</li>
+
+<li>it avoids all the pitfalls of <code>for</code>-<code>in</code></li>
+
+<li>unlike <code>forEach()</code>, it works with <code>break</code>, <code>continue</code>, and <code>return</code></li>
+
+</ul>
+
+<p>The <code>for</code>-<strong><code>in</code></strong> loop is for looping over object properties.</p>
+
+<p>The <code>for</code>-<strong><code>of</code></strong> loop is for looping over <em>data</em>—like the values in an array.</p>
+
+<p>But that’s not all.</p>
+
+
+<h3>Other collections support for-of too</h3>
+
+<p><code>for</code>-<code>of</code> is not just for arrays. It also works on most array-like objects, like DOM <a href="https://developer.mozilla.org/en-US/docs/Web/API/NodeList"><code>NodeList</code></a>s.</p>
+
+<p>It also works on strings, treating the string as a sequence of Unicode characters:</p>
+
+<code><pre>
+for (var chr of "&#128570;&#128562;") {
+  alert(chr);
+}
+</pre></code>
+
+<p>It also works on <code>Map</code> and <code>Set</code> objects.</p>
+
+<p>Oh, I’m sorry. You’ve never heard of <code>Map</code> and <code>Set</code> objects? Well, they are new in ES6. We’ll do a whole post about them at some point. If you’ve worked with maps and sets in other languages, there won’t be any big surprises.</p>
+
+<p>For example, a <code>Set</code> object is good for eliminating duplicates:</p>
+
+<code><pre>
+// make a set from an array of words
+var uniqueWords = new Set(words);
+</pre></code>
+
+<p>Once you’ve got a <code>Set</code>, maybe you’d like to loop over its contents. Easy:</p>
+
+<code><pre>
+for (var word of uniqueWords) {
+  console.log(word);
+}
+</pre></code>
+
+<p>A <code>Map</code> is slightly different: the data inside it is made of key-value pairs, so you’ll want to use <em>destructuring</em> to unpack the key and value into two separate variables:</p>
+
+<code><pre>
+for (var [key, value] of phoneBookMap) {
+  console.log(key + "'s phone number is: " + value);
+}
+</pre></code>
+
+<p>Destructuring is yet another new ES6 feature and a great topic for a future blog post. I should write these down.</p>
+
+<p>By now, you get the picture: JS already has quite a few different collection classes, and even more are on the way. <code>for</code>-<code>of</code> is designed to be the workhorse loop statement you use with all of them.</p>
+
+<p><code>for</code>-<code>of</code> does <em>not</em> work with plain old <code>Object</code>s, but if you want to iterate over an object’s properties you can either use <code>for</code>-<code>in</code> (that’s what it’s for) or the builtin <code>Object.keys()</code>:</p>
+
+<code><pre>
+// dump an object's own enumerable properties to the console
+for (var key of Object.keys(someObject)) {
+  console.log(key + ": " + someObject[key]);
+}
+</pre></code>
+
+
+<h3>Under the hood</h3>
+
+<p><i>&ldquo;Good artists copy, great artists steal.&rdquo; &mdash;Pablo Picasso</i></p>
+
+<p>A running theme in ES6 is that the new features being added to the language didn’t come out of nowhere. Most have been tried and proven useful in other languages.</p>
+
+<p>The <code>for</code>-<code>of</code> loop, for example, resembles similar loop statements in C++, Java, C#, and Python. Like them, it works with several different data structures provided by the language and its standard library. But it’s also an extension point in the language.</p>
+
+<p>Like the <code>for</code>/<code>foreach</code> statements in those other languages, <strong><code>for</code>-<code>of</code> works entirely in terms of method calls</strong>. What <code>Array</code>s, <code>Map</code>s, <code>Set</code>s, and the other objects we talked about all have in common is that they have an iterator method.</p>
+
+<p>And there’s another kind of object that can have an iterator method too: <em>any object you want</em>.
+
+<p>Just as you can add a <code>myObject.toString()</code> method to any object and suddenly JS knows how to convert that object to a string, you can add the <code>myObject[Symbol.iterator]()</code> method to any object and suddenly JS will know how to loop over that object.</p>
+
+<p>For example, suppose you’re using jQuery, and although you’re very fond of <code>.each()</code>, you would like jQuery objects to work with <code>for</code>-<code>of</code> as well. Here’s how to do that:</p>
+
+<code><pre>
+// Since jQuery objects are array-like,
+// give them the same iterator method Arrays have
+jQuery.prototype[Symbol.iterator] =
+  Array.prototype[Symbol.iterator];
+</pre></code>
+
+<p>OK, I know what you’re thinking. That <code>[Symbol.iterator]</code> syntax seems weird. What is going on there? It has to do with the method’s name. The standard committee could have just called this method <code>.iterator()</code>, but then, your existing code might already have some objects with <code>.iterator()</code> methods, and that could get pretty confusing. So the standard uses a <em>symbol</em>, rather than a string, as the name of this method. Symbols are new in ES6, and we’ll tell you all about them in—you guessed it—a future blog post. For now, all you need to know is that the standard can define a brand-new symbol, like <code>Symbol.iterator</code>, and it’s guaranteed not to conflict with any existing code. The trade-off is that the syntax is a little weird. But it’s a small price to pay for this versatile new feature and excellent backward compatibility.</p>
+
+<p>An object that has a <code>[Symbol.iterator]()</code> method is called <em>iterable</em>. In coming weeks, we’ll see that the concept of iterable objects is used throughout the language, not only in <code>for</code>-<code>of</code> but in the <code>Map</code> and <code>Set</code> constructors, destructuring assignment, and the new spread operator.</p>
+
+
+<h3>Iterator objects</h3>
+
+<p>Now, there is a chance you will never have to implement an iterator object of your own from scratch. We’ll see why next week. But for completeness, let’s look at what an iterator object looks like. (If you skip this whole section, you’ll mainly be missing crunchy technical details.)</p>
+
+<p>A <code>for</code>-<code>of</code> loop starts by calling the <code>[Symbol.iterator]()</code> method on the collection. This returns a new iterator object. An iterator object can be any object with a <code>.next()</code> method; the <code>for</code>-<code>of</code> loop will call this method repeatedly, once each time through the loop. For example, here’s the simplest iterator object I can think of:</p>
+
+<code><pre>
+var zeroesForeverIterator = {
+  [Symbol.iterator]: function () {
+    return this;
+  },
+  next: function () {
+    return {done: false, value: 0};
+  }
+};
+</pre></code>
+
+<p>Every time this <code>.next()</code> method is called, it returns the same result, telling the <code>for</code>-<code>of</code> loop (a) we’re not done iterating yet; and (b) the next value is <code>0</code>. This means that <code>for (value of zeroesForeverIterator) {}</code> will be an infinite loop. Of course, a typical iterator will not be quite this trivial.</p>
+
+<p>This iterator design, with its <code>.done</code> and <code>.value</code> properties, is superficially different from how iterators work in other languages. In Java, iterators have separate <code>.hasNext()</code> and <code>.next()</code> methods. In Python, they have a single <code>.next()</code> method that throws <code>StopIteration</code> when there are no more values. But all three designs are fundamentally returning the same information.</p>
+
+<p>An iterator object can also implement optional <code>.return()</code> and <code>.throw(exc)</code> methods. The <code>for</code>-<code>of</code> loop calls <code>.return()</code> if the loop exits prematurely, due to an exception or a <code>break</code> or <code>return</code> statement. The iterator can implement <code>.return()</code> if it needsto do some cleanup or free up resources it was using. Most iterator objects won’t need to implement it. <code>.throw(exc)</code> is even more of a special case: <code>for</code>-<code>of</code> never calls it at all. But we’ll hear more about it next week.</p>
+
+<p>Now that we have all the details, we can take a simple <code>for</code>-<code>of</code> loop and rewrite it in terms of the underlying method calls.</p>
+
+<p>First the <code>for</code>-<code>of</code> loop:</p>
+
+<code><pre>
+for (VAR of ITERABLE) {
+  STATEMENTS
+}
+</pre></code>
+
+<p>Here is a rough equivalent, using the underlying methods and a few temporary variables:</p>
+
+<code><pre>
+var $iterator = ITERABLE[Symbol.iterator]();
+var $result = $iterator.next();
+while (!result.done) {
+  VAR = result.value;
+  STATEMENTS
+  $result = $iterator.next();
+}
+</pre></code>
+
+<p>This code doesn’t show how <code>.return()</code> is handled. We could add that, but I think it would obscure what’s going on rather than illuminate it. <code>for</code>-<code>of</code> is easy to use, but there is a lot going on behind the scenes.</p>
+
+
+<h3>That’s amazing. Are we done yet?</h3>
+
+<p>We’re done for today, but we’re <em>still</em> not done with the <code>for</code>-<code>of</code> loop.</p>
+
+<p>There is one more new kind of object in ES6 that works beautifully with <code>for</code>-<code>of</code>. I didn’t mention it because it’s the topic of next week’s post. I think this new feature is the most magical thing in ES6. If you haven’t already encountered it in languages like Python and C#, you’ll probably find it mind-boggling at first. But it’s the easiest way to write an iterator, it’s useful in refactoring, and it might just change the way we write asynchronous code, both in the browser and on the server. So join us next week as we look at ES6 generators in depth.</p>
