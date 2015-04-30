@@ -1,4 +1,4 @@
-<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
 <p>How do you loop over the elements of an array? When JavaScript was introduced, twenty years ago, you would do it like this:</p>
 
@@ -8,7 +8,7 @@ for (var index = 0; index &lt; myArray.length; index++) {
 }
 </pre></code>
 
-<p>Since ES5, you can use the built-in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach"><code>forEach</code></a> method:</p>
+<p>Since ES5, you can use the built-in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" target="_blank"><code>forEach</code></a> method:</p>
 
 <code><pre>
 myArray.forEach(function (value) {
@@ -16,11 +16,11 @@ myArray.forEach(function (value) {
 });
 </pre></code>
 
-<p>This is a little shorter, but there is one minor drawback: you can’t break out of this loop using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break"><code>break</code></a> statement or return from the enclosing function using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return"><code>return</code></a> statement.</p>
+<p>This is a little shorter, but there is one minor drawback: you can’t break out of this loop using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break" target="_blank"><code>break</code></a> statement or return from the enclosing function using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return" target="_blank"><code>return</code></a> statement.</p>
 
 <p>It sure would be nice if there were just a <code>for</code>-loop syntax that looped over array elements.</p>
 
-<p>How about a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in"><code>for</code>-<code>in</code></a> loop?</p>
+<p>How about a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in" target="_blank"><code>for</code>-<code>in</code></a> loop?</p>
 
 <code><pre>
 for (var index in myArray) {    // don't actually do this
@@ -34,7 +34,7 @@ for (var index in myArray) {    // don't actually do this
 
 <li>The values assigned to <code>index</code> in this code are the strings <code>"0"</code>, <code>"1"</code>, <code>"2"</code> and so on, not actual numbers. Since you probably don’t want string arithmetic (<code>"2" + 1 == "21"</code>), this is inconvenient at best.</li>
 
-<li>The loop body will execute not only for array elements, but also for any other <a href="https://developer.mozilla.org/en-US/docs/Glossary/Expando">expando</a> properties someone may have added. For example, if your array has an enumerable property <code>myArray.name</code>, then this loop will execute one extra time, with <code>index == "name"</code>. Even properties on the array’s prototype chain can be visited.</li>
+<li>The loop body will execute not only for array elements, but also for any other <a href="https://developer.mozilla.org/en-US/docs/Glossary/Expando" target="_blank">expando</a> properties someone may have added. For example, if your array has an enumerable property <code>myArray.name</code>, then this loop will execute one extra time, with <code>index == "name"</code>. Even properties on the array’s prototype chain can be visited.</li>
 
 <li>Most astonishing of all, in some circumstances, this code can loop over the array elements in an arbitrary order.</li>
 
@@ -150,7 +150,9 @@ jQuery.prototype[Symbol.iterator] =
   Array.prototype[Symbol.iterator];
 </pre></code>
 
-<p>OK, I know what you’re thinking. That <code>[Symbol.iterator]</code> syntax seems weird. What is going on there? It has to do with the method’s name. The standard committee could have just called this method <code>.iterator()</code>, but then, your existing code might already have some objects with <code>.iterator()</code> methods, and that could get pretty confusing. So the standard uses a <em>symbol</em>, rather than a string, as the name of this method. Symbols are new in ES6, and we’ll tell you all about them in—you guessed it—a future blog post. For now, all you need to know is that the standard can define a brand-new symbol, like <code>Symbol.iterator</code>, and it’s guaranteed not to conflict with any existing code. The trade-off is that the syntax is a little weird. But it’s a small price to pay for this versatile new feature and excellent backward compatibility.</p>
+<p>OK, I know what you’re thinking. That <code>[Symbol.iterator]</code> syntax seems weird. What is going on there? It has to do with the method’s name. The standard committee could have just called this method <code>.iterator()</code>, but then, your existing code might already have some objects with <code>.iterator()</code> methods, and that could get pretty confusing. So the standard uses a <em>symbol</em>, rather than a string, as the name of this method.</p>
+
+<p>Symbols are new in ES6, and we’ll tell you all about them in—you guessed it—a future blog post. For now, all you need to know is that the standard can define a brand-new symbol, like <code>Symbol.iterator</code>, and it’s guaranteed not to conflict with any existing code. The trade-off is that the syntax is a little weird. But it’s a small price to pay for this versatile new feature and excellent backward compatibility.</p>
 
 <p>An object that has a <code>[Symbol.iterator]()</code> method is called <em>iterable</em>. In coming weeks, we’ll see that the concept of iterable objects is used throughout the language, not only in <code>for</code>-<code>of</code> but in the <code>Map</code> and <code>Set</code> constructors, destructuring assignment, and the new spread operator.</p>
 
