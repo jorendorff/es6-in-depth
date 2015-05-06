@@ -1,0 +1,312 @@
+<p>I'm excited about today's post. Today, we're going to discuss the most magical feature in ES6.</p>
+
+<p>What do I mean by "magical"?  For starters, this feature is so different from things that already existed in JS that it may seem completely arcane at first.  In a sense, it turns the normal behavior of the language inside out!  If that's not magic, I don't know what is.</p>
+
+<p>Not only that: this feature's power to simplify code and straighten out "callback hell" borders on the supernatural.</p>
+
+<p>Am I laying it on a bit thick? Let's dive in and you can judge for yourself.</p>
+
+
+<h3>Introducing ES6 generators</h3>
+
+<p>What are generators?</p>
+
+<p>Let's start by looking at one.</p>
+
+<code class="js"><pre>
+function* quips(name) {
+  yield "hello " + name + "!";
+  yield "i hope you are enjoying the blog posts";
+  if (name.startsWith("X")) {
+    yield "it's cool how your name starts with X, " + name;
+  }
+  yield "see you later!";
+}
+</pre></code>
+
+<p>This is some code for <a href="">a talking cat</a>, possibly the most important kind of application on the Internet today. (Go ahead, <a href="">click the link, play with the cat</a>. When you're thoroughly confused, come back here for the explanation.)</p>
+
+<p>It looks sort of like a function, right? This is called a <dfn>generator-function</dfn> and it has a lot in common with functions. But you can see two differences right away:</p>
+
+<ul>
+
+<li><p>Regular functions start with <code>function</code>. Generator-functions start with <code>function*</code>.</p></li>
+
+<li><p>Inside a generator-function, <code>yield</code> is a keyword, with syntax rather like <code>return</code>. The difference is that while a function (even a generator-function) can only return once, a generator-function can yield any number of times. The <code>yield</code> expression <em>suspends execution of the generator so it can be resumed again later.</em></p></li>
+
+</ul>
+
+<p>So that's it, that's the big difference between regular functions and generator-functions. Regular functions can't pause themselves. Generator-functions can.</p>
+
+
+<h3>What generators do</h3>
+
+<p>What happens when you call the <code>quips()</code> generator-function?</p>
+
+<code class="js"><pre>
+&gt; var iter = quips("jorendorff");
+  [object Generator]
+&gt; iter.next()
+  { value: "hello jorendorff!", done: false }
+&gt; iter.next()
+  { value: "i hope you are enjoying the blog posts", done: false }
+&gt; iter.next()
+  { value: "see you later!", done: false }
+&gt; iter.next()
+  { value: undefined, done: true }
+</pre></code>
+
+<p>You're probably very used to calling ordinary functions and methods, and how they behave. When you call them, they start running right away, and they run until they either return or throw. All this is second nature to any programmer.</p>
+
+<p><em>Calling</em> a generator looks just the same, but when you call a generator, it doesn't start running yet. Instead, it returns a paused generator-iterator object. Each time you call that object's <code>.next()</code> method, it runs to the next <code>yield</code> expression.</p>
+
+<p>In technical terms, each time a generator yields, its <em>stack frame</em>—the local variables, arguments, temporary values, and the current position of execution within the generator body—is removed from the stack. However, the generator-iterator object keeps a reference to (or copy of) this stack frame, so that a later <code>.next()</code> call can reactivate it and continue execution.</p>
+
+<pre>
+...
+...
+...
+</pre>
+
+<p>All right. We've seen a generator run, pause itself, then resume execution. Now for the big question. How could this weird ability possibly be useful?</p>
+
+
+
+<h3>Generators are iterators</h3>
+
+<p>Last week, we saw that ES6 iterators are not just a single built-in class. They're an extension point of the language. You can create your own iterators just by implementing two methods (<code>[Symbol.iterator]()</code> and <code>.next()</code>).</p>
+
+<p>But implementing an interface is always at least a little work. Let's see what iterators look like in practice. As an example, let's implement a simple <code>range</code> iterator that simply counts up from one number to another, like an old-fashioned C <code>for&nbsp;(;;)</code> loop.</p>
+
+<code class="js"><pre>
+// This should "ding" three times
+for (var value of range(0, 3)) {
+  alert("Ding! at floor #" + value);
+}
+</pre></code>
+
+<p>Both loops should behave the same, alerting five times, with the values 0, 1, 2, 3, and 4. But there isn't a built-in <code>range()</code> function that creates iterator objects: we have to write our own. Here's what it might look like, using an ES6 class.</p>
+
+<code class="js"><pre>
+class RangeIterator {
+  constructor(start, stop) {
+    this.value = start;
+    this.stop = stop;
+  }
+
+  [Symbol.iterator]() { return this; }
+
+  next() {
+    var value = this.value;
+    if (value &lt; this.stop) {
+      this.value++;
+      return {done: false, value: value};
+    } else {
+      return {done: true, value: undefined};
+    }
+  }
+}
+
+// Return a new iterator that counts up from 'start' to 'stop'.
+function range(start, stop) {
+  return new RangeIterator(start, stop);
+}
+</pre></code>
+
+<p><a href="http://codepen.io/anon/pen/NqGgOQ">See this code in action.</a></p>
+
+<p>This is what implementing an iterator is like in <a href="http://gafter.blogspot.com/2007/07/internal-versus-external-iterators.html">Java</a> or <a href="https://schani.wordpress.com/2014/06/06/generators-in-swift/">Swift</a>. It's not so bad. But it's not exactly trivial either. Are there any bugs in this code? It's not easy to say. It looks nothing like the original <code>for&nbsp;(;;)</code> loop we are trying to emulate here: the iterator protocol forces us to dismantle the loop.</p>
+
+<p>At this point you might be feeling a little lukewarm toward iterators. They may be great to <em>use,</em> but they seem hard to implement.</p>
+
+<p>It probably wouldn't occur to you to suggest that we introduce a wild, mindmending new control flow structure to the JS language just to make iterators easier to build. But since we <em>do</em> have generators, can we use them here? Let's try it:</p>
+
+<code class="js"><pre>
+function* range(start, stop) {
+  for (var i = start; i < stop; i++)
+    yield i;
+}
+</pre></code>
+
+<p><a href="http://codepen.io/anon/pen/mJewga">See this code in action.</a></p>
+
+<p>The above 4-line generator is a drop-in replacement for the previous 23-line implementation of <code>range()</code>, including the entire <code>RangeIterator</code> class. This is possible because <strong>generators are iterators.</strong> All generators have a built-in implementation of <code>.next()</code> and <code>[Symbol.iterator]()</code>. You just write the looping behavior.</p>
+
+<p>Implementing iterators without generators is like being forced to write a long email entirely in the passive voice. When simply saying what you mean is not an option, what you end up saying instead can become quite convoluted. <code>RangeIterator</code> is long and weird because it has to describe the functionality of a loop without using loop syntax. Generators are the answer.</p>
+
+<p>How else can we use the ability of generators to act as iterators?</p>
+
+<ul>
+
+<li><p><strong>Making any object iterable.</strong> Just write a generator-function that traverses <code>this</code>, yielding each value as it goes. Then install that generator-function as the <code>[Symbol.iterator]</code> method of the object.</p></li>
+
+<li><p><strong>Simplifying array-building functions.</strong> Suppose you have a function that returns an array of results each time it's called, like this one:</p>
+
+<code class="js"><pre>
+// Divide the one-dimensional array 'icons'
+// into arrays of length 'rowLength'.
+function splitIntoRows(icons, rowLength) {
+  var rows = [];
+  var nRows = Math.ceil(icons.length / rowLength);
+  for (var i = 0; i < icons.length; i += rowLength) {
+    rows.push(icons.slice(i, i + rowLength));
+  }
+  return rows;
+}
+</pre></code>
+
+<p>Generators make this kind of code a bit shorter:</p>
+
+<code class="js"><pre>
+function* splitIntoRows(icons, rowLength) {
+  var nRows = Math.ceil(icons.length / rowLength);
+  for (var i = 0; i < icons.length; i += rowLength) {
+    yield icons.slice(i, i + rowLength);
+  }
+}
+</pre></code>
+
+<p>The only difference in behavior is that instead of computing all the results at once and returning an array of them, this returns an iterator and the results are computed one by one, on demand. (Callers can turn this iterator into an array, if needed, by passing it to <code>Array.from()</code>.)</p></li>
+
+<li><p><strong>Results Of Unusual Size.</strong> You can't build an infinite array. But you can return a generator that generates an endless sequence, and each caller can draw from it however many values they need. This probably sounds absurd and useless. You'd be surprised.</p></li>
+
+<li><p><strong>Refactoring complex loops.</strong> Do you have a huge ugly function? Would you like to break it into two simpler parts? Generators are a new knife for your refactoring toolkit. When you're facing a complicated loop, you can <em>factor out the part of the code that produces data</em>, turning it into a separate generator-function. Then change the loop to say <code>for (var&nbsp;data of myNewGeneratorFunction(args))</code>.</p></li>
+
+<li><p><strong>Tools for working with iterables.</strong> ES6 does <em>not</em> provide an extensive library for filtering, mapping, and generally hacking on arbitrary iterable data sets. But generators are great for building the tools you need with just a few lines of code.</p>
+
+<p>For example, suppose you need an equivalent of <code>Array.prototype.filter</code> that works on DOM NodeLists, not just Arrays. Piece of cake:</p>
+
+<code class="js"><pre>
+function* filter(test, iterable) {
+  for (var item of iterable) {
+    if (test(item))
+      yield item;
+  }
+}
+</pre></code>
+
+</li>
+
+</ul>
+
+<p>So are generators useful? Sure. Generators are the easiest way to implement custom iterators, and iterators are the new standard for data and loops throughout ES6.</p>
+
+<p>But that's not all.</p>
+
+
+<h3>Generators and asynchronous code</h3>
+
+<p>Here is some JS code I wrote a while back.</p>
+
+<code class="js"><pre>
+          };
+        })
+      });
+    });
+  });
+});
+</pre></code>
+>
+<p>Maybe you've seen something like this in your own code. Asynchronous APIs require you to write an extra anonymous function every time you do something, so if you have a bit of code that does five things, rather than five lines of code, you're looking five <em>indentation levels</em> of code.</p>
+
+<p>Here is some more JS code I've written.</p>
+
+<code class="js"><pre>
+}).on('close', function () {
+  done(undefined, undefined);
+}).on('error', function (error) {
+  done(error);
+});
+</pre></code>
+
+<p>Asynchronous APIs have error-handling conventions rather than exceptions. Different APIs have different conventions. In most of them, errors are silently dropped by default.</p>
+
+<p>Until now, these two problems have simply been the price we pay for asynchronous programming.</p>
+
+<p>With generators, it doesn't have to be this way.</p>
+
+<pre>
+...
+...
+...
+</pre>
+
+
+
+<h3>When can I use these crazy things?</h3>
+
+<p>Generators were first implemented in JS by Brendan Eich. They shipped in Firefox 2.0 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7">back in 2006</a>. The standardization process made some changes to the syntax and behavior. ES6 generators were implemented in both Firefox and Chrome by extraordinary engineer <a href="http://wingolog.org/" target="_blank">Andy Wingo</a>. This work was sponsored by Bloomberg.</p>
+
+<p>On the server, you can use ES6 generators today in io.js (and in Node with the <code>--harmony</code> command-line option).</p>
+
+<p>Generators are also supported in Firefox 27+ and Chrome 39+. To use them on the web today, you'll need to translate your ES6 code to Web-friendly ES5 using <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>.</p>
+
+
+<pre>
+...
+...
+...
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<pre>
+Research:
+
+- line-by-line I/O in Node
+- libraries to drive generators like task.js
+
+
+Outline:
+
+- a simple example
+    - here is some code containing a totally new kind of function in ES6
+    - you can see it's using a new 'yield' keyword
+        - contextual keywords btw; so is 'of' in for-of
+    - and here is some code using it, note the output
+    - now you might guess that what this does is: (a) run the function, collecting the yielded values; (b) run the loop.
+    - Sort of! but control flow *alternates* between the generator and the for-of loop. This means that if you 'break' out of the loop, 
+
+- what generators are
+    - it's kind of complicated
+        - show figure 2 from the spec
+    - generator functions
+        - they look like functions
+        - they actually are functions
+        - they act kind of like functions
+        - but when you call them they don't run right away
+        - instead you get a generator object representing the execution of that function
+        - they can yield; each .next() runs to the next yield
+    - this is kind of like:
+        - threads, but no actual concurrency
+        - coroutines
+    - but let's talk about two very different ways to use them
+
+- generators are iterators
+    - key point: abstract over any loop
+    - you can write a generator that yields a sequence of values
+    - generators are iterators, so they work with for-of
+    - refactoring Array-building code into a generator
+        - apart from being slightly shorter, it lets the caller consume the data lazily
+    - refactoring a complicated loop to separate looping-logic from the body
+    - generators of this kind shouldn't return a value (it'll be ignored)
+
+- generators and asynchronous code
+    - asynchronous code involves extra indentation
+    - asynchronous code has error-handling conventions rather than exceptions
+        - in some frameworks, the default is for errors to be lost
+    - you can write a generator that yields promises
+    - this kind of generator can't be driven by for-of, but there are libraries that can drive it
+    - more sugar, following C# async/await, is proposed for ES7
+</pre>
+

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Simple ES6 Generator Example</title>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="meow.css">
+  </head>
+
+  <body>
+    <div class="editor-wrapper">
+    <div id="editor">function* quips(name) {
+  yield "hello " + name + "!";
+  yield "i hope you are enjoying the blog posts";
+  if (name.toLowerCase().startsWith("x")) {
+    yield "hey, it's cool how your name starts with an X, " + name;
+  }
+  yield "see you later!";
+}
+
+var meow_iter = quips("Xingu");
+
+showCat();</div>
+    </div>
+
+    <p><input id="eval-btn" type="button" value="eval(editor.getValue())"> &larr; push to run code</p>
+
+    <div id="cat-area" style="display: none">
+      <blockquote class="rectangle-speech-border">
+        <p id="chat"></p>
+      </blockquote>
+
+      <p><span class="cat">😺</span>  <span id="meow-btn-container" style="display: none"><input id="meow-btn" type="button" value="meow_iter.next()" onclick="meow()"> &larr; push to talk</span></p>
+    </div>
+
+    <p class="gloss"><a href="">What is this?</a></p>
+  </body>
+
+  <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/javascript");
+
+    // Code to drive the quips() generator. Sorry for how clumsy this is! :)
+    var meow_iter = undefined;
+
+    function compile($src) {
+      var quips;
+      eval($src);  // non-strict direct eval. don't try this at home, kids.
+      return quips;
+    }
+
+    function showCat() {
+      $("#cat-area").fadeIn(1000);
+    }
+
+    $("#eval-btn").click(function () {
+      try {
+        window.eval(editor.getValue());
+      } catch (exc) {
+        console.error(exc);
+        alert(exc.toString() + "\n(details in console)");
+        $("#meow-btn-container").hide();
+      }
+      $("#chat").text("");
+      $("#meow-btn-container").show();
+    });
+
+    $("#meow-btn").click(function () {
+      var result = meow_iter.next();
+
+      if (result.done) {
+        // The generator returned. It has nothing more to say.
+        $("#chat").text("");
+        meow_iter = undefined;
+        $("#meow-btn-container").hide();
+        $("#cat-area").fadeOut(1000);
+      } else {
+        // The generator yielded a value. Display it.
+        $("#chat").text(result.value);
+      }
+    });
+
+    setTimeout(function () { $(".gloss").fadeIn(1200); }, 2500);
+  </script>
+
+</html>
