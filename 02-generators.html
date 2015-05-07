@@ -174,7 +174,7 @@ function* splitIntoRows(icons, rowLength) {
 
 <p>The only difference in behavior is that instead of computing all the results at once and returning an array of them, this returns an iterator, and the results are computed one by one, on demand.</p></li>
 
-<li><p><strong>Results Of Unusual Size.</strong> You can’t build an infinite array. But you can return a generator that generates an endless sequence, and each caller can draw from it however many values they need.</p></li>
+<li><p><strong>Results of unusual size.</strong> You can’t build an infinite array. But you can return a generator that generates an endless sequence, and each caller can draw from it however many values they need.</p></li>
 
 <li><p><strong>Refactoring complex loops.</strong> Do you have a huge ugly function? Would you like to break it into two simpler parts? Generators are a new knife to add to your refactoring toolkit. When you’re facing a complicated loop, you can <em>factor out the part of the code that produces data</em>, turning it into a separate generator-function. Then change the loop to say <code>for (var&nbsp;data of myNewGenerator(args))</code>.</p></li>
 
@@ -231,7 +231,7 @@ function* filter(test, iterable) {
 
 <p>Generators offer new hope that it doesn’t have to be this way.</p>
 
-<p><a href="https://github.com/kriskowal/q/tree/v1/examples/async-generators" target="_blank">Q.async()</a> is an experimental attempt at using generators with promises to produce async code that resembles the corresponding sychronous code. For example:</p>
+<p><a href="https://github.com/kriskowal/q/tree/v1/examples/async-generators" target="_blank">Q.async()</a> is an experimental attempt at using generators with promises to produce async code that resembles the corresponding synchronous code. For example:</p>
 
 <code class="js"><pre>
 // Synchronous code to make some noise.
@@ -268,11 +268,13 @@ function makeNoise_async() {
 
 <p>In the browser, only Firefox 27+ and Chrome 39+ support ES6 generators so far. To use generators on the web today, you’ll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> to translate your ES6 code to Web-friendly ES5.</p>
 
-<p>A few shout-outs to deserving parties: Generators were first implemented in JS by Brendan Eich; he was inspired by <a href="https://www.python.org/dev/peps/pep-0255/" target="blank_">Python generators</a> which were inspired by <a href="http://www.cs.arizona.edu/icon/" target="blank_">Icon</a>. They shipped in Firefox 2.0 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7" target="_blank">back in 2006</a>. The road to standardization was bumpy, and the syntax and behavior changed a bit along the way. ES6 generators were implemented in both Firefox and Chrome by compiler hacker <a href="http://wingolog.org/" target="_blank">Andy Wingo</a>. This work was sponsored by Bloomberg.</p>
+<p>A few shout-outs to deserving parties: Generators were first implemented in JS by Brendan Eich; the design followed <a href="https://www.python.org/dev/peps/pep-0255/" target="blank_">Python generators</a> which were inspired by <a href="http://www.cs.arizona.edu/icon/" target="blank_">Icon</a>. They shipped in Firefox 2.0 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7" target="_blank">back in 2006</a>. The road to standardization was bumpy, and the syntax and behavior changed a bit along the way. ES6 generators were implemented in both Firefox and Chrome by compiler hacker <a href="http://wingolog.org/" target="_blank">Andy Wingo</a>. This work was sponsored by Bloomberg.</p>
 
 
 <h3>yield;</h3>
 
 <p>There is more to say about generators. We didn’t cover the <code>.throw()</code> and <code>.return()</code> methods, the optional argument to <code>.next()</code>, or the <code>yield*</code> expression syntax. But I think this post is long and bewildering enough for now. Like generators themselves, we should pause, and take up the rest another time.</p>
 
-<p>But next week, let’s change gears a little. We’ve tackled two deep topics in a row here. Wouldn’t it be great to talk about an ES6 feature that <em>won’t</em> change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too. Coming up: a feature that will <em>plug right in</em> to the kind of code you write every day. Please join us next week for a look at ES6 template strings in depth.</p>
+<p>But next week, let’s change gears a little. We’ve tackled two deep topics in a row here. Wouldn’t it be great to talk about an ES6 feature that <em>won’t</em> change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too.</p>
+
+<p>Coming up: a feature that will <em>plug right in</em> to the kind of code you write every day. Please join us next week for a look at ES6 template strings in depth.</p>
