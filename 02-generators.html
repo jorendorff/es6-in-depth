@@ -1,3 +1,5 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
 <p>I'm excited about today's post. Today, we're going to discuss the most magical feature in ES6.</p>
 
 <p>What do I mean by "magical"?  For starters, this feature is so different from things that already existed in JS that it may seem completely arcane at first.  In a sense, it turns the normal behavior of the language inside out!  If that's not magic, I don't know what is.</p>
@@ -24,7 +26,7 @@ function* quips(name) {
 }
 </pre></code>
 
-<p>This is some code for <a href="">a talking cat</a>, possibly the most important kind of application on the Internet today. (Go ahead, <a href="">click the link, play with the cat</a>. When you're thoroughly confused, come back here for the explanation.)</p>
+<p>This is some code for <a href="" target="_blank">a talking cat</a>, possibly the most important kind of application on the Internet today. (Go ahead, <a href="" target="_blank">click the link, play with the cat</a>. When you're thoroughly confused, come back here for the explanation.)</p>
 
 <p>It looks sort of like a function, right? This is called a <dfn>generator-function</dfn> and it has a lot in common with functions. But you can see two differences right away:</p>
 
@@ -58,17 +60,21 @@ function* quips(name) {
 
 <p>You're probably very used to calling ordinary functions and methods, and how they behave. When you call them, they start running right away, and they run until they either return or throw. All this is second nature to any programmer.</p>
 
-<p><em>Calling</em> a generator looks just the same, but when you call a generator, it doesn't start running yet. Instead, it returns a paused generator-iterator object. Each time you call that object's <code>.next()</code> method, it runs to the next <code>yield</code> expression.</p>
+<p><em>Calling</em> a generator looks just the same: <code>quips("jorendorff")</code>. But when you call a generator, it doesn't start running yet. Instead, it returns a paused <em>generator-iterator object</em> (called <code>iter</code> in the example above). You can think of this generator-iterator object as a function call, frozen in time. Specifically, it's frozen right at the top of the generator-function, just before running its first line of code.</p>
+
+<p>Each time you call that object's <code>.next()</code> method, the function call thaws itself out and runs to the next <code>yield</code> expression.</p>
+
+<p>That's why each time we called <code>iter.next()</code> above, we got a different string value. Those are the values produced by the <code>yield</code> expressions in the 
+
+<p>Now might be a good time to go back to <a href="" target="blank_">the talking cat demo page</a> and really play around with the code. Try putting a <code>yield</code> inside a loop. What happens?</p>
 
 <p>In technical terms, each time a generator yields, its <em>stack frame</em>—the local variables, arguments, temporary values, and the current position of execution within the generator body—is removed from the stack. However, the generator-iterator object keeps a reference to (or copy of) this stack frame, so that a later <code>.next()</code> call can reactivate it and continue execution.</p>
 
-<pre>
-...
-...
-...
-</pre>
 
-<p>All right. We've seen a generator run, pause itself, then resume execution. Now for the big question. How could this weird ability possibly be useful?</p>
+
+<p>It's worth pointing out that, although they  <strong>generators are not threads.</strong> In languages with threads, multiple pieces of code can run at the same time, usually leading to race conditions, nondeterminism, and sweet sweet performance. Generators are not like that at all. When a generator runs, it runs in the same thread as the caller. The order of execution is sequential and deterministic, and a generator is only ever suspended at points marked by <code>yield</code> in its body.</p>
+
+<p>All right. We know what generators are. We've seen a generator run, pause itself, then resume execution. We even know what generators aren't. Now for the big question. How could this weird ability possibly be useful?</p>
 
 
 
@@ -113,9 +119,9 @@ function range(start, stop) {
 }
 </pre></code>
 
-<p><a href="http://codepen.io/anon/pen/NqGgOQ">See this code in action.</a></p>
+<p><a href="http://codepen.io/anon/pen/NqGgOQ" target="_blank">See this code in action.</a></p>
 
-<p>This is what implementing an iterator is like in <a href="http://gafter.blogspot.com/2007/07/internal-versus-external-iterators.html">Java</a> or <a href="https://schani.wordpress.com/2014/06/06/generators-in-swift/">Swift</a>. It's not so bad. But it's not exactly trivial either. Are there any bugs in this code? It's not easy to say. It looks nothing like the original <code>for&nbsp;(;;)</code> loop we are trying to emulate here: the iterator protocol forces us to dismantle the loop.</p>
+<p>This is what implementing an iterator is like in <a href="http://gafter.blogspot.com/2007/07/internal-versus-external-iterators.html" target="_blank">Java</a> or <a href="https://schani.wordpress.com/2014/06/06/generators-in-swift/" target="_blank">Swift</a>. It's not so bad. But it's not exactly trivial either. Are there any bugs in this code? It's not easy to say. It looks nothing like the original <code>for&nbsp;(;;)</code> loop we are trying to emulate here: the iterator protocol forces us to dismantle the loop.</p>
 
 <p>At this point you might be feeling a little lukewarm toward iterators. They may be great to <em>use,</em> but they seem hard to implement.</p>
 
@@ -128,7 +134,7 @@ function* range(start, stop) {
 }
 </pre></code>
 
-<p><a href="http://codepen.io/anon/pen/mJewga">See this code in action.</a></p>
+<p><a href="http://codepen.io/anon/pen/mJewga" target="_blank">See this code in action.</a></p>
 
 <p>The above 4-line generator is a drop-in replacement for the previous 23-line implementation of <code>range()</code>, including the entire <code>RangeIterator</code> class. This is possible because <strong>generators are iterators.</strong> All generators have a built-in implementation of <code>.next()</code> and <code>[Symbol.iterator]()</code>. You just write the looping behavior.</p>
 
@@ -189,9 +195,9 @@ function* filter(test, iterable) {
 
 </ul>
 
-<p>So are generators useful? Sure. Generators are the easiest way to implement custom iterators, and iterators are the new standard for data and loops throughout ES6.</p>
+<p>So are generators useful? Sure. They are an astonshingly easy way to implement custom iterators, and iterators are the new standard for data and loops throughout ES6.</p>
 
-<p>But that's not all.</p>
+<p>But that's not all generators can do.</p>
 
 
 <h3>Generators and asynchronous code</h3>
@@ -207,9 +213,9 @@ function* filter(test, iterable) {
 });
 </pre></code>
 >
-<p>Maybe you've seen something like this in your own code. Asynchronous APIs require you to write an extra anonymous function every time you do something, so if you have a bit of code that does five things, rather than five lines of code, you're looking five <em>indentation levels</em> of code.</p>
+<p>Maybe you've seen something like this in your own code. <a href="http://www.html5rocks.com/en/tutorials/async/deferred/" target="_blank">Asynchronous APIs</a> typically require a callback, which means writing an extra anonymous function every time you do something. So if you have a bit of code that does three things, rather than three lines of code, you're looking at three <em>indentation levels</em> of code.</p>
 
-<p>Here is some more JS code I've written.</p>
+<p>Here is some more JS code I've written:</p>
 
 <code class="js"><pre>
 }).on('close', function () {
@@ -221,32 +227,54 @@ function* filter(test, iterable) {
 
 <p>Asynchronous APIs have error-handling conventions rather than exceptions. Different APIs have different conventions. In most of them, errors are silently dropped by default.</p>
 
-<p>Until now, these two problems have simply been the price we pay for asynchronous programming.</p>
+<p>Until now, these two problems have simply been the price we pay for asynchronous programming. We have come to accept that asynchronous code just can't look as nice and as simple as synchronous code.</p>
 
-<p>With generators, it doesn't have to be this way.</p>
+<p>Generators offer new hope that it doesn't have to be this way.</p>
 
-<pre>
-...
-...
-...
-</pre>
+<p><a href="https://github.com/kriskowal/q/tree/v1/examples/async-generators" target="_blank">Q.async</a> is an experimental attempt at using promises and generators to produce async code that resembles the corresponding sychronous code. For example:</p>
+
+<code class="js"><pre>
+// Synchronous code to make some noise.
+function makeNoise() {
+  shake();
+  rattle();
+  roll();
+}
+
+// Asynchronous code to make some noise.
+// Returns a Promise object that becomes resolved
+// when we're done making noise.
+function makeNoise_async() {
+  return Q.async(function* () {
+    yield shake_async();
+    yield rattle_async();
+    yield roll_async();
+  });
+}
+</pre></code>
+
+<p>The main difference is that the asynchronous version must add the <code>yield</code> keyword each place where it calls an asynchronous function.</p>
+
+<p>Unlike asynchronous JS code written any other way, code using Q.async and generators can handle errors using the <code>try</code>/<code>catch</code> syntax built into the language for that purpose. In short, it feels a lot less like learning a whole new language.</p>
+
+<p>So generators are pointing the way to a new asynchronous programming model that I think is better suited to human brains. This work is ongoing. Among other things, better syntax might help. <a href="https://github.com/lukehoban/ecmascript-asyncawait" target="_blank">A proposal for async functions</a>, building on both promises and generators, and taking inspiration from similar features in C#, is <a href="https://github.com/tc39/ecma262" target="_blank">on the table for ES7</a>.</p>
 
 
 
 <h3>When can I use these crazy things?</h3>
 
-<p>Generators were first implemented in JS by Brendan Eich. They shipped in Firefox 2.0 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7">back in 2006</a>. The standardization process made some changes to the syntax and behavior. ES6 generators were implemented in both Firefox and Chrome by extraordinary engineer <a href="http://wingolog.org/" target="_blank">Andy Wingo</a>. This work was sponsored by Bloomberg.</p>
+<p>Generators were first implemented in JS by Brendan Eich. They shipped in Firefox 2.0 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7" target="_blank">back in 2006</a>. The standardization process made some changes to the syntax and behavior. ES6 generators were implemented in both Firefox and Chrome by extraordinary engineer <a href="http://wingolog.org/" target="_blank">Andy Wingo</a>. This work was sponsored by Bloomberg.</p>
 
-<p>On the server, you can use ES6 generators today in io.js (and in Node with the <code>--harmony</code> command-line option).</p>
+<p>On the server, you can use ES6 generators today in io.js (and in Node if you use the <code>--harmony</code> command-line option).</p>
 
-<p>Generators are also supported in Firefox 27+ and Chrome 39+. To use them on the web today, you'll need to translate your ES6 code to Web-friendly ES5 using <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>.</p>
+<p>In the browser, only Firefox 27+ and Chrome 39+ support ES6 generators so far. To use generators on the web today, you'll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> to translate your ES6 code to Web-friendly ES5.</p>
 
 
-<pre>
-...
-...
-...
-</pre>
+<h3>yield</h3>
+
+<p>Well, it's time for this blog series to yield for the time being. But don't worry. We'll be sure to resume it a week from today. (That was a generator joke. I know, funny, right?)</p>
+
+<p>We've been talking about some pretty deep topics here. Next week, wouldn't it be great to talk about an ES6 feature that <em>won't</em> change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too. Coming up: a feature that will <em>plug right in</em> to the kind of code you write every day. So please join us next week for a look at ES6 template strings in depth.</p>
 
 
 
