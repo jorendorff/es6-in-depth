@@ -212,7 +212,7 @@ function* filter(test, iterable) {
   });
 });
 </pre></code>
->
+
 <p>Maybe you’ve seen something like this in your own code. <a href="http://www.html5rocks.com/en/tutorials/async/deferred/" target="_blank">Asynchronous APIs</a> typically require a callback, which means writing an extra anonymous function every time you do something. So if you have a bit of code that does three things, rather than three lines of code, you’re looking at three <em>indentation levels</em> of code.</p>
 
 <p>Here is some more JS code I’ve written:</p>
@@ -255,7 +255,7 @@ function makeNoise_async() {
 
 <p>The main difference is that the asynchronous version must add the <code>yield</code> keyword each place where it calls an asynchronous function.</p>
 
-<p>Adding a little wrinkle like an <code>if</code> statement or a <code>try</code>/<code>catch</code> block in the <code>Q.async</code> version is, again, exactly like adding it to the plain synchronous version. In short, it feels a lot less like learning a whole new language.</p>
+<p>Adding a wrinkle like an <code>if</code> statement or a <code>try</code>/<code>catch</code> block in the <code>Q.async</code> version is exactly like adding it to the plain synchronous version. Compared to other ways of writing async code, this feels a lot less like learning a whole new language.</p>
 
 <p>If you’ve gotten this far, you might enjoy James Long’s <a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators" target="_blank">very detailed post on this topic</a>.</p>
 
@@ -273,6 +273,6 @@ function makeNoise_async() {
 
 <h3>yield;</h3>
 
-<p>There is more to say about generators. This post didn’t cover the <code>.throw()</code> and <code>.return()</code> methods, the optional argument to <code>.next()</code>, or the <code>yield*</code> expression syntax. But this post is long and bewildering enough. Like generators, perhaps we should pause, and pick those points up another time.</p>
+<p>There is more to say about generators. We didn’t cover the <code>.throw()</code> and <code>.return()</code> methods, the optional argument to <code>.next()</code>, or the <code>yield*</code> expression syntax. But I think this post is long and bewildering enough for now. Like generators themselves, we should pause, and take up the rest another time.</p>
 
-<p>But next week, let’s change gears a little. We’ve covered two deep topics in a row here. Wouldn’t it be great to talk about an ES6 feature that <em>won’t</em> change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too. Coming up: a feature that will <em>plug right in</em> to the kind of code you write every day. Please join us next week for a look at ES6 template strings in depth.</p>
+<p>But next week, let’s change gears a little. We’ve tackled two deep topics in a row here. Wouldn’t it be great to talk about an ES6 feature that <em>won’t</em> change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too. Coming up: a feature that will <em>plug right in</em> to the kind of code you write every day. Please join us next week for a look at ES6 template strings in depth.</p>
