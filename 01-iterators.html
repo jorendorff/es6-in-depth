@@ -207,10 +207,11 @@ while (!$result.done) {
 
 <h3>When can I start using this?</h3>
 
-<p>The <code>for</code>-<code>of</code> loop is supported in all current Firefox and Chrome releases. It also works in Microsoft&rsquo;s Spartan browser, but not in shipping versions of IE. If you’d like to use this new syntax on the web, but you need to support IE and Safari, you can use a compiler like <a href="http://babeljs.io/" target="_blank">Babel</a> or Google’s <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> to translate your ES6 code to Web-friendly ES5.</p>
+<p>The <code>for</code>-<code>of</code> loop is supported in all current Firefox releases. It’s supported in Chrome if you go to <code>chrome://flags</code> and enable “Experimental JavaScript”. It also works in Microsoft&rsquo;s Spartan browser, but not in shipping versions of IE. If you’d like to use this new syntax on the web, but you need to support IE and Safari, you can use a compiler like <a href="http://babeljs.io/" target="_blank">Babel</a> or Google’s <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> to translate your ES6 code to Web-friendly ES5.</p>
 
-<p>On the server, you don’t need a compiler&mdash;you can start using <code>for</code>-<code>of</code> in io.js and Node today.</p>
+<p>On the server, you don’t need a compiler&mdash;you can start using <code>for</code>-<code>of</code> in io.js (and Node, with the <code>--harmony</code> option) today.</p>
 
+<p>(<strong>UPDATE:</strong> This previously said that Chrome supports <code>for</code>-<code>of</code>, without qualification. Thanks to Oleg for pointing out the mistake in the comments.) </p>
 
 <h3><code>{done: true}</code></h3>
 
