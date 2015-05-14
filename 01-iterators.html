@@ -195,8 +195,8 @@ for (VAR of ITERABLE) {
 <code class="js"><pre>
 var $iterator = ITERABLE[Symbol.iterator]();
 var $result = $iterator.next();
-while (!result.done) {
-  VAR = result.value;
+while (!$result.done) {
+  VAR = $result.value;
   STATEMENTS
   $result = $iterator.next();
 }
