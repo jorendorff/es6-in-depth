@@ -166,9 +166,9 @@ var libraryHtml = hashTemplate`
 
 </ul>
 
-<p>The flexibility doesn’t stop there. Note that neither the arguments nor the return value is automatically converted to a string. They can be anything. <strong>Tagged templates are not even necessarily strings!</strong> You could use custom tags to create regular expressions, DOM trees, images, promises representing whole asynchronous processes, JS data structures, GL shaders...</p>
+<p>The flexibility doesn’t stop there. Note that the arguments to a tag function are not automatically converted to strings. They can be anything. The same goes for the return value. Tagged templates are not even necessarily strings! You could use custom tags to create regular expressions, DOM trees, images, promises representing whole asynchronous processes, JS data structures, GL shaders...</p>
 
-<p>Tagged templates invite library designers to create domain-specific languages that might look nothing like JS, but still embed in JS seamlessly and interact intelligently with the rest of the language. Offhand, I can’t think of anything quite like it in any other language. I don’t know where this feature will take us. The possibilities are exciting.</p>
+<p><strong>Tagged templates invite library designers to create powerful domain-specific languages.</strong> These languages might look nothing like JS, but they can still embed in JS seamlessly and interact intelligently with the rest of the language. Offhand, I can’t think of anything quite like it in any other language. I don’t know where this feature will take us. The possibilities are exciting.</p>
 
 
 <h3>When can I start using this?</h3>
