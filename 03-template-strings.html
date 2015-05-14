@@ -1,0 +1,216 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>Last week I promised a change of pace. After <a>iterators</a> and <a>generators</a>, we would tackle something easy, I said. Something that won’t melt your brain, I said. We’ll see whether I can keep that promise in the end.</p>
+
+<p>For now, let’s start with something simple.</p>
+
+
+<h3>Backtick basics</h3>
+
+<p>ES6 introduces a new kind of string literal syntax called <dfn>template strings</dfn>. They look like ordinary strings, except using the backtick character <code>`</code> rather than the usual quote marks <code>'</code> or <code>&quot;</code>. In the simplest case, they really are just strings:</p>
+
+<code class="js"><pre>
+context.fillText(`Ceci n'est pas une chaîne.`, x, y);
+</pre></code>
+
+<p>But there’s a reason these are called “template strings” and not “boring plain old strings that don’t do anything special, only with backticks”. Template strings bring simple <a href="https://en.wikipedia.org/wiki/String_interpolation" target="_blank">string interpolation</a> to JavaScript. That is, they’re a nice-looking, convenient way to plug JavaScript values into a string.</p>
+
+<p>There are one million ways to use this, but the one that warms my heart is the humble error message:</p>
+
+<code class="js"><pre>
+function authorize(user, action) {
+  if (!user.hasPrivilege(action)) {
+    throw new Error(
+      `User ${user.name} is not authorized to do ${action}.`);
+  }
+}
+</pre></code>
+
+<p>In this example, <code>${user.name}</code> and <code>${action}</code> are called <dfn>template substitutions</dfn>. JavaScript will plug the values <code>user.name</code> and <code>action</code> into the resulting string. This could generate a message like <code>User jorendorff is not authorized to do hockey.</code> (Which is true. I don’t have a hockey license.)</p>
+
+<p>So far, this is just a slightly nicer syntax for the <code>+</code> operator, and the details are what you would expect:</p>
+
+<ul>
+
+<li><p>The code in a template substitution can be any JavaScript expression, so function calls, arithmetic, and so on are allowed. (If you really want to, you can even nest a template string inside another template string, which I call <dfn>template inception</dfn>.)</p></li>
+
+<li><p>If either value is not a string, it’ll be converted to a string using the usual rules. For example, if <code>action</code> is an object, its <code>.toString()</code> method will be called.</p></li>
+
+<li><p>If you need to write a backtick inside a template string, you must escape it with a backslash: <code>`\``</code> is the same as <code>"`"</code>.</p></li>
+
+<li><p>Likewise, if you need to include the two characters <code>${</code> in a template string, I don’t want to know what you’re up to, but you can escape either character with a backslash: <code>`write&nbsp;\${&nbsp;or&nbsp;$\{`</code>.</p></li>
+
+</ul>
+
+<p>Unlike ordinary strings, template strings can cover multiple lines:</p>
+
+<code class="js"><pre>
+$("#warning").html(`
+  &lt;h1&gt;Watch out!&lt;/h1&gt;
+  &lt;p&gt;Unauthorized hockeying can result in penalties
+  of up to ${maxPenalty} minutes.&lt;/p&gt;
+`);
+</pre></code>
+
+<p>All whitespace in the template string, including newlines and indentation, is included verbatim in the output.</p>
+
+<p>OK. Because of my promise last week, I feel responsible for your brain health. So a quick warning: it starts getting a little intense from here. You can stop reading now, maybe go have a cup of coffee and enjoy your intact, unmelted brain. Seriously, there’s no shame in turning back. Did <a href="https://en.wikipedia.org/wiki/Lopes_Gon%C3%A7alves" target="_blank">Lopes Gonçalves</a> exhaustively explore the entire Southern Hemisphere after proving that ships can cross the equator without being crushed by sea monsters or falling off the edge of the earth? No. He turned back, went home, and had a nice lunch. You like lunch, right?</p>
+
+
+<h3>Backtick the future</h3>
+
+<p>Let’s talk about a few things template strings <em>don’t</em> do.</p>
+
+<ul>
+
+<li><p>They don’t automatically escape special characters for you. To avoid <a href="http://www.techrepublic.com/blog/it-security/what-is-cross-site-scripting/" target="_blank">cross-site scripting</a> vulnerabilities, you’ll still have to treat untrusted data with care, just as if you were concatenating ordinary strings.</p></li>
+
+<li><p>It’s not obvious how they would interact with an <a href="http://yuilibrary.com/yui/docs/intl/" target="_blank">internationalization library</a> (a library for helping your code speak different languages to different users). Template strings don’t handle language-specific formatting of numbers and dates, much less plurals.</p></li>
+
+<li><p>They aren’t a replacement for template libraries, like <a href="https://mustache.github.io/" target="_blank">Mustache</a> or <a href="https://mozilla.github.io/nunjucks/" target="_blank">Nunjucks</a>.</p>
+
+<p>Template strings don’t have any built-in syntax for looping—building the rows of an HTML table from an array, for example—or even conditionals. (Yes, you could use template inception for this, but to me it seems like the sort of thing you’d do as a joke.)</p></li>
+
+</ul>
+
+<p>ES6 provides one more twist on template strings that gives JS developers and library designers the power to address these limitations and more. The feature is called <dfn>tagged templates</dfn>.</p>
+
+<p>The syntax for tagged templates is simple. They’re just template strings with an extra <dfn>tag</dfn> before the opening backtick. For our first example, the tag will be <code>SaferHTML</code>, and we’re going to use this tag to try to address the first limitation listed above: automatically escaping special characters.</p>
+
+<p>Note that <code>SaferHTML</code> is <em>not</em> something provided by the ES6 standard library. We’re going to implement it ourselves below.</p>
+
+<code class="js"><pre>
+var message =
+  SaferHTML`&lt;p&gt;${bonk.sender} has sent you a bonk.&lt;/p&gt;`;
+</pre></code>
+
+<p>The tag here is the single identifier <code>SaferHTML</code>, but a tag can also be a property, like <code>SaferHTML.escape</code>, or even a method call, like <code>SaferHTML.escape({unicodeControlCharacters: false})</code>. (To be precise, any ES6 <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-left-hand-side-expressions" target="_blank">MemberExpression or CallExpression</a> can serve as a tag.)</p>
+
+<p>We saw that untagged template strings are shorthand for simple string concatenation. Tagged templates are shorthand for something else entirely: <em>a function call</em>.</p>
+
+<p>The code above is equivalent to:</p>
+
+<code class="js"><pre>
+var message =
+  SaferHTML(<var>templateData</var>, bonk.sender);
+</pre></code>
+
+<p>where <code><var>templateData</var></code> is an immutable array of all the string parts of the template, created for us by the JS engine. Here the array would have two elements, because there are two string parts in the tagged template, separated by a substitution.  So <code><var>templateData</var></code> will be like <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze" target="_blank">Object.freeze</a>(["&lt;p&gt;", "&nbsp;has&nbsp;sent&nbsp;you&nbsp;a&nbsp;bonk.&lt;/p&gt;"]</code>.</p>
+
+<p>(There is actually one more property present on <code><var>templateData</var></code>. We won’t use it in this article, but I’ll mention it for completeness: <code><var>templateData</var>.raw</code> is another array containing all the string parts in the tagged template, but this time exactly as they looked in the source code—with escape sequences like <code>\n</code> left intact, rather than being turned into newlines and so on. The standard tag <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw" target="_blank"><code>String.raw</code></a> uses these raw strings.)</p>
+
+<p>This gives the <code>SaferHTML</code> function free rein to interpret both the string and the substitutions in a million possible ways.</p>
+
+<p>Before reading on, maybe you’d like to try to puzzle out just what <code>SaferHTML</code> should do, and then try your hand at implementing it. After all, it’s just a function. You can test your work in the Firefox developer console.</p>
+
+<p>Here is one possible answer (also available <a href="https://gist.github.com/jorendorff/1a17f69dbfaafa2304f0" target="_blank">as a gist</a>).</p>
+
+<code class="js"><pre>
+function SaferHTML(templateData) {
+  var s = templateData[0];
+  for (var i = 1; i &lt; arguments.length; i++) {
+    var arg = String(arguments[i]);
+
+    // Escape special characters in the substitution.
+    s += arg.replace(/&amp;/g, "&amp;amp;")
+            .replace(/&lt;/g, "&amp;lt;")
+            .replace(/&gt;/g, "&amp;gt;");
+
+    // Don't escape special characters in the template.
+    s += templateData[i];
+  }
+  return s;
+}
+</pre></code>
+
+<p>With this definition, the tagged template <code>SaferHTML`&lt;p&gt;${bonk.sender}&nbsp;has&nbsp;sent&nbsp;you&nbsp;a&nbsp;bonk.&lt;/p&gt;`</code> might expand to the string <code>"&lt;p&gt;ES6&amp;lt;3er&nbsp;has&nbsp;sent&nbsp;you&nbsp;a&nbsp;bonk.&lt;/p&gt;"</code>. Your users are safe even if a maliciously named user, like <code>Hacker&nbsp;Steve&nbsp;&lt;script&gt;alert('xss');&lt;/script&gt;</code>, sends them a bonk. Whatever that means.</p>
+
+<p>(Incidentally, if the way that function uses <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments" target="_blank">the arguments object</a> strikes you as a bit clunky, drop by next week. There’s <em>another</em> new feature in ES6 that I think you’ll like.)</p>
+
+<p>A single example isn’t enough to illustrate the flexibility of tagged templates. Let’s revisit our earlier list of template string limitations to see what else you could do.</p>
+
+<ul>
+
+<li><p>Template strings don’t auto-escape special characters. But as we’ve seen, with tagged templates, you can fix that problem yourself with a tag.</p>
+
+<p>In fact, you can do a lot better than that.</p>
+
+<p>From a security perspective, my <code>SaferHTML</code> function is pretty weak. Different places in HTML have different special characters that need to be escaped in different ways; <code>SaferHTML</code> does not escape them all. But with some effort, you could write a much smarter <code>SaferHTML</code> function that actually parses the bits of HTML in the strings in <code>templateData</code>, so that it knows which substitutions are in plain HTML; which ones are inside element attributes, and thus need to escape <code>'</code> and <code>&quot;</code>; which ones are in URL query strings, and thus need URL-escaping rather than HTML-escaping; and so on. It could perform just the right escaping for each substitution.</p>
+
+<p>Does this sound far-fetched because HTML parsing is slow? Fortunately, the string parts of a tagged template do not change when the template is evaluated again. <code>SaferHTML</code> could cache the results of all this parsing, to speed up later calls.  (The cache could be a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap" target="_blank">WeakMap</a>, another ES6 feature that we’ll discuss in a future post.)</p></li>
+
+<li><p>Template strings don’t have built-in internationalization features. But with tags, we could add them. <a href="http://jaysoo.ca/2014/03/20/i18n-with-es6-template-strings/" target="_blank">A blog post by Jack Hsu</a> shows what the first steps down that road might look like. Just one example, as a teaser:</p>
+
+<code class="js"><pre>
+i18n`Hello ${name}, you have ${amount}:c(CAD) in your bank account.`
+// => Hallo Bob, Sie haben 1.234,56 $CA auf Ihrem Bankkonto.
+</pre></code>
+
+<p>Note how in this example, <code>name</code> and <code>amount</code> are JavaScript, but there’s a different bit of unfamiliar code, that <code>:c(CAD)</code>, which Jack places in the <em>string</em> part of the template.JavaScript is of course handled by the JavaScript engine; the string parts are handled by Jack’s <code>i18n</code> tag. Users would learn from the <code>i18n</code> documentation that <code>:c(CAD)</code> means <code>amount</code> is an amount of currency, denominated in Canadian dollars.</p>
+
+<p><em>This</em> is what tagged templates are about.</p></li>
+
+<li><p>Template strings are no replacement for Mustache and Nunjucks, partly because they don’t have built-in syntax for loops or conditionals. But now we’re starting to see how you would go about fixing this, right? If JS doesn’t provide the feature, write a tag that provides it.</p>
+
+<code class="js"><pre>
+// Purely hypothetical template language based on
+// ES6 tagged templates.
+var libraryHtml = hashTemplate`
+  &lt;ul&gt;
+    #for book in ${myBooks}
+      &lt;li&gt;&lt;i&gt;#{book.title}&lt;/i&gt; by #{book.author}&lt;/li&gt;
+    #end
+  &lt;/ul&gt;
+`;
+</code></pre></li>
+
+</ul>
+
+<p>The flexibility doesn’t stop there. Note that neither the arguments nor the return value is automatically converted to a string. They can be anything. <strong>Tagged templates are not even necessarily strings!</strong> You could use custom tags to create regular expressions, DOM trees, images, promises representing whole asynchronous processes, JS data structures, GL shaders...</p>
+
+<p>Tagged templates invite library designers to create domain-specific languages that might look nothing like JS, but still embed in JS seamlessly and interact intelligently with the rest of the language. Offhand, I can’t think of anything quite like it in any other language. I don’t know where this feature will take us. The possibilities are exciting.</p>
+
+
+<h3>When can I start using this?</h3>
+
+<p>On the server, ES6 template strings are supported in io.js today.
+
+<p>In browsers, Firefox 34+ supports template strings. Chrome 41+ with the “Experimental JavaScript” preference, which is off by default. For now, you’ll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> if you want to use template strings on the web. You can also use them right now in <a href="http://blogs.msdn.com/b/typescript/archive/2015/01/16/announcing-typescript-1-4.aspx" target="_blank">TypeScript</a>!</p>
+
+
+<h3>Wait—what about Markdown?</h3>
+
+<p>Hmm?</p>
+
+<p>Oh. ...Good question.</p>
+
+<p>(This section isn’t really about JavaScript. If you don’t use <a href="http://daringfireball.net/projects/markdown/basics" target="_blank">Markdown</a>, you can skip it.)</p>
+
+<p>With template strings, both Markdown and JavaScript now use the <code>`</code> character to mean something special. In fact, in Markdown, it’s the delimiter for <code>code</code> snippets in the middle of inline text.</p>
+
+<p>This brings up a bit of a problem! If you write this in a Markdown document:
+
+<pre>
+To display a message, write `alert(`hello world!`)`.
+</pre>
+
+<p>it’ll be displayed like this:</p>
+
+<div style="padding-left: 2em"><p>To display a message, write <code>alert(</code>hello world!<code>)</code>.</p></div>
+
+<p>Note that there are no backticks in the output. Markdown interpreted all four backticks as code delimiters and replaced them with HTML tags.</p>
+
+<p>To avoid this, we turn to a little-known feature that’s been in Markdown from the beginning: you can use multiple backticks as code delimiters, like this:
+
+<pre>
+To display a message, write ``alert(`hello world!`)``.
+</pre>
+
+<p><a href="https://gist.github.com/jorendorff/d3df45120ef8e4a342e5" target="blank_">This Gist</a> has the details, and it’s written in Markdown so you can look at the source.</p>
+
+
+<h3>Up next</h3>
+
+<p>Next week, we’ll look at two features that programmers have enjoyed in other languages for decades: one for people who like to avoid an argument where possible, and one for people who like to have lots of arguments. I’m talking about function arguments, of course. Both features are really for all of us.</p>
+
+<p>We’ll see these features through the eyes of the person who implemented them in Firefox. So please join us next week, as guest author Benjamin Peterson presents ES6 default parameters and rest parameters in depth.</p>
