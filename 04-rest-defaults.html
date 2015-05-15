@@ -37,7 +37,7 @@ function containsAll(haystack, ...needles) {
 
 <p>This version of the function has the same behavior as the first one but contains the special <code>...needles</code> syntax. Let&rsquo;s see how calling this function works for the invocation <code>containsAll("banana", "b", "nan")</code>. The argument <code>haystack</code> is filled as usual with the parameter that is passed first, namely <code>"banana"</code>. The ellipsis before <code>needles</code> indicates it is a <em>rest parameter</em>. All the other passed parameters are put into an array and assigned to the variable <code>needles</code>. For our example call, <code>needles</code> is set to <code>["b", "nan"]</code>. Function execution then continues as normal. (Notice we have used the ES6 <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of</a> looping construct.)</p>
 
-<p>In general, only the last parameter of a function may be marked as a rest parameter. In an call, the parameters before the reset parameter are filled as usual. Any &ldquo;extra&rsquo; arguments are put into an array and assigned to the rest parameter. If there are no extra arguments, the rest parameter will simply be an empty array; the rest parameter will never be <code>undefined</code>.</p>
+<p>In general, only the last parameter of a function may be marked as a rest parameter. In an call, the parameters before the rest parameter are filled as usual. Any &ldquo;extra&rsquo; arguments are put into an array and assigned to the rest parameter. If there are no extra arguments, the rest parameter will simply be an empty array; the rest parameter will never be <code>undefined</code>.</p>
 
 <h3>Default Parameters</h3>
 
@@ -53,7 +53,7 @@ function animalSentence(animals2="tigers", animals3="bears") {
 
 <p>For each parameter, the part after the <code>=</code> is an expression specifying the default value of the parameter if a caller does not pass it. So, <code>animalSentence()</code> returns <code>"Lions, tigers, and bears! Oh my!"</code>, <code>animalSentence("elephants")</code> returns <code>"Lions, elephants, and bears! Oh my!"</code>, and <code>animalSentence("elephants", "whales")</code> returns <code>"Lions, elephants, and whales! Oh my!</code>.</p>
 
-<p>The are several subtleties related to default parmaeters. The first is that, unlike Python, <strong>default value expressions are evaluated at function call time</strong> from left to right. This also means that default expressions can use the values of previously-filled parameters. For example, we could make our animal sentence function more fancy as follows:</p>
+<p>The are several subtleties related to default parameters. The first is that, unlike Python, <strong>default value expressions are evaluated at function call time</strong> from left to right. This also means that default expressions can use the values of previously-filled parameters. For example, we could make our animal sentence function more fancy as follows:</p>
 
 <code class="js"><pre>
 function animalSentenceFancy(animals2="tigers", animals3=(animals2 == "bears") ? "sealions" : "bears") {
@@ -67,9 +67,9 @@ function animalSentenceFancy(animals2="tigers", animals3=(animals2 == "bears") ?
 
 <h3>Shutting Down <code>arguments</code></h3>
 
-<p>We&rsquo;ve now seen that rest parameters and defaults can replace usage of the <code>aruments</code> object, and removing <code>arguments</code> usually makes the code nicer to read. In addition to harming readibility, the magic of the <code>arguments</code> object notoriously causes <a href="https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments">headaches for optimizing JavaScript VMs</a>.</p>
+<p>We&rsquo;ve now seen that rest parameters and defaults can replace usage of the <code>arguments</code> object, and removing <code>arguments</code> usually makes the code nicer to read. In addition to harming readibility, the magic of the <code>arguments</code> object notoriously causes <a href="https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments">headaches for optimizing JavaScript VMs</a>.</p>
 
-<p>It is hoped that rest parameters and defaults can completely supersede <code>arguments</code> As a first step towards this, functions that use a rest parameter or defaults are forbidden from using the <code>arguments</code> object. Support for <code>arguments</code> won&rsquo;t be removed soon, if ever, but it&rsquo;s now preferable to avoid <code>arguments</code> with rest parameters and defaults when possible.</p>
+<p>It is hoped that rest parameters and defaults can completely supersede <code>arguments</code>. As a first step towards this, functions that use a rest parameter or defaults are forbidden from using the <code>arguments</code> object. Support for <code>arguments</code> won&rsquo;t be removed soon, if ever, but it&rsquo;s now preferable to avoid <code>arguments</code> with rest parameters and defaults when possible.</p>
 
 <h3>Conclusion</h3>
 
