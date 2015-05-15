@@ -1,0 +1,76 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>Today&rsquo;s post is about two features that make JavaScript&rsquo;s function syntax more expressive: rest parameters and parameter defaults.</p>
+
+<h3>Rest Parameters</h3>
+
+<p>A common need when creating an API is a <em>variadic function</em>, a function that accepts any number of arguments. For example, the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/concat">String.prototype.concat</a> method takes any number of string arguments. With rest parameters, ES6 provides a new way to write variadic functions.</p>
+
+<p>To demonstrate, let&rsquo;s write a simple variadic function <code>containsAll</code> that checks whether a string contains a number of substrings. For example, <code>containsAll("banana", "b", "nan")</code> would return <code>true</code>, and <code>containsAll("banana", "c", "nan")</code> would return <code>false</code>.</p>
+
+<p>Here is the traditional way to implement this function:</p>
+
+<code class="js"><pre>
+function containsAll(haystack) {
+    for (var i = 1; i < arguments.length; i++) {
+        var needle = arguments[i];
+        if (haystack.indexOf(needle) === -1) {
+            return false;
+        }
+    }
+    return true;
+}
+</pre></code>
+
+<p>This implementation uses the magical <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments"><code>arguments</code> object</a>, an array-like object containing the parameters passed to the function. This code certainly does what we want, but its readibility is not optimal. The function parameter list contains only one parameter <code>haystack</code>, so it&rsquo; impossible to tell at a glance that the function actually takes multiple arguments. Additionally, we must be careful to start iterating through <code>arguments</code> at index <code>1</code> not <code>0</code>, since <code>arguments[0]</code> corresponds to the <code>haystack</code> argument. If we ever wanted to add another parameter before or after <code>haystack</code>, we would have to remember to update the for loop. Rest parameters address both of these concerns. Here is a natural ES6 implementation of <code>containsAll</code> using a rest parameter:</p>
+
+<code class="js"><pre>
+function containsAll(haystack, ...needles) {
+    for (var needle of needles) {
+        if (haystack.indexOf(needle) === -1) {
+            return false;
+        }
+    }
+    return true;
+}
+</pre></code>
+
+<p>This version of the function has the same behavior as the first one but contains the special <code>...needles</code> syntax. Let&rsquo;s see how calling this function works for the invocation <code>containsAll("banana", "b", "nan")</code>. The argument <code>haystack</code> is filled as usual with the parameter that is passed first, namely <code>"banana"</code>. The ellipsis before <code>needles</code> indicates it is a <em>rest parameter</em>. All the other passed parameters are put into an array and assigned to the variable <code>needles</code>. For our example call, <code>needles</code> is set to <code>["b", "nan"]</code>. Function execution then continues as normal. (Notice we have used the ES6 <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of</a> looping construct.)</p>
+
+<p>In general, only the last parameter of a function may be marked as a rest parameter. In an call, the parameters before the reset parameter are filled as usual. Any &ldquo;extra&rsquo; arguments are put into an array and assigned to the rest parameter. If there are no extra arguments, the rest parameter will simply be an empty array; the rest parameter will never be <code>undefined</code>.</p>
+
+<h3>Default Parameters</h3>
+
+<p>Often, a function doesn&rsquo;t need to have all its possible parameters passed by callers, and there are sensible defaults that could be used for parameters that are not passed. JavaScript has always had a inflexible form of default parameters; parameters for which no value is passed default to <code>undefined</code>. ES6 introduces a way to specify arbitrary parameter defaults.</p>
+
+<p>Here&rsquo;s an example. (The backticks signify template strings, which were <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-template-strings-2/">discussed last week</a>.)</p>
+
+<code class="js"><pre>
+function animalSentence(animals2="tigers", animals3="bears") {
+    return `Lions, ${animals2}, and ${animals3}! Oh my!`;
+}
+</pre></code>
+
+<p>For each parameter, the part after the <code>=</code> is an expression specifying the default value of the parameter if a caller does not pass it. So, <code>animalSentence()</code> returns <code>"Lions, tigers, and bears! Oh my!"</code>, <code>animalSentence("elephants")</code> returns <code>"Lions, elephants, and bears! Oh my!"</code>, and <code>animalSentence("elephants", "whales")</code> returns <code>"Lions, elephants, and whales! Oh my!</code>.</p>
+
+<p>The are several subtleties related to default parmaeters. The first is that, unlike Python, <strong>default value expressions are evaluated at function call time</strong> from left to right. This also means that default expressions can use the values of previously-filled parameters. For example, we could make our animal sentence function more fancy as follows:</p>
+
+<code class="js"><pre>
+function animalSentenceFancy(animals2="tigers", animals3=(animals2 == "bears") ? "sealions" : "bears") {
+    return `Lions, ${animals2}, and ${animals3}! Oh my!`;
+}
+</pre></code>
+
+<p>Then, <code>animalSentenceFancy("bears")</code> returns <code>"Lions, bears, and sealions. Oh my!"</code>.</p>
+
+<p>The second subtlety of defaults is that passing <code>undefined</code> is considered to be equivalent to not passing anything at all. Thus, <code>animalSentence(undefined, "unicorns")</code> returns <code>"Lions, tigers, and unicorns! Oh my!"</code>.</p>
+
+<h3>Shutting Down <code>arguments</code></h3>
+
+<p>We&rsquo;ve now seen that rest parameters and defaults can replace usage of the <code>aruments</code> object, and removing <code>arguments</code> usually makes the code nicer to read. In addition to harming readibility, the magic of the <code>arguments</code> object notoriously causes <a href="https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments">headaches for optimizing JavaScript VMs</a>.</p>
+
+<p>It is hoped that rest parameters and defaults can completely supersede <code>arguments</code> As a first step towards this, functions that use a rest parameter or defaults are forbidden from using the <code>arguments</code> object. Support for <code>arguments</code> won&rsquo;t be removed soon, if ever, but it&rsquo;s now preferable to avoid <code>arguments</code> with rest parameters and defaults when possible.</p>
+
+<h3>Conclusion</h3>
+
+<p>Although technically not allowing any new behavior, rest parameters and parameter defaults can make some JavaScript function declarations more expressive and readable. Happy calling!</p>
