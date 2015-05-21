@@ -56,7 +56,9 @@ function animalSentence(animals2="tigers", animals3="bears") {
 <p>The are several subtleties related to default parameters. The first is that, unlike Python, <strong>default value expressions are evaluated at function call time</strong> from left to right. This also means that default expressions can use the values of previously-filled parameters. For example, we could make our animal sentence function more fancy as follows:</p>
 
 <code class="js"><pre>
-function animalSentenceFancy(animals2="tigers", animals3=(animals2 == "bears") ? "sealions" : "bears") {
+function animalSentenceFancy(animals2="tigers",
+    animals3=(animals2 == "bears") ? "sealions" : "bears")
+{
   return `Lions, ${animals2}, and ${animals3}! Oh my!`;
 }
 </pre></code>
