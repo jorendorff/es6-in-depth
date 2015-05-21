@@ -93,6 +93,12 @@ function myFunc(a=42, b=undefined) {...}
 
 <p>It is hoped that rest parameters and defaults can completely supersede <code>arguments</code>. As a first step towards this, functions that use a rest parameter or defaults are forbidden from using the <code>arguments</code> object. Support for <code>arguments</code> won&rsquo;t be removed soon, if ever, but it&rsquo;s now preferable to avoid <code>arguments</code> with rest parameters and defaults when possible.</p>
 
+<h3>Browser Support</h3>
+
+<p>Firefox has had support for rest parameters and defaults since version 15.</p>
+
+<p>Unfortunately, no other released browser supports rest parameters or defaults yet. V8 recently <a href="https://code.google.com/p/v8/issues/detail?id=2159">added experimental support for rest parameters</a>, and there is an open V8 <a href="https://code.google.com/p/v8/issues/detail?id=2160">bug for implementing defaults</a>. JSC also has open bugs for <a href="https://bugs.webkit.org/show_bug.cgi?id=38408">rest parameters</a> and <a href="https://bugs.webkit.org/show_bug.cgi?id=38409">defaults</a>.</p>
+
 <h3>Conclusion</h3>
 
 <p>Although technically not allowing any new behavior, rest parameters and parameter defaults can make some JavaScript function declarations more expressive and readable. Happy calling!</p>
