@@ -1,0 +1,285 @@
+<p>
+ES6 is here, people is starting to talk about ES7 and the future holds for us more features and shiny things through newer standards.
+We all wonder, how can we make use of all that?
+<p>
+
+<p>
+The first option is to wait for browser vendors to implement and support all the new features with each released standard. Of course, that is going to take a long time, if it ever happens. The second option is to find a tool that will allow us to write code using ES6 while also guaranteeing that we'll be able to execute in every browser. The name for such a thing is a <strong>transpiler</strong> (source to source compiler).
+</p>
+
+<h2>Transpilation our salvation</h2>
+
+<p>
+A transpiler is very easy to use, you can describe the process in only two steps:
+</p>
+
+1. We write code with ES6 syntax.
+
+<p><code class="js"><pre>
+let q = 99;
+let myVariable = `${q} bottles of beer on the wall, ${q} bottles of beer.`;
+</pre></code></p>
+
+2. We use the code above as input for the transpiler which will process it and produce the following output:
+
+<p><code class="js"><pre>
+var q = 99;
+var myVariable = q + " bottles of beer on the wall, " + q + " bottles of beer.";
+</pre></code></p>
+
+<p>
+The good old JavaScript that we all know and that can be used in any browser.
+</p>
+
+<p>
+The internals of what a transpiler does to go from input to output are highly complex things that don't need to be fully understood by web developers. The important thing for us to know is that they are the tool that we need and there are already two great alternatives. One of them is <a title="Traceur JS Compiler" href="https://github.com/google/traceur-compiler">Traceur</a> and the other is <a title="Babel JS Compiler" href="https://babeljs.io/">Babel</a>.
+</p>
+
+<p>
+In the next section we will use a build tool and a transpiler, Broccoli and Babel, to write and execute our first lines of ES6.
+</p>
+
+<h2>Our first Broccoli &amp; Babel project</h2>
+
+<h3>Project setup</h3>
+
+<p>We'll setup our Broccoli project first with:</p>
+
+<p><code class="bash"><pre>
+mkdir es6-fruits
+cd es6-fruits
+npm init
+# Create an empty file called Brocfile.js
+touch Brocfile.js
+</pre></code></p>
+
+<p>Now we install <code>broccoli</code> and <code>broccoli-cli</code></p>
+
+<p><code class="bash"><pre>
+# package dependency
+npm install --save-dev broccoli
+# command line tool
+npm install -g broccoli-cli
+</pre></code></p>
+
+<h3>Write some ES6</h3>
+
+<p>We'll create a <code>src</code> folder and inside we'll put a <code>fruits.js</code> file.</p>
+
+<p><code class="bash"><pre>
+mkdir src
+vim src/fruits.js
+</pre></code></p>
+
+<p>
+In our new file we'll write a small script using ES6 syntax.
+</p>
+
+<p><code class="js"><pre>
+let fruits = [
+  {id: 100, name: 'strawberry'},
+  {id: 101, name: 'grapefruit'},
+  {id: 102, name: 'plum'}
+];
+
+for (let fruit of fruits) {
+  let message = `ID: ${fruit.id} Name: ${fruit.name}`;
+
+  console.log(message);
+}
+
+console.log(`List total: ${fruits.length}`);
+</pre></code></p>
+
+<p>The code sample above makes use of three ES6 features:</p>
+
+<ol>
+  <li><code>let</code> for local scope declarations</li>
+  <li><a title="es6 in depth: iterators and the for of loop" href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of loops</a></li>
+  <li><a title="es6 in depth: template strings" href="https://hacks.mozilla.org/2015/05/es6-in-depth-template-strings-2/">template strings</a></li>
+</ol>
+
+<p>Save the file and try to execute it with <code>node src/fruits.js</code>, it will fail with:</p>
+
+<p><code class="bash"><pre>
+let fruits = [
+^^^^^^
+SyntaxError: Unexpected identifier
+</pre></code></p>
+
+<h3>Transpiration time, right?</h3>
+
+<p>
+Now we'll use Broccoli to load our code and push it through Babel. We'll edit the file `Brocfile.js` and add this code to it:
+</p>
+
+<p><code class="js"><pre>
+// import babel plugin
+var babel = require('broccoli-babel-transpiler');
+
+// grab the source and transpile in 1 step
+fruits = babel('src'); // src/*.js
+
+module.exports = fruits;
+</pre></code></p>
+
+<p>
+Notice that we are requiring <code>broccoli-babel-transpiler</code>, that is a Broccoli plugin that wraps around the Babel library, so we must install it.
+</p>
+
+<p><code class="bash"><pre>
+npm install --save-dev broccoli-babel-transpiler
+</pre></code></p>
+
+<p>Now we can build our project and execute our script with:</p>
+
+<p><code class="bash"><pre>
+broccoli build dist
+node dist/fruits.js
+</pre></code></p>
+
+<p>The output should be:</p>
+
+<p><code class="bash"><pre>
+&gt; ID: 100 Name: strawberry
+&gt; ID: 101 Name: grapefruit
+&gt; ID: 102 Name: plum
+&gt; List total: 3
+</pre></code></p>
+
+<p>That was easy, no transpiration required!</p>
+
+<p>
+You can open <code>dist/fruits.js</code> to see what the transpiled code looks like. A nice feature of the Babel transpiler is that it produces readable code.
+</p>
+
+<h2>Writing ES6 code for a website</h2>
+
+<p>
+We'll take it up a notch. You already saw that we can grab and transpile many files at once. We'll do just that. In the `src` folder we'll create two files:
+</p>
+
+<p><code class="js"><pre>
+// src/print-info.js
+
+function printInfo() {
+  $('#info')
+  .append('&lt;p&gt;minimal website example with Broccoli and Babel&lt;/p&gt;');
+}
+
+$(printInfo);
+</pre></code></p>
+
+<p><code class="js"><pre>
+// src/print-colors.js
+function* hexRange(start, stop, step) { // ES6 Generator
+  for (var i = start; i &lt; stop; i += step) {
+    yield i;
+  }
+}
+
+function printColors() {
+  var content$ = $('#content');
+
+  for ( var hex of hexRange(900, 999, 10) ) { // contrived example
+    var newDiv = $('&lt;div&gt;')
+                 .attr('class', 'color')
+                 .css({ 'background-color': `#${hex}` })
+                 .append(`hex code: #${hex}`);
+    content$.append(newDiv);
+  }
+}
+
+$(printColors);
+</pre></code></p>
+
+<p>
+The next step is to put all the JS files together and use them in a website. The hardest part is writing our Brocfile. This time we'll install 4 plugins:
+</p>
+
+<p><code class="bash"><pre>
+npm install --save-dev broccoli-babel-transpiler
+npm install --save-dev broccoli-funnel
+npm install --save-dev broccoli-concat
+npm install --save-dev broccoli-merge-trees
+</pre></code></p>
+
+<p>Lets put them to use:</p>
+
+<p><code class="js"><pre>
+// Babel transpiler
+var babel = require('broccoli-babel-transpiler');
+// filter trees (subsets of files)
+var funnel = require('broccoli-funnel');
+// concatenate trees
+var concat = require('broccoli-concat');
+// merge trees
+var mergeTrees = require('broccoli-merge-trees');
+
+// Transpile the source files
+var appJs = babel('src');
+
+// We'll be using ES6 generators and a Polyfill is needed
+// Grab the polyfill file provided by the Babel library
+var root = 'node_modules/broccoli-babel-transpiler/node_modules/babel-core';
+var browserPolyfill = funnel(root, { 
+  files: ['browser-polyfill.js']
+});
+
+// Add the Babel polyfill to the tree of transpiled files
+appJs = mergeTrees([browserPolyfill, appJs]);
+
+// Concatenate all the JS files into a single file
+appJs = concat(appJs, {
+  // we specify a concatenation order
+  inputFiles: ['browser-polyfill.js', '**/*.js'],
+  outputFile: '/js/my-app.js'
+});
+
+// Grab the index file
+var index = funnel('src', {files: ['index.html']});
+
+// Grab all our trees and 
+// export them as a single and final tree
+module.exports = mergeTrees([index, appJs]);
+</pre></code></p>
+
+<p>Time to build and execute our code.</p>
+
+<p><code class="bash"><pre>
+broccoli build dist
+</pre></code></p>
+
+<p>
+This time you should see the following structure in the <code>dist</code> folder:
+</p>
+
+<p><code class="bash"><pre>
+tree dist/
+dist/
+├── index.html
+└── js
+    └── my-app.js
+</pre></code></p>
+
+<p>
+That is just a static website that you can serve with any server to verify that the code is working, example:
+</p>
+
+<p><code class="js"><pre>
+cd dist/
+python -m SimpleHTTPServer
+# visit http://localhost:8000/
+</pre></code></p>
+
+<p>You should see this:</p>
+
+[caption id="" align="alignnone" width="361"]<img class="" src="https://raw.githubusercontent.com/givanse/broccoli-babel-examples/master/es6-website/screenshot.png" alt="simple ES6 website" width="361" height="631" /> simple ES6 website[/caption]
+
+<h2>Getting serious with ES6</h2>
+
+<p>With the second example we accomplished a lot and might be all you need to keep you going for a while. For those who want more, you should check this repository: <a title="broccoli-babel-boilerplate" href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a> It is also a Broccoli + Babel setup, but taking it up two notches. It handles modules and imports.</p>
+
+<p>
+The complete source code for the two examples can be found here <a title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>.
+</p>
