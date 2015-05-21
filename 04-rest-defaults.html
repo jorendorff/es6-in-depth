@@ -47,11 +47,11 @@ function containsAll(haystack, ...needles) {
 
 <code class="js"><pre>
 function animalSentence(animals2="tigers", animals3="bears") {
-    return `Lions, ${animals2}, and ${animals3}! Oh my!`;
+    return `Lions and ${animals2} and ${animals3}! Oh my!`;
 }
 </pre></code>
 
-<p>For each parameter, the part after the <code>=</code> is an expression specifying the default value of the parameter if a caller does not pass it. So, <code>animalSentence()</code> returns <code>"Lions, tigers, and bears! Oh my!"</code>, <code>animalSentence("elephants")</code> returns <code>"Lions, elephants, and bears! Oh my!"</code>, and <code>animalSentence("elephants", "whales")</code> returns <code>"Lions, elephants, and whales! Oh my!</code>.</p>
+<p>For each parameter, the part after the <code>=</code> is an expression specifying the default value of the parameter if a caller does not pass it. So, <code>animalSentence()</code> returns <code>"Lions and tigers and bears! Oh my!"</code>, <code>animalSentence("elephants")</code> returns <code>"Lions and elephants and bears! Oh my!"</code>, and <code>animalSentence("elephants", "whales")</code> returns <code>"Lions and elephants and whales! Oh my!</code>.</p>
 
 <p>The are several subtleties related to default parameters. The first is that, unlike Python, <strong>default value expressions are evaluated at function call time</strong> from left to right. This also means that default expressions can use the values of previously-filled parameters. For example, we could make our animal sentence function more fancy as follows:</p>
 
@@ -59,13 +59,13 @@ function animalSentence(animals2="tigers", animals3="bears") {
 function animalSentenceFancy(animals2="tigers",
     animals3=(animals2 == "bears") ? "sealions" : "bears")
 {
-  return `Lions, ${animals2}, and ${animals3}! Oh my!`;
+  return `Lions and ${animals2} and ${animals3}! Oh my!`;
 }
 </pre></code>
 
-<p>Then, <code>animalSentenceFancy("bears")</code> returns <code>"Lions, bears, and sealions. Oh my!"</code>.</p>
+<p>Then, <code>animalSentenceFancy("bears")</code> returns <code>"Lions and bears and sealions. Oh my!"</code>.</p>
 
-<p>The second subtlety of defaults is that passing <code>undefined</code> is considered to be equivalent to not passing anything at all. Thus, <code>animalSentence(undefined, "unicorns")</code> returns <code>"Lions, tigers, and unicorns! Oh my!"</code>.</p>
+<p>The second subtlety of defaults is that passing <code>undefined</code> is considered to be equivalent to not passing anything at all. Thus, <code>animalSentence(undefined, "unicorns")</code> returns <code>"Lions and tigers and unicorns! Oh my!"</code>.</p>
 
 <h3>Shutting Down <code>arguments</code></h3>
 
