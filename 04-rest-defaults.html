@@ -74,6 +74,17 @@ Then, <code>animalSentenceFancy("bears")</code> returns <code>"Lions and bears a
 Passing <code>undefined</code> is considered to be equivalent to not passing anything at all. Thus, <code>animalSentence(undefined, "unicorns")</code> returns <code>"Lions and tigers and unicorns! Oh my!"</code>.
 </li>
 
+<li>
+A parameter without a default implicitly defaults to undefined, so
+<code class="js"><pre>
+function myFunc(a=42, b) {...}
+</pre></code>
+is allowed and equivalent to
+<code class="js"><pre>
+function myFunc(a=42, b=undefined) {...}
+</pre></code>
+</li>
+
 </ul>
 
 <h3>Shutting Down <code>arguments</code></h3>
