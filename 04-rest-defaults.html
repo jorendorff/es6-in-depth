@@ -12,13 +12,13 @@
 
 <code class="js"><pre>
 function containsAll(haystack) {
-    for (var i = 1; i < arguments.length; i++) {
-        var needle = arguments[i];
-        if (haystack.indexOf(needle) === -1) {
-            return false;
-        }
+  for (var i = 1; i < arguments.length; i++) {
+    var needle = arguments[i];
+    if (haystack.indexOf(needle) === -1) {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 </pre></code>
 
@@ -26,18 +26,18 @@ function containsAll(haystack) {
 
 <code class="js"><pre>
 function containsAll(haystack, ...needles) {
-    for (var needle of needles) {
-        if (haystack.indexOf(needle) === -1) {
-            return false;
-        }
+  for (var needle of needles) {
+    if (haystack.indexOf(needle) === -1) {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 </pre></code>
 
 <p>This version of the function has the same behavior as the first one but contains the special <code>...needles</code> syntax. Let&rsquo;s see how calling this function works for the invocation <code>containsAll("banana", "b", "nan")</code>. The argument <code>haystack</code> is filled as usual with the parameter that is passed first, namely <code>"banana"</code>. The ellipsis before <code>needles</code> indicates it is a <em>rest parameter</em>. All the other passed parameters are put into an array and assigned to the variable <code>needles</code>. For our example call, <code>needles</code> is set to <code>["b", "nan"]</code>. Function execution then continues as normal. (Notice we have used the ES6 <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of</a> looping construct.)</p>
 
-<p>In general, only the last parameter of a function may be marked as a rest parameter. In an call, the parameters before the rest parameter are filled as usual. Any &ldquo;extra&rsquo; arguments are put into an array and assigned to the rest parameter. If there are no extra arguments, the rest parameter will simply be an empty array; the rest parameter will never be <code>undefined</code>.</p>
+<p>In general, only the last parameter of a function may be marked as a rest parameter. In an call, the parameters before the rest parameter are filled as usual. Any &ldquo;extra&rdquo; arguments are put into an array and assigned to the rest parameter. If there are no extra arguments, the rest parameter will simply be an empty array; the rest parameter will never be <code>undefined</code>.</p>
 
 <h3>Default Parameters</h3>
 
@@ -57,7 +57,7 @@ function animalSentence(animals2="tigers", animals3="bears") {
 
 <code class="js"><pre>
 function animalSentenceFancy(animals2="tigers", animals3=(animals2 == "bears") ? "sealions" : "bears") {
-    return `Lions, ${animals2}, and ${animals3}! Oh my!`;
+  return `Lions, ${animals2}, and ${animals3}! Oh my!`;
 }
 </pre></code>
 
