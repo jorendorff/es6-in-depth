@@ -1,4 +1,6 @@
-<p><i>Editor's note: this article originally appeared on Nick Fitzgerald's blog as <a href="http://fitzgeraldnick.com/weblog/50/">Destructuring Assignment in ES6</a>.</i></p>
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p><i>Editor’s note: Today’s post, by Mozilla developer tools engineer <a href="http://fitzgeraldnick.com/" target="_blank">Nick Fitzgerald</a>, originally appeared on Nick’s blog as <a href="http://fitzgeraldnick.com/weblog/50/" target="_blank">Destructuring Assignment in ES6</a>.</i></p>
 
 
 
@@ -14,17 +16,17 @@ var second = someArray[1];
 var third = someArray[2];
 </pre></code>
 
-<p>With destructuring assignment, the equivalent code becomes more concise and read-able:</p>
+<p>With destructuring assignment, the equivalent code becomes more concise and readable:</p>
 
 <code class="js"><pre>
 var [first, second, third] = someArray;
 </pre></code>
 
-<p>SpiderMonkey (Firefox's JavaScript engine) already has support for most of destructuring, but not all of it. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=694100">Track SpiderMonkey's destructuring (and general ES6) support in this bugzilla ticket.</a></p>
+<p>SpiderMonkey (Firefox’s JavaScript engine) already has support for most of destructuring, but not quite all of it. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=694100" target="_blank">Track SpiderMonkey’s destructuring (and general ES6) support in this bugzilla ticket.</a></p>
 
 
 
-<h3>Destructuring Arrays and Iterables</h3>
+<h3>Destructuring arrays and iterables</h3>
 
 <p>We already saw one example of destructuring assignment on an array above. The general form of the syntax is:</p>
 
@@ -60,7 +62,7 @@ console.log(third);
 // "baz"
 </pre></code>
 
-<p>And you can capture all trailing items in an array with a "rest" pattern:</p>
+<p>And you can capture all trailing items in an array with a “rest” pattern:</p>
 
 <code class="js"><pre>
 var [head, ...tail] = [1, 2, 3, 4];
@@ -68,7 +70,7 @@ console.log(tail);
 // [2, 3, 4]
 </pre></code>
 
-<p>When you access items in the array that are out of bounds or don't exist, you get the same result you would by indexing: <code>undefined</code>.</p>
+<p>When you access items in the array that are out of bounds or don’t exist, you get the same result you would by indexing: <code>undefined</code>.</p>
 
 <code class="js"><pre>
 console.log([][0]);
@@ -98,7 +100,7 @@ console.log(sixth);
 
 
 
-<h3>Destructuring Objects</h3>
+<h3>Destructuring objects</h3>
 
 <p>Destructuring on objects lets you bind variables to different properties of an object. You specify the property being bound, followed by the variable you are binding its value to.</p>
 
@@ -158,7 +160,7 @@ console.log(missing);
 // Syntax error
 </pre></code>
 
-<p>This happens because the JavaScript grammar tells the engine to parse as a block statement (for example, <code>{ console }</code> is a valid block statement). The solution is to either wrap the pattern or the whole expression in parentheses:</p>
+<p>This happens because the JavaScript grammar tells the engine to parse any statement starting with <code>{</code> as a block statement (for example, <code>{ console }</code> is a valid block statement). The solution is to either wrap the pattern or the whole expression in parentheses:</p>
 
 <code class="js"><pre>
 ({ safe }) = {};
@@ -168,7 +170,7 @@ console.log(missing);
 
 
 
-<h3>Destructuring Values that are not an Object, Array, or Iterable</h3>
+<h3>Destructuring values that are not an object, array, or iterable</h3>
 
 <p>When you try to use destructuring on <code>null</code> or <code>undefined</code>, you get a type error:</p>
 
@@ -185,11 +187,11 @@ console.log(wtf);
 // undefined
 </pre></code>
 
-<p>This may come unexpected, but upon further examination it turns out to be simple. When using an object assignment pattern, the value being destructured is <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible">required to be coercible to an <code>Object</code></a>. Most types can be converted to an object, but <code>null</code> and <code>undefined</code> may not be. When using an array assignment pattern, the value must <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getiterator">have an iterator</a>.</p>
+<p>This may come unexpected, but upon further examination the reason turns out to be simple. When using an object assignment pattern, the value being destructured is <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible" target="_blank">required to be coercible to an <code>Object</code></a>. Most types can be converted to an object, but <code>null</code> and <code>undefined</code> may not be. When using an array assignment pattern, the value must <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getiterator" target="_blank">have an iterator</a>.</p>
 
 
 
-<h3>Default Values</h3>
+<h3>Default values</h3>
 
 <p>You can also provide default values for when the property you are destructuring is not defined:</p>
 
@@ -198,19 +200,23 @@ var [missing = true] = [];
 console.log(missing);
 // true
 
+var { message: msg = "Something went wrong" } = {};
+console.log(msg);
+// "Something went wrong"
+
 var { x = 3 } = {};
 console.log(x);
 // 3
 </pre></code>
 
-<p>??? <i>Note that SpiderMonkey doesn't implement default values for object assignment patterns yet. See bug TODO. Default values in array assignment patterns are supported.</i></p>
+<p><i>(Editor’s note: This feature is currently implemented in Firefox only for the first two cases, not the third. See <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080" target="_blank">bug 932080</a>.)</i></p>
 
 
 
-<h3>Practical Applications of Destructuring</h3>
+<h3>Practical applications of destructuring</h3>
 
 
-<h4>Function Parameter Definitions</h4>
+<h4>Function parameter definitions</h4>
 
 <p>As developers, we can often expose more ergonomic APIs by accepting a single object with multiple properties as a parameter instead of forcing our API consumers to remember the order of many individual parameters. We can use destructuring to avoid repeating this single parameter object whenever we want to reference one of its properties:</p>
 
@@ -220,12 +226,12 @@ function removeBreakpoint({ url, line, column }) {
 }
 </pre></code>
 
-<p>This is a simplified snippet of real world code from the Firefox DevTool's JavaScript debugger (which is also implemented in JavaScript &mdash; yo dog). We have found this pattern particularly pleasing.</p>
+<p>This is a simplified snippet of real world code from the Firefox DevTools JavaScript debugger (which is also implemented in JavaScript&mdash;yo dawg). We have found this pattern particularly pleasing.</p>
 
 
-<h4>Configuration Object Parameters</h4>
+<h4>Configuration object parameters</h4>
 
-<p>Expanding on the previous example, we can also give default values to the properties of the objects we are destructuring. This is particularly helpful when we have an object that is meant to provide configuration and many of the object's properties already have sensible defaults. For example, jQuery's <code>ajax</code> function takes a configuration object as its second parameter, and could be re-written like this:</p>
+<p>Expanding on the previous example, we can also give default values to the properties of the objects we are destructuring. This is particularly helpful when we have an object that is meant to provide configuration and many of the object’s properties already have sensible defaults. For example, jQuery’s <code>ajax</code> function takes a configuration object as its second parameter, and could be rewritten like this:</p>
 
 <code class="js"><pre>
 jQuery.ajax = function (url, {
@@ -243,12 +249,12 @@ jQuery.ajax = function (url, {
 
 <p>This avoids repeating <code>var foo = config.foo || theDefaultFoo;</code> for each property of the configuration object.</p>
 
-<p>???*Note that default values for object assignment patterns in function parameters aren't implemented in SpiderMonkey yet. See bug TODO. Default values for array assignment patterns in function parameters are supported.*</p>
+<p><i>(Editor’s note: Unfortunately, default values within object shorthand syntax still aren’t implemented in Firefox. I know, we’ve had several paragraphs to work on it since that earlier note. See <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080" target="_blank">bug 932080</a> for the latest updates.)</i></p>
 
 
-<h4>With the ES6 Iteration Protocol</h4>
+<h4>With the ES6 iteration protocol</h4>
 
-<p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">ECMAScript 6 also defines an iteration protocol, which we talked about earlier in this series.</a> When you iterate over <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>Map</code>s (an ES6 addition to the standard library)</a>, you get a series of <code>[key, value]</code> pairs. We can destructure this pair to get easy access to both the key and the value:</p>
+<p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">ECMAScript 6 also defines an iteration protocol, which we talked about earlier in this series.</a> When you iterate over <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank"><code>Map</code>s (an ES6 addition to the standard library)</a>, you get a series of <code>[key, value]</code> pairs. We can destructure this pair to get easy access to both the key and the value:</p>
 
 <code class="js"><pre>
 var map = new Map();
@@ -279,9 +285,10 @@ for (var [,value] of map) {
 </pre></code>
 
 
+
 <h4>Multiple Return Values</h4>
 
-<p>Although multiple return values aren't baked into the language proper, they don't need to be because you can return an array and destructure the result:</p>
+<p>Although multiple return values aren’t baked into the language proper, they don’t need to be because you can return an array and destructure the result:</p>
 
 <code class="js"><pre>
 function returnMultipleValues() {
@@ -326,13 +333,31 @@ returnMultipleValues((foo, bar) => ...);
 </pre></code>
 
 
-<h4>Importing the Subset of a CommonJS Module</h4>
+<h4>Importing names from a CommonJS module</h4>
 
-<p>Not using ES6 modules yet? Still using CommonJS modules? No problem! When importing some CommonJS module X, it is fairly common that module X exports more functions than you actually intend on using. With destructuring, you can be explicit about which parts of a given module you'd like to use and avoid cluttering your namespace:</p>
+<p>Not using ES6 modules yet? Still using CommonJS modules? No problem! When importing some CommonJS module X, it is fairly common that module X exports more functions than you actually intend on using. With destructuring, you can be explicit about which parts of a given module you’d like to use and avoid cluttering your namespace:</p>
 
 <code class="js"><pre>
 const { SourceMapConsumer, SourceNode } = require("source-map");
 </pre></code>
 
+<p>(And if you do use ES6 modules, you know that a similar syntax is available in <code>import</code> declarations.)</p>
 
 
+
+<hr>
+
+
+
+<p><i>So as you can see, destructuring is useful in many individually small cases. At Mozilla we’ve had a lot of experience with it: destructuring was first implemented for JavaScript by Brendan Eich in 2006, again drawing from Python. It shipped in Firefox 2. So we know that destructuring sneaks into your everyday use of the language, quietly making your code a bit shorter and cleaner all over the place.</i></p>
+
+<p><i>Five weeks ago, I said that ES6 would change the way you write JavaScript. It is this sort of feature that I had particularly in mind: simple improvements that can be learned one at a time. Taken together, they will end up affecting every project you work on. Revolution by way of evolution.</i></p>
+
+<p><i>Updating destructuring to comply with ES6 has been a team effort. Special thanks to Tooru Fujisawa (arai) and Arpad Borsos (Swatinem) for their excellent contributions.</i></p>
+
+<p><i>Support for destructuring is under development for Chrome, and other browsers will undoubtedly add support in time. For now, you’ll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> if you want to use destructuring on the Web.</i></p>
+
+<p><i>Next week, we’ll cover a feature that is nothing more or less than a slightly shorter, simpler way to write something JS already has—in fact, one of the fundamental building blocks of the language. Will you care? Could slightly shorter syntax possibly be something you can get excited about? I confidently predict the answer is yes, but don’t take my word for it. Join us next week and find out, as we look at ES6 arrow functions in depth.</i></p>
+
+<p><i>Jason Orendorff<br>
+<a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> editor</i></p>
