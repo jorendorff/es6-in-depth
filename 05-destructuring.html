@@ -226,7 +226,7 @@ function removeBreakpoint({ url, line, column }) {
 }
 </pre></code>
 
-<p>This is a simplified snippet of real world code from the Firefox DevTools JavaScript debugger (which is also implemented in JavaScript&mdash;yo dawg). We have found this pattern particularly pleasing.</p>
+<p>This is a simplified snippet of real world code from the Firefox DevTools JavaScript debugger (which is also implemented in JavaScript—yo dawg). We have found this pattern particularly pleasing.</p>
 
 
 <h4>Configuration object parameters</h4>
@@ -345,17 +345,21 @@ const { SourceMapConsumer, SourceNode } = require("source-map");
 
 
 
+<h3>Conclusion</h3>
+
+<p>So as you can see, destructuring is useful in many individually small cases. At Mozilla we’ve had a lot of experience with it: destructuring was first implemented for JavaScript by Brendan Eich in 2006, again drawing from Python. It shipped in Firefox 2. So we know that destructuring sneaks into your everyday use of the language, quietly making your code a bit shorter and cleaner all over the place.</p>
+
+<p>Five weeks ago, we said that ES6 would change the way you write JavaScript. It is this sort of feature that we had particularly in mind: simple improvements that can be learned one at a time. Taken together, they will end up affecting every project you work on. Revolution by way of evolution.</p>
+
+<p>Updating destructuring to comply with ES6 has been a team effort. Special thanks to Tooru Fujisawa (arai) and Arpad Borsos (Swatinem) for their excellent contributions.</p>
+
+<p>Support for destructuring is under development for Chrome, and other browsers will undoubtedly add support in time. For now, you’ll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> if you want to use destructuring on the Web.</p>
+
+
 <hr>
 
 
-
-<p><i>So as you can see, destructuring is useful in many individually small cases. At Mozilla we’ve had a lot of experience with it: destructuring was first implemented for JavaScript by Brendan Eich in 2006, again drawing from Python. It shipped in Firefox 2. So we know that destructuring sneaks into your everyday use of the language, quietly making your code a bit shorter and cleaner all over the place.</i></p>
-
-<p><i>Five weeks ago, I said that ES6 would change the way you write JavaScript. It is this sort of feature that I had particularly in mind: simple improvements that can be learned one at a time. Taken together, they will end up affecting every project you work on. Revolution by way of evolution.</i></p>
-
-<p><i>Updating destructuring to comply with ES6 has been a team effort. Special thanks to Tooru Fujisawa (arai) and Arpad Borsos (Swatinem) for their excellent contributions.</i></p>
-
-<p><i>Support for destructuring is under development for Chrome, and other browsers will undoubtedly add support in time. For now, you’ll need to use <a href="http://babeljs.io/" target="_blank">Babel</a> or <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> if you want to use destructuring on the Web.</i></p>
+<p><i>Thanks again to Nick Fitzgerald for this week’s post.</i></p>
 
 <p><i>Next week, we’ll cover a feature that is nothing more or less than a slightly shorter, simpler way to write something JS already has—in fact, one of the fundamental building blocks of the language. Will you care? Could slightly shorter syntax possibly be something you can get excited about? I confidently predict the answer is yes, but don’t take my word for it. Join us next week and find out, as we look at ES6 arrow functions in depth.</i></p>
 
