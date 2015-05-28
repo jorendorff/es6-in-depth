@@ -1,6 +1,6 @@
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p><i>Editor’s note: Today’s post, by Mozilla developer tools engineer <a href="http://fitzgeraldnick.com/" target="_blank">Nick Fitzgerald</a>, originally appeared on Nick’s blog as <a href="http://fitzgeraldnick.com/weblog/50/" target="_blank">Destructuring Assignment in ES6</a>.</i></p>
+<p><i>Editor’s note: An earlier version of today’s post, by Firefox Developer Tools engineer <a href="http://fitzgeraldnick.com/" target="_blank">Nick Fitzgerald</a>, originally appeared on Nick’s blog as <a href="http://fitzgeraldnick.com/weblog/50/" target="_blank">Destructuring Assignment in ES6</a>.</i></p>
 
 
 
@@ -22,7 +22,7 @@ var third = someArray[2];
 var [first, second, third] = someArray;
 </pre></code>
 
-<p>SpiderMonkey (Firefox’s JavaScript engine) already has support for most of destructuring, but not quite all of it. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=694100" target="_blank">Track SpiderMonkey’s destructuring (and general ES6) support in this bugzilla ticket.</a></p>
+<p>SpiderMonkey (Firefox’s JavaScript engine) already has support for most of destructuring, but not quite all of it. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=694100" target="_blank">Track SpiderMonkey’s destructuring (and general ES6) support in bug 694100</a>.</p>
 
 
 
@@ -42,7 +42,7 @@ let [ variable1, variable2, ..., variableN ] = array;
 const [ variable1, variable2, ..., variableN ] = array;
 </pre></code>
 
-<p>Although <code>variable</code> is a misnomer since you can nest patterns as deep as you would like:</p>
+<p>In fact, <code>variable</code> is a misnomer since you can nest patterns as deep as you would like:</p>
 
 <code class="js"><pre>
 var [foo, [[bar], baz]] = [1, [[2], 3]];
@@ -187,7 +187,7 @@ console.log(wtf);
 // undefined
 </pre></code>
 
-<p>This may come unexpected, but upon further examination the reason turns out to be simple. When using an object assignment pattern, the value being destructured is <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible" target="_blank">required to be coercible to an <code>Object</code></a>. Most types can be converted to an object, but <code>null</code> and <code>undefined</code> may not be. When using an array assignment pattern, the value must <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getiterator" target="_blank">have an iterator</a>.</p>
+<p>This may come unexpected, but upon further examination the reason turns out to be simple. When using an object assignment pattern, the value being destructured is <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible" target="_blank">required to be coercible to an <code>Object</code></a>. Most types can be converted to an object, but <code>null</code> and <code>undefined</code> may not be converted. When using an array assignment pattern, the value must <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getiterator" target="_blank">have an iterator</a>.</p>
 
 
 
@@ -254,7 +254,7 @@ jQuery.ajax = function (url, {
 
 <h4>With the ES6 iteration protocol</h4>
 
-<p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">ECMAScript 6 also defines an iteration protocol, which we talked about earlier in this series.</a> When you iterate over <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank"><code>Map</code>s (an ES6 addition to the standard library)</a>, you get a series of <code>[key, value]</code> pairs. We can destructure this pair to get easy access to both the key and the value:</p>
+<p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">ECMAScript 6 also defines an iteration protocol</a>, which we talked about earlier in this series. When you iterate over <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank"><code>Map</code>s (an ES6 addition to the standard library)</a>, you get a series of <code>[key, value]</code> pairs. We can destructure this pair to get easy access to both the key and the value:</p>
 
 <code class="js"><pre>
 var map = new Map();
@@ -286,7 +286,7 @@ for (var [,value] of map) {
 
 
 
-<h4>Multiple Return Values</h4>
+<h4>Multiple return values</h4>
 
 <p>Although multiple return values aren’t baked into the language proper, they don’t need to be because you can return an array and destructure the result:</p>
 
@@ -335,7 +335,7 @@ returnMultipleValues((foo, bar) => ...);
 
 <h4>Importing names from a CommonJS module</h4>
 
-<p>Not using ES6 modules yet? Still using CommonJS modules? No problem! When importing some CommonJS module X, it is fairly common that module X exports more functions than you actually intend on using. With destructuring, you can be explicit about which parts of a given module you’d like to use and avoid cluttering your namespace:</p>
+<p>Not using ES6 modules yet? Still using CommonJS modules? No problem! When importing some CommonJS module X, it is fairly common that module X exports more functions than you actually intend to use. With destructuring, you can be explicit about which parts of a given module you’d like to use and avoid cluttering your namespace:</p>
 
 <code class="js"><pre>
 const { SourceMapConsumer, SourceNode } = require("source-map");
@@ -347,9 +347,9 @@ const { SourceMapConsumer, SourceNode } = require("source-map");
 
 <h3>Conclusion</h3>
 
-<p>So as you can see, destructuring is useful in many individually small cases. At Mozilla we’ve had a lot of experience with it: destructuring was first implemented for JavaScript by Brendan Eich in 2006, again drawing from Python. It shipped in Firefox 2. So we know that destructuring sneaks into your everyday use of the language, quietly making your code a bit shorter and cleaner all over the place.</p>
+<p>So, as you can see, destructuring is useful in many individually small cases. At Mozilla we’ve had a lot of experience with it: destructuring was first implemented for JavaScript by Brendan Eich in 2006, again drawing from Python. It shipped in Firefox 2. So we know that destructuring sneaks into your everyday use of the language, quietly making your code a bit shorter and cleaner all over the place.</p>
 
-<p>Five weeks ago, we said that ES6 would change the way you write JavaScript. It is this sort of feature that we had particularly in mind: simple improvements that can be learned one at a time. Taken together, they will end up affecting every project you work on. Revolution by way of evolution.</p>
+<p>Five weeks ago, we said that ES6 would change the way you write JavaScript. It is this sort of feature we had particularly in mind: simple improvements that can be learned one at a time. Taken together, they will end up affecting every project you work on. Revolution by way of evolution.</p>
 
 <p>Updating destructuring to comply with ES6 has been a team effort. Special thanks to Tooru Fujisawa (arai) and Arpad Borsos (Swatinem) for their excellent contributions.</p>
 
@@ -358,10 +358,11 @@ const { SourceMapConsumer, SourceNode } = require("source-map");
 
 <hr>
 
+<br>
 
 <p><i>Thanks again to Nick Fitzgerald for this week’s post.</i></p>
 
-<p><i>Next week, we’ll cover a feature that is nothing more or less than a slightly shorter, simpler way to write something JS already has—in fact, one of the fundamental building blocks of the language. Will you care? Could slightly shorter syntax possibly be something you can get excited about? I confidently predict the answer is yes, but don’t take my word for it. Join us next week and find out, as we look at ES6 arrow functions in depth.</i></p>
+<p><i>Next week, we’ll cover a feature that is nothing more or less than a slightly shorter way to write something JS already has—something that has been one of the fundamental building blocks of the language all along. Will you care? Is slightly shorter syntax something you can get excited about? I confidently predict the answer is yes, but don’t take my word for it. Join us next week and find out, as we look at ES6 arrow functions in depth.</i></p>
 
 <p><i>Jason Orendorff<br>
 <a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> editor</i></p>
