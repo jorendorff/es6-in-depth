@@ -1,5 +1,5 @@
 <p>
-<em><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</em>
+<em><a target="_blank" href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</em>
 </p>
 
 <p>
@@ -7,17 +7,17 @@ ES6 is here, people is starting to talk about ES7 and the future holds for us mo
 <p>
 
 <blockquote>
-If you’d like to use this new syntax on the web, you can use <a title="Babel JS Compiler" href="https://babeljs.io/">Babel</a> or <a title="Traceur JS Compiler" href="https://github.com/google/traceur-compiler">Google's Traceur</a> to translate your ES6 code to Web-friendly ES5.
+If you’d like to use this new syntax on the web, you can use <a target="_blank" title="Babel JS Compiler" href="https://babeljs.io/">Babel</a> or <a target="_blank" title="Traceur JS Compiler" href="https://github.com/google/traceur-compiler">Google's Traceur</a> to translate your ES6 code to Web-friendly ES5.
 </blockquote>
 
 <p>
-Now its time to show you step by step how to do it. The mentioned tools are called transpilers, that is a source to source compiler, so they are known as compilers too. What they allow us to do is write code using ES6 while also guaranteeing that we'll be able to execute it in every browser.
+Well, finally its the time for us to show you step by step how to do it. The mentioned tools are called transpilers, that is a source to source compiler, so they are known as compilers too. What they allow us to do is write code using ES6 while also guaranteeing that we'll be able to execute it in every browser.
 </p>
 
 <h2>Transpilation our salvation</h2>
 
 <p>
-A transpiler is very easy to use, you can describe the process in only two steps:
+A transpiler is very easy to use, you can describe what it does in only two steps:
 </p>
 
 1. We write code with ES6 syntax.
@@ -70,7 +70,7 @@ Those methods do not scale when your code base starts to grow and you start spli
 <p>
 
 <p>
-In the next section we'll integrate Babel into a build tool, <a title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through two micro-projects. In case you run into trouble, the complete source code for the examples can be found here <a title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>.
+In the next section we'll integrate Babel into a build tool, <a target="_blank" title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through two example projects. In case you run into trouble, the complete source code for the examples can be found here <a target="_blank" title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>.
 </p>
 
 
@@ -81,7 +81,7 @@ If you are thinking &mdash;I'll just wait for browsers to support the new featur
 <h2>Our first Broccoli &amp; Babel project</h2>
 
 <p>
-Broccoli is a tool designed to build projects and to do it as fast as possible. You can uglify and minify files, among many other things through the use of <a title="npm broccoli-plugin" href="https://www.npmjs.com/browse/keyword/broccoli-plugin">Broccoli plugins</a>. It saves us the burden of handling files, directories and executing commands each time we introduce changes to a project.
+Broccoli is a tool designed to build projects and to do it as fast as possible. You can uglify and minify files, among many other things through the use of <a target="_blank" title="npm broccoli-plugin" href="https://www.npmjs.com/browse/keyword/broccoli-plugin">Broccoli plugins</a>. It saves us the burden of handling files, directories and executing commands each time we introduce changes to a project.
 </p>
 
 <blockquote>
@@ -93,7 +93,7 @@ Comparable to the Rails asset pipeline in scope, though it runs on Node and is b
 <h4>Node</h4>
 
 <p>
-As you might have guessed, you'll have to install <a title="Node JS" href="https://nodejs.org/">Node</a>, version 0.11 at least. There are many ways of accomplishing the task, a highly recommended option is to use <a title="nvm" href="https://github.com/creationix/nvm">Node Version Manager (NVM)</a>.
+As you might have guessed, you'll have to install <a target="_blank" title="Node JS" href="https://nodejs.org/">Node</a>, version 0.11 at least. There are many ways to do this, a highly recommended option is to use <a target="_blank" title="nvm" href="https://github.com/creationix/nvm">Node Version Manager (NVM)</a>.
 </p>
 
 <p>
@@ -123,7 +123,7 @@ touch Brocfile.js
 <p>Now we install <code>broccoli</code> and <code>broccoli-cli</code></p>
 
 <p><code class="bash"><pre>
-# package dependency
+# the broccoli library 
 npm install --save-dev broccoli
 # command line tool
 npm install -g broccoli-cli
@@ -162,8 +162,8 @@ console.log(`List total: ${fruits.length}`);
 
 <ol>
   <li><code>let</code> for local scope declarations (we'll discuss this in a future blog post)</li>
-  <li><a title="es6 in depth: iterators and the for of loop" href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of loops</a></li>
-  <li><a title="es6 in depth: template strings" href="https://hacks.mozilla.org/2015/05/es6-in-depth-template-strings-2/">template strings</a></li>
+  <li><a target="_blank" title="es6 in depth: iterators and the for of loop" href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">for-of loops</a></li>
+  <li><a target="_blank" title="es6 in depth: template strings" href="https://hacks.mozilla.org/2015/05/es6-in-depth-template-strings-2/">template strings</a></li>
 </ol>
 
 <p>Save the file and try to execute it.</p>
@@ -190,14 +190,14 @@ Now we'll use Broccoli to load our code and push it through Babel. We'll edit th
 // import the babel plugin
 var babel = require('broccoli-babel-transpiler');
 
-// grab the source and transpile in 1 step
+// grab the source and transpile it in 1 step
 fruits = babel('src'); // src/*.js
 
 module.exports = fruits;
 </pre></code></p>
 
 <p>
-Notice that we are requiring <code>broccoli-babel-transpiler</code>, that is a Broccoli plugin that wraps around the Babel library, so we must install it.
+Notice that we are requiring <code>broccoli-babel-transpiler</code>, that is a Broccoli plugin that wraps around the Babel library, so we must install it with:
 </p>
 
 <p><code class="bash"><pre>
@@ -293,11 +293,11 @@ $(printColors);
 </pre></code></p>
 
 <p>
-You might have noticed this bit <code>function* hexRange</code>, that is a <a title="es6 in depth: generators" href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">ES6 generator</a>. Currently that feature is not supported in all the browsers, to be able to use it we'll need a polyfill. Babel already provides it and we'll see how to use it soon.
+You might have noticed this bit <code>function* hexRange</code>, that is a <a target="_blank" title="es6 in depth: generators" href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">ES6 generator</a>. Currently that feature is not supported in all the browsers, to be able to use it we'll need a polyfill. Babel already provides it and we'll use it soon.
 </p>
 
 <p>
-The next step is to put all the JS files together and use them in a website. The hardest part is writing our Brocfile. This time we'll install 4 plugins:
+The next step is to merge all the JS files and use them within a website. The hardest part is writing our Brocfile. This time we'll install 4 plugins:
 </p>
 
 <p><code class="bash"><pre>
@@ -357,7 +357,7 @@ This time you should see the following structure in the <code>dist</code> folder
 </p>
 
 <p><code class="bash"><pre>
-tree dist/
+$> tree dist/
 dist/
 ├── index.html
 └── js
@@ -380,4 +380,4 @@ python -m SimpleHTTPServer
 
 <h2>There is more!</h2>
 
-<p>With the second example we accomplished a lot and might be all you need to keep you going for a while. For those who want more, you should check this repository: <a title="broccoli-babel-boilerplate" href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a> It is also a Broccoli + Babel setup, but taking it up two notches. It handles modules and imports.</p>
+<p>With the second example we accomplished a lot and might be all you need to keep you going for a while. For those who want more, you should check this repository: <a target="_blank" title="broccoli-babel-boilerplate" href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a> It is also a Broccoli + Babel setup, but taking it up two notches. It handles modules and imports.</p>
