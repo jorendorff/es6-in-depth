@@ -167,6 +167,8 @@ console.log(missing);
 // No errors
 </pre></code>
 
+
+
 <h3>Destructuring values that are not an object, array, or iterable</h3>
 
 <p>When you try to use destructuring on <code>null</code> or <code>undefined</code>, you get a type error:</p>
@@ -282,7 +284,6 @@ for (var [,value] of map) {
 </pre></code>
 
 
-
 <h4>Multiple return values</h4>
 
 <p>Although multiple return values aren’t baked into the language proper, they don’t need to be because you can return an array and destructure the result:</p>
@@ -326,7 +327,7 @@ var bar = temp.bar;
 function returnMultipleValues(k) {
   k(1, 2);
 }
-returnMultipleValues((foo, bar) => ...);
+returnMultipleValues((foo, bar) =&gt; ...);
 </pre></code>
 
 
@@ -355,7 +356,7 @@ const { SourceMapConsumer, SourceNode } = require("source-map");
 
 <hr>
 
-<br>
+<p>&nbsp;</p>
 
 <p><i>Thanks again to Nick Fitzgerald for this week’s post.</i></p>
 
