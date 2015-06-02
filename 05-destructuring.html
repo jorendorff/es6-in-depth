@@ -160,15 +160,12 @@ console.log(missing);
 // Syntax error
 </pre></code>
 
-<p>This happens because the JavaScript grammar tells the engine to parse any statement starting with <code>{</code> as a block statement (for example, <code>{ console }</code> is a valid block statement). The solution is to either wrap the pattern or the whole expression in parentheses:</p>
+<p>This happens because the JavaScript grammar tells the engine to parse any statement starting with <code>{</code> as a block statement (for example, <code>{ console }</code> is a valid block statement). The solution is to either wrap the whole expression in parentheses:</p>
 
 <code class="js"><pre>
-({ safe }) = {};
-({ andSound } = {});
+({ safe } = {});
 // No errors
 </pre></code>
-
-
 
 <h3>Destructuring values that are not an object, array, or iterable</h3>
 
