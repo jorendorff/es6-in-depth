@@ -174,14 +174,14 @@ console.log(missing);
 <p>When you try to use destructuring on <code>null</code> or <code>undefined</code>, you get a type error:</p>
 
 <code class="js"><pre>
-var [blowUp] = null;
+var {blowUp} = null;
 // TypeError: null has no properties
 </pre></code>
 
 <p>However, you can destructure on other primitive types such as booleans, numbers, and strings, and get <code>undefined</code>:</p>
 
 <code class="js"><pre>
-var [wtf] = NaN;
+var {wtf} = NaN;
 console.log(wtf);
 // undefined
 </pre></code>
