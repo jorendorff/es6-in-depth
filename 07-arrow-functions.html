@@ -1,43 +1,45 @@
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p>Arrows have been part of JavaScript from the very beginning. The first JavaScript tutorials advised wrapping inline scripts in HTML comments. This would prevent browsers that <em>didn't</em> support JS from erroneously displaying your JS code as text. You would write something like this:</p>
+<p>Arrows have been part of JavaScript from the very beginning. The first JavaScript tutorials advised wrapping inline scripts in HTML comments. This would prevent browsers that <em>didn’t</em> support JS from erroneously displaying your JS code as text. You would write something like this:</p>
 
-<pre>
+<code><pre>
 &lt;script language="javascript"&gt;
 &lt;!--
   document.bgColor = "brown";  // red
 // --&gt;
 &lt;/script&gt;
-</pre>
+</pre></code>
 
 <p>Old browsers would see two unsupported tags and a comment; only new browsers would see JS code.</p>
 
 <p>To support this odd hack, the JavaScript engine in your browser treats the characters <code>&lt;!--</code> as the start of a one-line comment. No joke. This has really been part of the language all along, and it works to this day, not just at the top of an inline <code>&lt;script&gt;</code> but everywhere in JS code. It even works in Node.</p>
 
-<p>As it happens, <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-html-like-comments">this style of comment is standardized for the first time in ES6.</a> But this isn't the arrow we're here to talk about.</p>
+<p>As it happens, <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-html-like-comments" target="_blank">this style of comment is standardized for the first time in ES6.</a> But this isn’t the arrow we’re here to talk about.</p>
 
-<p>The arrow sequence <code>--&gt;</code> also denotes a one-line comment. Weirdly, while in HTML characters <em>before</em> the <code>--&gt;</code> are part of the comment, in JS the rest of the line <em>after</em> the <code>--&gt;</code> is a comment. But this arrow only indicates a comment when it appears at the start of a line. That's because <code>--&gt;</code> is also an operator in JS, the "goes to" operator!</p>
+<p>The arrow sequence <code>--&gt;</code> also denotes a one-line comment. Weirdly, while in HTML characters <em>before</em> the <code>--&gt;</code> are part of the comment, in JS the rest of the line <em>after</em> the <code>--&gt;</code> is a comment.</p>
 
-<pre>
+<p>It gets stranger. This arrow indicates a comment <em>only</em> when it appears at the start of a line. That’s because in other contexts, <code>--&gt;</code> is an operator in JS, the “goes to” operator!</p>
+
+<code class="js"><pre>
 function countdown(n) {
   while (n --&gt; 0)  // "n goes to zero"
     alert(n);
   blastoff();
 }
-</pre>
+</pre></code>
 
-<p><a href="http://codepen.io/anon/pen/oXZaBY?editors=001">This code really works.</a> The loop runs until <var>n</var> gets to 0. This too is <em>not</em> a new feature in ES6, but a combination of familiar features, with a little misdirection thrown in. Can you figure out what's going on here? As usual, the answer to the puzzle can be found <a href="http://stackoverflow.com/questions/1642028/what-is-the-name-of-the-operator">on Stack Overflow</a>.</p>
+<p><a href="http://codepen.io/anon/pen/oXZaBY?editors=001" target="_blank">This code really works.</a> The loop runs until <var>n</var> gets to 0. This too is <em>not</em> a new feature in ES6, but a combination of familiar features, with a little misdirection thrown in. Can you figure out what’s going on here? As usual, the answer to the puzzle can be found <a href="http://stackoverflow.com/questions/1642028/what-is-the-name-of-the-operator" target="_blank">on Stack Overflow</a>.</p>
 
-<p>Of course there is also the less-than-or-equal-to operator, <code>&lt;=</code>. Perhaps you can find more arrows in JS, Hidden Pictures style, but let's stop here and observe that <em>there is an arrow missing</em>.</p>
+<p>Of course there is also the less-than-or-equal-to operator, <code>&lt;=</code>. Perhaps you can find more arrows in JS, Hidden Pictures style, but let’s stop here and observe that <em>there is an arrow missing</em>.</p>
 
-<table border="1">
+<table>
   <tr>
     <td><code>&lt;!--</code></td>
     <td>single-line comment</td>
   </tr>
   <tr>
     <td><code>--&gt;</code></td>
-    <td>"goes to" operator</td>
+    <td>“goes to” operator</td>
   </tr>
   <tr>
     <td><code>&lt;=</code></td>
@@ -51,7 +53,7 @@ function countdown(n) {
 
 <p>What happened to <code>=&gt;</code>? Today, we find out.</p>
 
-<p>First, let's talk a bit about functions.</p>
+<p>First, let’s talk a bit about functions.</p>
 
 
 <h3>Function expressions are everywhere</h3>
@@ -60,26 +62,26 @@ function countdown(n) {
 
 <p>For example, suppose you are trying to tell the browser what to do when the user clicks on a particular button. You start typing:</p>
 
-<pre>
+<code class="js"><pre>
 $("#confetti-btn").click(
-</pre>
+</pre></code>
 
-<p>jQuery's <code>.click()</code> method takes one argument: a function. No problem. You can just type in a function right here:</p>
+<p>jQuery’s <code>.click()</code> method takes one argument: a function. No problem. You can just type in a function right here:</p>
 
-<pre>
+<code class="js"><pre>
 $("#confetti-btn").click(function (event) {
   playTrumpet();
   fireConfettiCannon();
 });
-</pre>
+</pre></code>
 
-<p>Writing code like this comes quite naturally to us now. So it's strange to recall that before JavaScript popularized this kind of programming, many languages <em>did not have this feature</em>. Of course Lisp had function expressions, also called <dfn>lambda functions</dfn>, in 1958. But C++, Python, C#, and Java all existed for years without them.</p>
+<p>Writing code like this comes quite naturally to us now. So it’s strange to recall that before JavaScript popularized this kind of programming, many languages <em>did not have this feature</em>. Of course Lisp had function expressions, also called <dfn>lambda functions</dfn>, in 1958. But C++, Python, C#, and Java all existed for years without them.</p>
 
 <p>Not anymore. All four have lambdas now. Newer languages universally have lambdas built in. We have JavaScript to thank for this—and early JavaScript programmers who fearlessly built libraries that depended heavily on lambdas, leading to widespread adoption of the feature.</p>
 
-<p>It is just slightly sad, then, that of all the languages I've mentioned, JavaScript's syntax for lambdas has turned out to be the wordiest.</p>
+<p>It is just slightly sad, then, that of all the languages I’ve mentioned, JavaScript’s syntax for lambdas has turned out to be the wordiest.</p>
 
-<pre>
+<code><pre>
 // A very simple function in six languages.
 function (a) { return a &gt; 0; } // JS
 [](int a) { return a &gt; 0; }  // C++
@@ -87,14 +89,14 @@ function (a) { return a &gt; 0; } // JS
 lambda a: a &gt; 0  # Python
 a =&gt; a &gt; 0  // C#
 a -&gt; a &gt; 0  // Java
-</pre>
+</pre></code>
 
 
 <h3>A new arrow in your quiver</h3>
 
 <p>ES6 introduces a new syntax for writing functions.</p>
 
-<pre>
+<code class="js"><pre>
 // ES5
 var selected = allJobs.filter(<strong>function (job) {
   return job.isSelected();
@@ -102,15 +104,15 @@ var selected = allJobs.filter(<strong>function (job) {
 
 // ES6
 var selected = allJobs.filter(<strong>job => job.isSelected()</strong>);
-</pre>
+</pre></code>
 
 <p>When you just need a simple function with one argument, the new arrow function syntax is simply <code><i>Identifier</i> =&gt; <i>Expression</i></code>. You get to skip typing <code>function</code> and <code>return</code>, as well as some parentheses, braces, and a semicolon.</p>
 
 <p>(I am personally very grateful for this feature. Not having to type <code>function</code> is important to me, because I inevitably type <code>functoin</code> instead and have to go back and correct it.)</p>
 
-<p>To write a function that has multiple arguments (or uses <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/">rest parameters or defaults</a>) you'll need to add parentheses around the argument list.</p>
+<p>To write a function that has multiple arguments (or uses <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters or defaults</a>) you’ll need to add parentheses around the argument list.</p>
 
-<pre>
+<code class="js"><pre>
 // ES5
 var total = values.reduce(<strong>function (a, b) {
   return a + b;
@@ -118,60 +120,60 @@ var total = values.reduce(<strong>function (a, b) {
 
 // ES6
 var total = values.reduce(<strong>(a, b) => a + b</strong>, 0);
-</pre>
+</pre></code>
 
 <p>I think it looks pretty nice.</p>
 
-<p>Arrow functions work just as beautifully with functional tools provided by libraries, like <a href="underscorejs.org">Underscore.js</a> and <a href="https://facebook.github.io/immutable-js/">Immutable</a>. In fact, the examples in <a href="https://facebook.github.io/immutable-js/docs/#/">Immutable's documentation</a> are all written in ES6, so many of them already use arrow functions.</p>
+<p>Arrow functions work just as beautifully with functional tools provided by libraries, like <a href="http://underscorejs.org/" target="_blank">Underscore.js</a> and <a href="https://facebook.github.io/immutable-js/" target="_blank">Immutable</a>. In fact, the examples in <a href="https://facebook.github.io/immutable-js/docs/#/" target="_blank">Immutable’s documentation</a> are all written in ES6, so many of them already use arrow functions.</p>
 
 <p>What about not-so-functional settings? Arrow functions can contain a block of statements instead of just an expression. Recall our earlier example:</p>
 
-<pre>
+<code class="js"><pre>
 // ES5
 $("#confetti-btn").click(<strong>function (event)</strong> {
   playTrumpet();
   fireConfettiCannon();
 });
-</pre>
+</pre></code>
 
-<p>Here's how it will look in ES6:</p>
+<p>Here’s how it will look in ES6:</p>
 
-<pre>
+<code class="js"><pre>
 // ES6
 $("#confetti-btn").click(<strong>event =&gt;</strong> {
   playTrumpet();
   fireConfettiCannon();
 });
-</pre>
+</pre></code>
 
 <p>A minor improvement. The effect on code using Promises can be more dramatic, as the <code>}).then(function (result) {</code>s occasionally pile up.</p>
 
-<p>Note that an arrow function with a block body does not automatically return a value. Use a <code>return statement for that.</p>
+<p>Note that an arrow function with a block body does not automatically return a value. Use a <code>return</code> statement for that.</p>
 
 <p>There is one caveat when using arrow functions to create plain objects. Always wrap the object in parentheses:</p>
 
-<pre>
+<code class="js"><pre>
 // create a new empty object for each puppy to play with
 var chewToys = puppies.map(puppy => {});   // BUG!
 var chewToys = puppies.map(puppy => ({})); // ok
-</pre>
+</pre></code>
 
 <p>Unfortunately, an empty object <code>{}</code> and an empty block <code>{}</code> look exactly the same. The rule in ES6 is that <code>{</code> immediately following an arrow is always treated as the start of a block, never the start of an object. The code <code>puppy => {}</code> is therefore silently interpreted as an arrow function that does nothing and returns <code>undefined</code>.</p>
 
-<p>Even more confusing, an object literal like <code>{key: value}</code> looks exactly like a block containing a labeled statement—at least, that's how it looks to your JavaScript engine. Fortunately <code>{</code> is the only ambiguous character, so wrapping object literals in parentheses is the only trick you need to remember.</p>
+<p>Even more confusing, an object literal like <code>{key: value}</code> looks exactly like a block containing a labeled statement—at least, that’s how it looks to your JavaScript engine. Fortunately <code>{</code> is the only ambiguous character, so wrapping object literals in parentheses is the only trick you need to remember.</p>
 
 
-<h3>What's <code>this</code>?</h3>
+<h3>What’s <code>this</code>?</h3>
 
 <p>There is one subtle difference in behavior between ordinary <code>function</code> functions and arrow functions. <strong>Arrow functions do not have their own <code>this</code> value.</strong> The value of <code>this</code> inside an arrow function is always inherited from the enclosing scope.</p>
 
-<p>Before we try and figure out what that means in practice, let's back up a bit.</p>
+<p>Before we try and figure out what that means in practice, let’s back up a bit.</p>
 
-<p>How does <code>this</code> work in JavaScript? Where does its value come from? <a href="http://stackoverflow.com/questions/3127429/how-does-the-this-keyword-work">There's no short answer.</a> If it seems simple in your head, it's because you've been dealing with it for a long time!</p>
+<p>How does <code>this</code> work in JavaScript? Where does its value come from? <a href="http://stackoverflow.com/questions/3127429/how-does-the-this-keyword-work" target="_blank">There’s no short answer.</a> If it seems simple in your head, it’s because you’ve been dealing with it for a long time!</p>
 
 <p>One reason this question comes up so often is that <code>function</code> functions receive a <code>this</code> value automatically, whether they want one or not. Have you ever written this hack?</p>
 
-<pre>
+<code class="js"><pre>
 {
   ...
   addAll: function addAll(pieces) {
@@ -182,9 +184,9 @@ var chewToys = puppies.map(puppy => ({})); // ok
   },
   ...
 }
-</pre>
+</pre></code>
 
-<p>Here, what you'd <em>like</em> to write in the inner function is just <code>this.add(piece)</code>. Unfortunately, the inner function doesn't inherit the outer function's <code>this</code> value. Inside the inner function, <code>this</code> will be <code>window</code> or <code>undefined</code>. The temporary variable <code>self</code> serves to smuggle the outer value of <code>this</code> into the inner function. (Another way is to use <code>.bind(this)</code> on the inner function. Neither way is particularly pretty.) </p>
+<p>Here, what you’d <em>like</em> to write in the inner function is just <code>this.add(piece)</code>. Unfortunately, the inner function doesn’t inherit the outer function’s <code>this</code> value. Inside the inner function, <code>this</code> will be <code>window</code> or <code>undefined</code>. The temporary variable <code>self</code> serves to smuggle the outer value of <code>this</code> into the inner function. (Another way is to use <code>.bind(this)</code> on the inner function. Neither way is particularly pretty.) </p>
 
 <p>In ES6, <code>this</code> hacks mostly go away if you follow these rules:</p>
 
@@ -194,7 +196,7 @@ var chewToys = puppies.map(puppy => ({})); // ok
   <li><p>Use arrow functions for everything else.</p></li>
 </ul>
 
-<pre>
+<code class="js"><pre>
 // ES6
 {
   ...
@@ -203,13 +205,13 @@ var chewToys = puppies.map(puppy => ({})); // ok
   },
   ...
 }
-</pre>
+</pre></code>
 
 <p>In the ES6 version, note that the <code>addAll</code> method receives <code>this</code> from its caller. The inner function is an arrow function, so it inherits <code>this</code> from the enclosing scope.</p>
 
 <p>As a bonus, ES6 also provides a shorter way to write methods in object literals! So the code above can be simplified further:</p>
 
-<pre>
+<code class="js"><pre>
 // ES6 with method syntax
 {
   ...
@@ -218,28 +220,28 @@ var chewToys = puppies.map(puppy => ({})); // ok
   },
   ...
 }
-</pre>
+</pre></code>
 
-<p>Between methods and arrows, I might never type <code>functoin</code> again. It's a nice thought.</p>
+<p>Between methods and arrows, I might never type <code>functoin</code> again. It’s a nice thought.</p>
 
-<p>There's one more minor difference between arrow and non-arrow functions: arrow functions don't get their own <code>arguments</code> object, either. Of course, in ES6, you'd probably rather use a rest parameter or default value anyway.</p>
+<p>There’s one more minor difference between arrow and non-arrow functions: arrow functions don’t get their own <code>arguments</code> object, either. Of course, in ES6, you’d probably rather use a rest parameter or default value anyway.</p>
 
 
 <h3>Using arrows to pierce the dark heart of computer science</h3>
 
-<p>We've talked about the many practical uses of arrow functions. There's one more possible use case I'd like to talk about: ES6 arrow functions as a learning tool, to uncover something deep about the nature of computation. Whether that is practical or not, you'll have to decide for yourself.</p>
+<p>We’ve talked about the many practical uses of arrow functions. There’s one more possible use case I’d like to talk about: ES6 arrow functions as a learning tool, to uncover something deep about the nature of computation. Whether that is practical or not, you’ll have to decide for yourself.</p>
 
-<p>In 1936, Alonzo Church and Alan Turing independently developed powerful mathematical models of computation. Turing called his model <em>a-machines</em>, but everyone instantly started calling them Turing machines. Church wrote instead about functions. His model was called the <a href="https://en.wikipedia.org/wiki/Lambda_calculus">λ-calculus</a>. (λ is the lowercase Greek letter lambda.) This work was the reason Lisp used the word <code>LAMBDA</code> to denote functions, which is why we call function expressions "lambdas" today.</p>
+<p>In 1936, Alonzo Church and Alan Turing independently developed powerful mathematical models of computation. Turing called his model <em>a-machines</em>, but everyone instantly started calling them Turing machines. Church wrote instead about functions. His model was called the <a href="https://en.wikipedia.org/wiki/Lambda_calculus" target="_blank">λ-calculus</a>. (λ is the lowercase Greek letter lambda.) This work was the reason Lisp used the word <code>LAMBDA</code> to denote functions, which is why we call function expressions “lambdas” today.</p>
 
-<p>But what is the λ-calculus? What is "model of computation" supposed to mean?</p>
+<p>But what is the λ-calculus? What is “model of computation” supposed to mean?</p>
 
-<p>It's hard to explain in just a few words, but here is my attempt: the λ-calculus is one of the first programming languages. It was not <em>designed</em> to be a programming language—after all, stored-program computers wouldn't come along for another decade or two—but rather a ruthlessly simple, stripped-down, purely mathematical idea of a language that could express any kind of computation you wished to do.</p>
+<p>It’s hard to explain in just a few words, but here is my attempt: the λ-calculus is one of the first programming languages. It was not <em>designed</em> to be a programming language—after all, stored-program computers wouldn’t come along for another decade or two—but rather a ruthlessly simple, stripped-down, purely mathematical idea of a language that could express any kind of computation you wished to do. Church wanted this model in order to prove things about computation in general.</p>
 
-<p>Church found that he only needed one thing in his system: <em>functions.</em></p>
+<p>And he found that he only needed one thing in his system: <em>functions.</em></p>
 
 <p>Think how extraordinary this claim is. Without objects, without arrays, without numbers, without <code>if</code> statements, <code>while</code> loops, semicolons, assignment, logical operators, or an event loop, it is possible to rebuild every kind of computation JavaScript can do, from scratch, using only functions.</p>
 
-<p>Here is an example of the sort of "program" Church and his students might write:</p>
+<p>Here is an example of the sort of “program” a mathematician could write, using Church’s λ notation:</p>
 
 <pre>
 fix = λf.(λx.f(λv.x(x)(v)))(λx.f(λv.x(x)(v)))
@@ -247,20 +249,20 @@ fix = λf.(λx.f(λv.x(x)(v)))(λx.f(λv.x(x)(v)))
 
 <p>The equivalent JavaScript function looks like this:</p>
 
-<pre>
+<code class="js"><pre>
 var fix = f => (x => f(v => x(x)(v)))
                (x => f(v => x(x)(v)));
-</pre>
+</pre></code>
 
-<p>That is, JavaScript contains an implementation of the λ-calculus that actually runs. The λ-calculus is in JavaScript.</p>
+<p>That is, JavaScript contains an implementation of the λ-calculus that actually runs. <em>The λ-calculus is in JavaScript.</em></p>
 
-<p>The story of <em>why</em> Church developed the λ-calculus, and how it has quietly insinuated itself into almost every major programming language is beyond the scope of this blog post. But if you're interested in the foundations of computer science, or you'd just like to see how a language with nothing but functions can do things like loops and recursion, you could do worse than to spend some rainy afternoon looking into <a href="https://en.wikipedia.org/wiki/Church_encoding">Church numerals</a> and <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator#Strict_fixed_point_combinator">fixed-point combinators</a>, and playing with them in your Firefox console or <a href="https://developer.mozilla.org/en-US/docs/Tools/Scratchpad">Scratchpad</a>. With ES6 arrows on top of its other strengths, JavaScript can reasonably claim to be the best language for exploring the lambda calculus.</p>
+<p>The stories of what Alonzo Church and later researchers did with the λ-calculus, and how it has quietly insinuated itself into almost every major programming language, are beyond the scope of this blog post. But if you’re interested in the foundations of computer science, or you’d just like to see how a language with nothing but functions can do things like loops and recursion, you could do worse than to spend some rainy afternoon looking into <a href="https://en.wikipedia.org/wiki/Church_encoding" target="_blank">Church numerals</a> and <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator#Strict_fixed_point_combinator" target="_blank">fixed-point combinators</a>, and playing with them in your Firefox console or <a href="https://developer.mozilla.org/en-US/docs/Tools/Scratchpad" target="_blank">Scratchpad</a>. With ES6 arrows on top of its other strengths, JavaScript can reasonably claim to be the best language for exploring the λ-calculus.</p>
 
 
 <h3>When can I use arrows?</h3>
 
-<p>ES6 arrow functions were implemented in Firefox by me, back in 2013. Jan de Mooij made them fast. Thanks to ziyunfei and Tooru Fujisawa for patches.</p>
+<p>ES6 arrow functions were implemented in Firefox by me, back in 2013. Jan de Mooij made them fast. Thanks to Tooru Fujisawa and ziyunfei for patches.</p>
 
-<p>Arrow functions are also implemented in the Microsoft Edge preview release. They're also available in <a href="http://babeljs.io/" target="_blank">Babel</a>, <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>, and <a href="http://www.typescriptlang.org/">TypeScript</a>, in case you're interested in using them on the Web right now.</p>
+<p>Arrow functions are also implemented in the Microsoft Edge preview release. They’re also available in <a href="http://babeljs.io/" target="_blank">Babel</a>, <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>, and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>, in case you’re interested in using them on the Web right now.</p>
 
-<p>Next time, we'll discuss one of the stranger features in ES6. So please join us next week for a look at ES6 symbols in depth.</p>
+<p>Our next topic is one of the stranger features in ES6. We’ll get to see <code>typeof x</code> return a totally new value. We’ll ask: When is a name not a string? We’ll puzzle over the meaning of equality. It’ll be weird. So please join us next week as we look at ES6 symbols in depth.</p>
