@@ -207,7 +207,7 @@ var chewToys = puppies.map(puppy => ({})); // ok
 
 <p>In the ES6 version, note that the <code>addAll</code> method receives <code>this</code> from its caller. The inner function is an arrow function, so it inherits <code>this</code> from the enclosing scope.</p>
 
-<p>As a bonus, ES6 methods provide a shorter way to write methods in object literals! So the code above can be simplified further:</p>
+<p>As a bonus, ES6 also provides a shorter way to write methods in object literals! So the code above can be simplified further:</p>
 
 <pre>
 // ES6 with method syntax
@@ -220,15 +220,47 @@ var chewToys = puppies.map(puppy => ({})); // ok
 }
 </pre>
 
-<p>Between method syntax and arrows, you might never type <code>functoin</code> again!</p>
+<p>Between methods and arrows, I might never type <code>functoin</code> again. It's a nice thought.</p>
 
 <p>There's one more minor difference between arrow and non-arrow functions: arrow functions don't get their own <code>arguments</code> object, either. Of course, in ES6, you'd probably rather use a rest parameter or default value anyway.</p>
 
 
+<h3>Using arrows to pierce the dark heart of computer science</h3>
+
+<p>We've talked about the many practical uses of arrow functions. There's one more possible use case I'd like to talk about: ES6 arrow functions as a learning tool, to uncover something deep about the nature of computation. Whether that is practical or not, you'll have to decide for yourself.</p>
+
+<p>In 1936, Alonzo Church and Alan Turing independently developed powerful mathematical models of computation. Turing called his model <em>a-machines</em>, but everyone instantly started calling them Turing machines. Church wrote instead about functions. His model was called the <a href="https://en.wikipedia.org/wiki/Lambda_calculus">λ-calculus</a>. (λ is the lowercase Greek letter lambda.) This work was the reason Lisp used the word <code>LAMBDA</code> to denote functions, which is why we call function expressions "lambdas" today.</p>
+
+<p>But what is the λ-calculus? What is "model of computation" supposed to mean?</p>
+
+<p>It's hard to explain in just a few words, but here is my attempt: the λ-calculus is one of the first programming languages. It was not <em>designed</em> to be a programming language—after all, stored-program computers wouldn't come along for another decade or two—but rather a ruthlessly simple, stripped-down, purely mathematical idea of a language that could express any kind of computation you wished to do.</p>
+
+<p>Church found that he only needed one thing in his system: <em>functions.</em></p>
+
+<p>Think how extraordinary this claim is. Without objects, without arrays, without numbers, without <code>if</code> statements, <code>while</code> loops, semicolons, assignment, logical operators, or an event loop, it is possible to rebuild every kind of computation JavaScript can do, from scratch, using only functions.</p>
+
+<p>Here is an example of the sort of "program" Church and his students might write:</p>
+
+<pre>
+fix = λf.(λx.f(λv.x(x)(v)))(λx.f(λv.x(x)(v)))
+</pre>
+
+<p>The equivalent JavaScript function looks like this:</p>
+
+<pre>
+var fix = f => (x => f(v => x(x)(v)))
+               (x => f(v => x(x)(v)));
+</pre>
+
+<p>That is, JavaScript contains an implementation of the λ-calculus that actually runs. The λ-calculus is in JavaScript.</p>
+
+<p>The story of <em>why</em> Church developed the λ-calculus, and how it has quietly insinuated itself into almost every major programming language is beyond the scope of this blog post. But if you're interested in the foundations of computer science, or you'd just like to see how a language with nothing but functions can do things like loops and recursion, you could do worse than to spend some rainy afternoon looking into <a href="https://en.wikipedia.org/wiki/Church_encoding">Church numerals</a> and <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator#Strict_fixed_point_combinator">fixed-point combinators</a>, and playing with them in your Firefox console or <a href="https://developer.mozilla.org/en-US/docs/Tools/Scratchpad">Scratchpad</a>. With ES6 arrows on top of its other strengths, JavaScript can reasonably claim to be the best language for exploring the lambda calculus.</p>
+
+
 <h3>When can I use arrows?</h3>
 
-<p>...</p>
+<p>ES6 arrow functions were implemented in Firefox by me, back in 2013. Jan de Mooij made them fast. Thanks to ziyunfei and Tooru Fujisawa for patches.</p>
 
-http://piotrwalat.net/arrow-function-expressions-in-typescript/
+<p>Arrow functions are also implemented in the Microsoft Edge preview release. They're also available in <a href="http://babeljs.io/" target="_blank">Babel</a>, <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>, and <a href="http://www.typescriptlang.org/">TypeScript</a>, in case you're interested in using them on the Web right now.</p>
 
 <p>Next time, we'll discuss one of the stranger features in ES6. So please join us next week for a look at ES6 symbols in depth.</p>
