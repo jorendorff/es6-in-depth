@@ -16,7 +16,7 @@
 
 <p>As it happens, <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-html-like-comments" target="_blank">this style of comment is standardized for the first time in ES6.</a> But this isn’t the arrow we’re here to talk about.</p>
 
-<p>The arrow sequence <code>--&gt;</code> also denotes a one-line comment. Weirdly, while in HTML characters <em>before</em> the <code>--&gt;</code> are part of the comment, in JS the rest of the line <em>after</em> the <code>--&gt;</code> is a comment.</p>
+<p>The arrow sequence <code>--&gt;</code> also denotes a one-line comment. Weirdly, while in&nbsp;HTML characters <em>before</em> the <code>--&gt;</code> are part of the comment, in&nbsp;JS the rest of the line <em>after</em> the <code>--&gt;</code> is a comment.</p>
 
 <p>It gets stranger. This arrow indicates a comment <em>only</em> when it appears at the start of a line. That’s because in other contexts, <code>--&gt;</code> is an operator in JS, the “goes to” operator!</p>
 
@@ -30,9 +30,9 @@ function countdown(n) {
 
 <p><a href="http://codepen.io/anon/pen/oXZaBY?editors=001" target="_blank">This code really works.</a> The loop runs until <var>n</var> gets to 0. This too is <em>not</em> a new feature in ES6, but a combination of familiar features, with a little misdirection thrown in. Can you figure out what’s going on here? As usual, the answer to the puzzle can be found <a href="http://stackoverflow.com/questions/1642028/what-is-the-name-of-the-operator" target="_blank">on Stack Overflow</a>.</p>
 
-<p>Of course there is also the less-than-or-equal-to operator, <code>&lt;=</code>. Perhaps you can find more arrows in JS, Hidden Pictures style, but let’s stop here and observe that <em>there is an arrow missing</em>.</p>
+<p>Of course there is also the less-than-or-equal-to operator, <code>&lt;=</code>. Perhaps you can find more arrows in your JS code, Hidden Pictures style, but let’s stop here and observe that <em>an arrow is missing</em>.</p>
 
-<table>
+<table style="margin-left: auto; margin-right: auto;">
   <tr>
     <td><code>&lt;!--</code></td>
     <td>single-line comment</td>
@@ -110,7 +110,7 @@ var selected = allJobs.filter(<strong>job => job.isSelected()</strong>);
 
 <p>(I am personally very grateful for this feature. Not having to type <code>function</code> is important to me, because I inevitably type <code>functoin</code> instead and have to go back and correct it.)</p>
 
-<p>To write a function that has multiple arguments (or uses <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters or defaults</a>) you’ll need to add parentheses around the argument list.</p>
+<p>To write a function with multiple arguments (or no arguments, or <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters or defaults</a>, or a <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/" target="_blank">destructuring</a> argument) you’ll need to add parentheses around the argument list.</p>
 
 <code class="js"><pre>
 // ES5
@@ -146,7 +146,7 @@ $("#confetti-btn").click(<strong>event =&gt;</strong> {
 });
 </pre></code>
 
-<p>A minor improvement. The effect on code using Promises can be more dramatic, as the <code>}).then(function (result) {</code>s occasionally pile up.</p>
+<p>A minor improvement. The effect on code using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Promises</a> can be more dramatic, as the <code>}).then(function (result) {</code> lines can pile up.</p>
 
 <p>Note that an arrow function with a block body does not automatically return a value. Use a <code>return</code> statement for that.</p>
 
@@ -265,4 +265,4 @@ var fix = f => (x => f(v => x(x)(v)))
 
 <p>Arrow functions are also implemented in the Microsoft Edge preview release. They’re also available in <a href="http://babeljs.io/" target="_blank">Babel</a>, <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>, and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>, in case you’re interested in using them on the Web right now.</p>
 
-<p>Our next topic is one of the stranger features in ES6. We’ll get to see <code>typeof x</code> return a totally new value. We’ll ask: When is a name not a string? We’ll puzzle over the meaning of equality. It’ll be weird. So please join us next week as we look at ES6 symbols in depth.</p>
+<p>Our next topic is one of the stranger features in ES6. We’ll get to see <code>typeof&nbsp;x</code> return a totally new value. We’ll ask: When is a name not a string? We’ll puzzle over the meaning of equality. It’ll be weird. So please join us next week as we look at ES6 symbols in depth.</p>
