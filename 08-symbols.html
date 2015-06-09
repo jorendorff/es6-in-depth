@@ -1,0 +1,62 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+What are ES6 symbols?
+
+Symbols are not logos.
+
+They're not iconic figures that stand for something.
+
+They're not cymbals. (This is an important distinction because cymbals, even when used correctly by experts, have a tendency to crash. We don't want JavaScript to crash.)
+
+*   "symbol" in common English unrelated to ES6 symbols
+*   first new "type" in JS since its inception
+    *   the other six types are: boolean, number, string, object, null, and undefined.
+*   motivation
+    *   you want to stash data on DOM objects
+    *   namespace collision
+    *   so here are symbols (using only the `Symbol()` syntax) yay
+*   ES6 symbols vs. symbols in other languages
+    *   Ruby basically only has registry symbols
+    *   Lisp implementations often have something called GENSYM
+
+*   what are symbols??
+    *   THEY ARE NOTHING BUT MADE-UP PROPERTY KEYS.
+    need to figure out where in here we get examples, and what those look like
+    *   guaranteed never to collide with any string property key.
+    *   all symbols are immutable and contain no data of their own
+        except an optional description string, useful for debugging
+    *   collision is impossible since unlike strings, unique symbols are unforgeable
+    *   symbols are not objects
+        *   can't set properties on them (strict error)
+        *   technically inherit properties from Symbol.prototype,
+            just like Strings get all their methods from String.prototype,
+            but Symbol.prototype doesn't have anything interesting on it
+            (just a toString method and some other odds and ends)
+        *   Object(sym) returns a wrapper object, these objects are useless
+            very much like Number, String, and Boolean objects
+    *   symbols are not strings
+        *   "x" === "x", equality by value,
+            but Symbol("x") !== Symbol("x"), equality by identity.
+    *   there are three sets of symbols
+        *   gensyms - for use by programs
+        *   registry - for use by programs, communication
+        *   well-known - these are defined by the standard, each one is custom
+            *   we already saw one of these: Symbol.iterator
+segue from well-known symbols
+*   what use is the spec itself making of symbols?
+    *   they are the __magic__ method names of JS
+        (though in some cases like .next(), the spec just uses a string)
+    *   Symbol.iterator is the big one, but each use is totally unique and off-the-wall
+    *   you probably won't use these, but let's take a look
+    *   @@toPrimitive is a method now
+    *   @@hasInstance too
+    *   @@unscopables, to prevent invalidating old bad code
+    *   @@split, @@search etc. duck-typing for regexp workalikes!!!
+    *   @@isConcatSpreadable???
+* conclusion
+    *   symbols are weird
+    *   they enable the standard committee to add new extension points to the language
+        without any risk that old code could accidentally trigger them
+    *   i implemented them in Firefox, so if they ever behave like cymbals, you know who to talk to
+    *   you can use them in...
+* next week
