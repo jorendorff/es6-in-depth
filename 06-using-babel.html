@@ -41,7 +41,7 @@ The good old JavaScript that we all know and that can be used in any browser.
 </p>
 
 <p>
-The internals of what a transpiler does to go from input to output are highly complex things that fall out of scope for this guide. Just as we can drive a car without knowing all the internal mechanics, we'll leave the transpiler as a blackbox that is able to process our code. 
+The internals of what a transpiler does to go from input to output are highly complex things that fall out of scope for this guide. Just as we can drive a car without knowing all the internal mechanics, we'll leave the transpiler as a blackbox that is able to process our code.
 </p>
 
 <h3>Babel in action</h3>
@@ -132,7 +132,7 @@ touch Brocfile.js
 <p>Now we install <code>broccoli</code> and <code>broccoli-cli</code></p>
 
 <p><code class="bash"><pre>
-# the broccoli library 
+# the broccoli library
 npm install --save-dev broccoli
 # command line tool
 npm install -g broccoli-cli
@@ -216,7 +216,7 @@ npm install --save-dev broccoli-babel-transpiler
 <p>Now we can build our project and execute our script with:</p>
 
 <p><code class="bash"><pre>
-# this time we execute 
+# this time we execute
 # from dist/ instead of src/
 broccoli build dist
 node dist/fruits.js
@@ -333,7 +333,7 @@ var appJs = babel('src');
 
 // Grab the polyfill file provided by the Babel library
 var root = 'node_modules/broccoli-babel-transpiler/node_modules/babel-core';
-var browserPolyfill = funnel(root, { 
+var browserPolyfill = funnel(root, {
   files: ['browser-polyfill.js']
 });
 
@@ -350,7 +350,7 @@ appJs = concat(appJs, {
 // Grab the index file
 var index = funnel('src', {files: ['index.html']});
 
-// Grab all our trees and 
+// Grab all our trees and
 // export them as a single and final tree
 module.exports = mergeTrees([index, appJs]);
 </pre></code></p>
