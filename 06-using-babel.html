@@ -66,16 +66,25 @@ Also, a browser ready version is provided. You can include it as a regular JS li
 </pre></code></p>
 
 <p>
-Those methods do not scale when your code base starts to grow and you start spliting everything in multiple files and folders. At that moment you'll need a build tool and a way to integrate Babel to a build pipeline.
+Those methods do not scale when your code base starts to grow and you start splitting everything in multiple files and folders. At that moment you'll need a build tool and a way to integrate Babel to a build pipeline.
 <p>
 
 <p>
-In the next section we'll integrate Babel into a build tool, <a target="_blank" title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through two example projects. In case you run into trouble, the complete source code for the examples can be found here <a target="_blank" title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>.
+In the following sections we'll integrate Babel into a build tool, <a target="_blank" title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through a couple of examples. In case you run into trouble, you can review the complete source code here: <a target="_blank" title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>. There you'll find three sample projects:
 </p>
 
+<ol>
+  <li>es6-fruits</li>
+  <li>es6-website</li>
+  <li>es6-modules</li>
+</ol>
 
 <p>
-If you are thinking &mdash;I'll just wait for browsers to support the new features&mdash; you'll be left behind. That is going to take a long time, if it ever happens to full compliance. Transpilers are here to stay; new ECMAScript standards are planned to be released yearly. Hop in already and take advantage of the new features.
+Each one of them builds on top of the previous example. We start with the bare minimum and progress to a general solution meant to be used as the starting point of a real project.
+</p>
+
+<p>
+If you are thinking &mdash;I'll just wait for browsers to support the new features&mdash; you'll be left behind. That is going to take a long time, if it ever happens to full compliance. Transpilers are here to stay; new ECMAScript standards are planned to be released yearly. So, we'll see new stantards released faster than uniform browser platforms, each year. Hop in already and take advantage of the new features.
 </p>
 
 <h2>Our first Broccoli &amp; Babel project</h2>
@@ -380,4 +389,8 @@ python -m SimpleHTTPServer
 
 <h2>There is more!</h2>
 
-<p>With the second example we accomplished a lot and might be all you need to keep you going for a while. For those who want more, you should check this repository: <a target="_blank" title="broccoli-babel-boilerplate" href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a> It is also a Broccoli + Babel setup, but taking it up two notches. It handles modules and imports.</p>
+<p>With the second example we accomplished a lot and might be all you need to keep you going for a while. For those who want more, you should check this repository: <a target="_blank" title="broccoli-babel-boilerplate" href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a>. It is also a Broccoli+Babel setup, but taking it up two notches. It handles modules, imports and unit testing.</p>
+
+<p>
+You can try out a usage example of that configuration here <a target="_blank" title="es6-modules" href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">es6-modules</a>. All the magic is in the Brocfile and its very similar to what we have done already.
+</p>
