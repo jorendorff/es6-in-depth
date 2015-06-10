@@ -216,10 +216,8 @@ npm install --save-dev broccoli-babel-transpiler
 <p>Now we can build our project and execute our script with:</p>
 
 <p><code class="bash"><pre>
-# this time we execute
-# from dist/ instead of src/
-broccoli build dist
-node dist/fruits.js
+broccoli build dist # compile
+node dist/fruits.js # execute ES5 
 </pre></code></p>
 
 <p>The output should be:</p>
