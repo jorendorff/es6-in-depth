@@ -244,27 +244,31 @@ For our second example we'll take it up a notch. In the <code>src</code> folder 
 <p><code class="html"><pre>
 &lt;!DOCTYPE html>
 &lt;html>
-    &lt;head>
-        &lt;title>ES6 Today&lt;/title>
-    &lt;/head>
-    &lt;style>
-      .color {
-        padding: 1rem;
-        color: #fff;
-      }
-    &lt;/style>
-    &lt;body>
-        &lt;h1>ES6 Today&lt;/h1>
+  &lt;head>
+    &lt;title>ES6 Today&lt;/title>
+  &lt;/head>
+  &lt;style>
+    body {
+      border: 2px solid #9a9a9a;
+      border-radius: 10px;
+      padding: 6px;
+      font-family: monospace;
+      text-align: center;
+    }
+    .color {
+      padding: 1rem;
+      color: #fff;
+    }
+  &lt;/style>
+  &lt;body>
+    &lt;h1>ES6 Today&lt;/h1>
+    &lt;div id="info">&lt;/div>
+    &lt;hr>
+    &lt;div id="content">&lt;/div>
 
-        &lt;div id="info">&lt;/div>
-
-        &lt;hr>
-
-        &lt;div id="content">&lt;/div>
-
-        &lt;script src="//code.jquery.com/jquery-2.1.4.min.js">&lt;/script>
-        &lt;script src="js/my-app.js">&lt;/script>
-    &lt;/body>
+    &lt;script src="//code.jquery.com/jquery-2.1.4.min.js">&lt;/script>
+    &lt;script src="js/my-app.js">&lt;/script>
+  &lt;/body>
 &lt;/html>
 </pre></code></p>
 
@@ -272,7 +276,8 @@ For our second example we'll take it up a notch. In the <code>src</code> folder 
 <p><code class="js"><pre>
 function printInfo() {
   $('#info')
-  .append('&lt;p&gt;minimal website example with Broccoli and Babel&lt;/p&gt;');
+  .append('&lt;p&gt;minimal website example with' +
+          'Broccoli and Babel&lt;/p&gt;');
 }
 
 $(printInfo);
@@ -280,7 +285,8 @@ $(printInfo);
 
 <code>src/print-colors.js</code>
 <p><code class="js"><pre>
-function* hexRange(start, stop, step) { // ES6 Generator
+// ES6 Generator
+function* hexRange(start, stop, step) {
   for (var i = start; i &lt; stop; i += step) {
     yield i;
   }
@@ -289,11 +295,12 @@ function* hexRange(start, stop, step) { // ES6 Generator
 function printColors() {
   var content$ = $('#content');
 
-  for ( var hex of hexRange(900, 999, 10) ) { // contrived example
+  // contrived example
+  for ( var hex of hexRange(900, 999, 10) ) {
     var newDiv = $('&lt;div&gt;')
-                 .attr('class', 'color')
-                 .css({ 'background-color': `#${hex}` })
-                 .append(`hex code: #${hex}`);
+      .attr('class', 'color')
+      .css({ 'background-color': `#${hex}` })
+      .append(`hex code: #${hex}`);
     content$.append(newDiv);
   }
 }
@@ -332,10 +339,13 @@ var mergeTrees = require('broccoli-merge-trees');
 var appJs = babel('src');
 
 // Grab the polyfill file provided by the Babel library
-var root = 'node_modules/broccoli-babel-transpiler/node_modules/babel-core';
-var browserPolyfill = funnel(root, {
+var babelPath = require.resolve('broccoli-babel-transpiler');
+babelPath = babelPath.replace(/\/index.js$/, '');
+babelPath += '/node_modules/babel-core';
+var browserPolyfill = funnel(babelPath, {
   files: ['browser-polyfill.js']
 });
+appJs = mergeTrees([browserPolyfill, appJs]);
 
 // Add the Babel polyfill to the tree of transpiled files
 appJs = mergeTrees([browserPolyfill, appJs]);
