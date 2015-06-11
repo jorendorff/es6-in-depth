@@ -80,7 +80,7 @@ In the following sections we'll integrate Babel into a build tool, <a target="_b
 </ol>
 
 <p>
-Each one of them builds on top of the previous example. We start with the bare minimum and progress to a general solution meant to be used as the starting point of an ambitious project. In this post we'll cover in detail the first two examples only. You'll be able to read and understand the code of the third example on your own after we are done here. 
+Each one of them builds on top of the previous example. We start with the bare minimum and progress to a general solution meant to be used as the starting point of an ambitious project. In this post we'll cover in detail the first two examples only. You'll be able to read and understand the code of the third example on your own after we are done here.
 </p>
 
 <p>
@@ -102,19 +102,11 @@ Comparable to the Rails asset pipeline in scope, though it runs on Node and is b
 <h4>Node</h4>
 
 <p>
-As you might have guessed, you'll have to install <a target="_blank" title="Node JS" href="https://nodejs.org/">Node</a>, version 0.11 at least. There are many ways to do this, a highly recommended option is to use <a target="_blank" title="nvm" href="https://github.com/creationix/nvm">Node Version Manager (NVM)</a>.
+As you might have guessed, you'll have to <a target="_blank" title="Node JS" href="https://nodejs.org/">install Node 0.11 or later</a>.
 </p>
 
 <p>
-Depending on how you installed Node, is possible that you'll need to execute the <code>npm -g</code> commands prepending <code>sudo</code> to them.
-</p>
-
-<p><code class="bash"><pre>
-sudo npm -g install some-package-name
-</pre></code></p>
-
-<p>
-If you are using NVM you won't need to do that.
+If you are in a unix system avoid installing from the package manager (apt, yum), that is to avoid using root privileges during installation. Its best to manually install the binaries, provided at the previous link, with your current user. You can read why using root is not recommended in <a target="_blank" title="Do not sudo npm" href="http://givan.se/do-not-sudo-npm/">Do not sudo npm</a>. In there you'll find other <a target="_blank" title="install npm properly" href="http://givan.se/do-not-sudo-npm/#install-npm-properly">installation alternatives.</a>
 </p>
 
 <h4>Broccoli</h4>
@@ -217,7 +209,7 @@ npm install --save-dev broccoli-babel-transpiler
 
 <p><code class="bash"><pre>
 broccoli build dist # compile
-node dist/fruits.js # execute ES5 
+node dist/fruits.js # execute ES5
 </pre></code></p>
 
 <p>The output should be:</p>
