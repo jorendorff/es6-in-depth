@@ -70,7 +70,7 @@ Those methods do not scale when your code base starts to grow and you start spli
 <p>
 
 <p>
-In the following sections we'll integrate Babel into a build tool, <a target="_blank" title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through a couple of examples. In case you run into trouble, you can review the complete source code here: <a target="_blank" title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>. There you'll find three sample projects:
+In the following sections we'll integrate Babel into a build tool, <a target="_blank" title="Broccoli JS" href="http://broccolijs.com/">Broccoli.js</a>, and we'll write and execute our first lines of ES6 through a couple of examples. In case you run into trouble, you can review the complete source code here: <a target="_blank" title="broccoli-babel-examples" href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>. Inside that repository you'll find three sample projects:
 </p>
 
 <ol>
@@ -80,7 +80,7 @@ In the following sections we'll integrate Babel into a build tool, <a target="_b
 </ol>
 
 <p>
-Each one of them builds on top of the previous example. We start with the bare minimum and progress to a general solution meant to be used as the starting point of a real project.
+Each one of them builds on top of the previous example. We start with the bare minimum and progress to a general solution meant to be used as the starting point of an ambitious project. In this post we'll cover in detail the first two examples only. You'll be able to read and understand the code of the third example on your own after we are done here.
 </p>
 
 <p>
@@ -102,19 +102,11 @@ Comparable to the Rails asset pipeline in scope, though it runs on Node and is b
 <h4>Node</h4>
 
 <p>
-As you might have guessed, you'll have to install <a target="_blank" title="Node JS" href="https://nodejs.org/">Node</a>, version 0.11 at least. There are many ways to do this, a highly recommended option is to use <a target="_blank" title="nvm" href="https://github.com/creationix/nvm">Node Version Manager (NVM)</a>.
+As you might have guessed, you'll have to <a target="_blank" title="Node JS" href="https://nodejs.org/">install Node 0.11 or later</a>.
 </p>
 
 <p>
-Depending on how you installed Node, is possible that you'll need to execute the <code>npm -g</code> commands prepending <code>sudo</code> to them.
-</p>
-
-<p><code class="bash"><pre>
-sudo npm -g install some-package-name
-</pre></code></p>
-
-<p>
-If you are using NVM you won't need to do that.
+If you are in a unix system avoid installing from the package manager (apt, yum), that is to avoid using root privileges during installation. Its best to manually install the binaries, provided at the previous link, with your current user. You can read why using root is not recommended in <a target="_blank" title="Do not sudo npm" href="http://givan.se/do-not-sudo-npm/">Do not sudo npm</a>. In there you'll find other <a target="_blank" title="install npm properly" href="http://givan.se/do-not-sudo-npm/#install-npm-properly">installation alternatives.</a>
 </p>
 
 <h4>Broccoli</h4>
@@ -216,10 +208,8 @@ npm install --save-dev broccoli-babel-transpiler
 <p>Now we can build our project and execute our script with:</p>
 
 <p><code class="bash"><pre>
-# this time we execute
-# from dist/ instead of src/
-broccoli build dist
-node dist/fruits.js
+broccoli build dist # compile
+node dist/fruits.js # execute ES5
 </pre></code></p>
 
 <p>The output should be:</p>
@@ -237,34 +227,42 @@ List total: 3
 <h2>Writing ES6 code for a website</h2>
 
 <p>
-For our second example we'll take it up a notch. In the <code>src</code> folder we'll create three files:
+For our second example we'll take it up a notch. First go out of the <code>es6-fruits</code> folder and create a new directory <code>es6-website</code> using the steps under <strong>Project setup</strong> above.
+</p>
+
+<p>
+In the <code>src</code> folder we'll create three files:
 </p>
 
 <code>src/index.html</code>
 <p><code class="html"><pre>
 &lt;!DOCTYPE html>
 &lt;html>
-    &lt;head>
-        &lt;title>ES6 Today&lt;/title>
-    &lt;/head>
-    &lt;style>
-      .color {
-        padding: 1rem;
-        color: #fff;
-      }
-    &lt;/style>
-    &lt;body>
-        &lt;h1>ES6 Today&lt;/h1>
+  &lt;head>
+    &lt;title>ES6 Today&lt;/title>
+  &lt;/head>
+  &lt;style>
+    body {
+      border: 2px solid #9a9a9a;
+      border-radius: 10px;
+      padding: 6px;
+      font-family: monospace;
+      text-align: center;
+    }
+    .color {
+      padding: 1rem;
+      color: #fff;
+    }
+  &lt;/style>
+  &lt;body>
+    &lt;h1>ES6 Today&lt;/h1>
+    &lt;div id="info">&lt;/div>
+    &lt;hr>
+    &lt;div id="content">&lt;/div>
 
-        &lt;div id="info">&lt;/div>
-
-        &lt;hr>
-
-        &lt;div id="content">&lt;/div>
-
-        &lt;script src="//code.jquery.com/jquery-2.1.4.min.js">&lt;/script>
-        &lt;script src="js/my-app.js">&lt;/script>
-    &lt;/body>
+    &lt;script src="//code.jquery.com/jquery-2.1.4.min.js">&lt;/script>
+    &lt;script src="js/my-app.js">&lt;/script>
+  &lt;/body>
 &lt;/html>
 </pre></code></p>
 
@@ -272,7 +270,8 @@ For our second example we'll take it up a notch. In the <code>src</code> folder 
 <p><code class="js"><pre>
 function printInfo() {
   $('#info')
-  .append('&lt;p&gt;minimal website example with Broccoli and Babel&lt;/p&gt;');
+  .append('&lt;p&gt;minimal website example with' +
+          'Broccoli and Babel&lt;/p&gt;');
 }
 
 $(printInfo);
@@ -280,7 +279,8 @@ $(printInfo);
 
 <code>src/print-colors.js</code>
 <p><code class="js"><pre>
-function* hexRange(start, stop, step) { // ES6 Generator
+// ES6 Generator
+function* hexRange(start, stop, step) {
   for (var i = start; i &lt; stop; i += step) {
     yield i;
   }
@@ -289,11 +289,12 @@ function* hexRange(start, stop, step) { // ES6 Generator
 function printColors() {
   var content$ = $('#content');
 
-  for ( var hex of hexRange(900, 999, 10) ) { // contrived example
+  // contrived example
+  for ( var hex of hexRange(900, 999, 10) ) {
     var newDiv = $('&lt;div&gt;')
-                 .attr('class', 'color')
-                 .css({ 'background-color': `#${hex}` })
-                 .append(`hex code: #${hex}`);
+      .attr('class', 'color')
+      .css({ 'background-color': `#${hex}` })
+      .append(`hex code: #${hex}`);
     content$.append(newDiv);
   }
 }
@@ -332,10 +333,13 @@ var mergeTrees = require('broccoli-merge-trees');
 var appJs = babel('src');
 
 // Grab the polyfill file provided by the Babel library
-var root = 'node_modules/broccoli-babel-transpiler/node_modules/babel-core';
-var browserPolyfill = funnel(root, {
+var babelPath = require.resolve('broccoli-babel-transpiler');
+babelPath = babelPath.replace(/\/index.js$/, '');
+babelPath += '/node_modules/babel-core';
+var browserPolyfill = funnel(babelPath, {
   files: ['browser-polyfill.js']
 });
+appJs = mergeTrees([browserPolyfill, appJs]);
 
 // Add the Babel polyfill to the tree of transpiled files
 appJs = mergeTrees([browserPolyfill, appJs]);
@@ -385,7 +389,7 @@ python -m SimpleHTTPServer
 
 <p>You should see this:</p>
 
-[caption id="" align="alignnone" width="361"]<img class="" src="https://raw.githubusercontent.com/givanse/broccoli-babel-examples/master/es6-website/screenshot.png" alt="simple ES6 website" width="361" height="631" /> simple ES6 website[/caption]
+<img class="" src="https://raw.githubusercontent.com/givanse/broccoli-babel-examples/master/es6-website/screenshot.png" alt="simple ES6 website" width="361" height="631" />
 
 <h2>There is more!</h2>
 
