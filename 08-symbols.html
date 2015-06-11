@@ -1,24 +1,180 @@
+While putting off writing this article, I came across an Atlantic article titled "The Procrastination Doom Loop—and How to Break It" the first sentence of which was "When I woke up this morning, I had one goal: Finish this article by 11 a.m." <http://www.theatlantic.com/business/archive/2014/08/the-procrastination-loop-and-how-to-break-it/379142/> Obviously I need to read this article!
+
+To look up:
+
+- pictures for the intro
+- look up when JS was first standardized, see if ECMA 262-1 is still available
+- see what happens when a getter  (or proxy?) is defined on Object.prototype and is accessed via property access on a primitive: in `(7).name`, the getter `Object.prototype.get name()` receives a primitive this only if *both* are strict code.
+
+----
+
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
 What are ES6 symbols?
 
 Symbols are not logos.
 
-They're not iconic figures that stand for something.
+They're not emoji that you use in your code.
 
-They're not cymbals. (This is an important distinction because cymbals, even when used correctly by experts, have a tendency to crash. We don't want JavaScript to crash.)
+They're not a literary device that stands for something else.
+
+They're not cymbals.
+
+(It is not a good idea to use cymbals in programming. Even when used correctly by experts, they have a tendency to crash.)
+
+So, what <em>are</em> symbols?
+
+
+<h3>The seventh type</h3>
+
+<p>Since JavaScript was first standardized in 1997, there have been six <dfn>types</dfn>. Until the introduction of ES6 symbols, every value in a JS program fell into exactly one of these six categories.</p>
+
+<ul>
+  <li>Undefined</li>
+  <li>Null</li>
+  <li>Boolean</li>
+  <li>Number</li>
+  <li>String</li>
+  <li>Object</li>
+</ul>
+
+<p>Each type is a set of values, and the first five sets are all finite. There are, of course, only two Boolean values, <code>true</code> and <code>false</code>, and they aren't making new ones. There are rather more Number and String values. The standard says there are 18,437,736,874,454,810,627 different Numbers; that's nothing compared to the number of different possible Strings, which I think is 2<sup>144,115,188,075,855,872</sup> &minus; 1 (though I may have miscounted).</p>
+
+<p>The set of Object values, however, is open-ended. Each object is a unique, precious snowflake. Every time you open a Web page, there is a rush of new objects being created.</p>
+
+<p>ES6 symbols are values, but they're not strings. They're not objects. They're something new: a seventh type of value.</p>
+
+<p>Let's talk about a scenario where they might come in handy.</p>
+
+
+<h3>One simple little boolean</h3>
+
+Sometimes it would be awfully convenient to stash some extra data on a JavaScript object that really belongs to someone else.
+
+For example, suppose you're writing a JS library that uses CSS transitions to make DOM elements zip around on the screen. You've noticed that trying to apply multiple CSS transitions to a single <code>div</code> at the same time doesn't work. It causes ugly, discontinuous "jumps". You think you can fix this, but first you need a way to find out if a given element is already moving.
+
+What can you do?
+
+One way is to use CSS APIs to ask the browser if the element is moving. But that sounds like overkill. Your library should <em>already know</em> the element is moving; you're the one who set it moving in the first place!
+
+So really what you want is a way to <em>keep track</code> of which elements are moving. You could keep an array of all moving elements. Each time your library is called upon to animate an element, you can search the array to see if that element is already there.
+
+Hmm. A linear search will be slow if the array is big.
+
+What you really want to do is just set a flag on the element:
+
+<pre>
+if (element.isMoving) {
+  smoothAnimations(element);
+}
+element.isMoving = true;
+</pre>
+
+There are some potential problems with this too. They all relate to the fact that your code isn't the only code using the DOM.
+
+1. Other code using <code>for-in</code> or <code>Object.keys()</code> may stumble over the property you created.
+
+2. Some other clever library author may have thought of this technique first, and your library would interact badly with that existing library.
+
+3. Some other clever library author may think of it in the future, and your library would interact badly with that future library.
+
+4. The standard committee may decide to add an <code>.isMoving()</code> method to all elements. Then you're <em>really</em> hosed!
+
+Of course you can address the last three problems by choosing a string so tedious or so silly that nobody else would ever name anything that:
+
+<pre>
+if (element.__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__) {
+  smoothAnimations(element);
+}
+element.__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__ = true;
+</pre>
+
+This seems not quite worth the eye strain.
+
+You could generate a practically unique name for the property using cryptography:
+
+<pre>
+// get 1024 Unicode characters of gibberish
+var isMoving = SecureRandom.generateName();
+
+...
+
+if (element[isMoving]) {
+  smoothAnimations(element);
+}
+element[isMoving] = true;
+</pre>
+
+The <code>object[name]</code> syntax lets you use literally any string as a property name. So this will work: collisions are virtually impossible, and your code looks OK.</p>
+
+But this is going to lead to a bad debugging experience. Every time you <code>console.log()</code> an element with that property on it, you'll be looking a huge string of garbage. And what if you need more than one property like this? How do you keep them straight? They'll have different names every time you reload.
+
+Why is this so hard? We just want one little boolean!
+
+
+<h3>Symbols are the answer</h3>
+
+Symbols are values that programs can create and use as property keys without risking collisions.
+
+<pre>
+var mySymbol = Symbol();
+</pre>
+
+Calling <code>Symbol()</code> creates a new symbol, a value that's not equal to any other value.
+
+Just like a string or number, you can use a symbol as a property key. Because it's not equal to any string, this symbol-keyed property is guaranteed not to collide with any other property.
+
+<pre>
+obj[mySymbol] = "ok!";  // guaranteed not to collide
+console.log(obj[mySymbol]);  // ok!
+</pre>
+
+Here is how you could use a symbol in the situation from above:
+
+<pre>
+// create a unique symbol
+var isMoving = Symbol("isMoving");  // the string is just for display
+
+...
+
+if (element[isMoving]) {
+  smoothAnimations(element);
+}
+element[isMoving] = true;
+</pre>
+
+A few notes about this code:
+
+<ul>
+  <li><p>The string <code>"isMoving"</code> in <code>Symbol("isMoving")</code> is called a description. It's helpful for debugging. It's shown when you write the symbol to <code>console.log()</code>, and possibly in error messages. But this string is not used for anything else; you can have several distinct symbols with the same description.</p></li>
+
+  <li><p><code>element[isMoving]</code> is called a <dfn>symbol-keyed property</dfn>. It's simply a property whose name is not a string, but a symbol.</p></li>
+
+  <li><p>Like array elements, symbol-keyed properties can't be accessed using a dot, as in <code>obj.name</code>. They must be accessed using square brackets.</p></li>
+
+  <li><p>It's trivial to access a symbol-keyed property if you've already got the symbol. In the above example, we can get and set <code>element[isMoving]</code> easily, and we could also ask <code>if (isMoving in element)<code> or even <code>delete element[isMoving]</code> if we needed to. However, this is only possible as long as <code>isMoving</code> is in scope. This makes symbols a mechanism for weak encapsulation: a module that creates a few symbols for itself can use them on arbitrary objects without any fear of accidental collision with other modules.</p></li>
+
+  <li><p>Symbol keys are not exposed by JavaScript's most common introspective features. A <code>for-in</code> loop, for instance, only loops over an object's string keys. Any symbol keys are skipped. <code>Object.keys(obj)</code> and <code>Object.getOwnPropertyNames()</code> do the same. It is possible, however, to
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 *   "symbol" in common English unrelated to ES6 symbols
-*   first new "type" in JS since its inception
-    *   the other six types are: boolean, number, string, object, null, and undefined.
-*   motivation
-    *   you want to stash data on DOM objects
-    *   namespace collision
-    *   so here are symbols (using only the `Symbol()` syntax) yay
 *   ES6 symbols vs. symbols in other languages
     *   Ruby basically only has registry symbols
     *   Lisp implementations often have something called GENSYM
-
 *   what are symbols??
     *   THEY ARE NOTHING BUT MADE-UP PROPERTY KEYS.
     need to figure out where in here we get examples, and what those look like
