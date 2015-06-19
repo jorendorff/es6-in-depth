@@ -229,7 +229,7 @@ alert(urls.size);  // 2
 <p>And that's how we ended up with hash tables that track insertion order in JS!</p>
 
 
-<h3>WeakMap and WeakSet</h3>
+<h3>Strong reasons to use weak collections</h3>
 
 <p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-symbols/">Last week,</a> we discussed an example involving a JS animation library. We wanted to store a boolean flag for every DOM object, like this:</p>
 
@@ -253,33 +253,41 @@ movingSet.add(element);
 
 <p>There is only one drawback: <code>Map</code> and <code>Set</code> objects keep a strong reference to every key and value they contain. This means that if a DOM element is removed from the document and dropped, garbage collection can't recover that memory until that element is removed from <code>movingSet</code> as well. Libraries typically have mixed success, at best, in imposing complex clean-up-after-yourself requirements on their users. So this could lead to memory leaks.</p>
 
-<p>ES6 offers a surprising fix for this. Make <code>movingSet</code> a <code>WeakSet</code> rather than a <code>Set</code>.</p>
-???
-<p>A <code>WeakSet</code> is much like a <code>Set</code>, but 
+<p>ES6 offers a surprising fix for this. Make <code>movingSet</code> a <code>WeakSet</code> rather than a <code>Set</code>. Memory leak solved!</p>
 
 
+<h3><code>WeakMap</code> and <code>WeakSet</code></h3>
 
-<p>ES6 also provides two more builtin classes, <code>WeakMap</code> and <code>WeakSet</code>. These work exactly like <code>Map</code> and <code>Set</code>, but with fewer features:
+<p><code>WeakMap</code> and <code>WeakSet</code> are specified to behave exactly like <code>Map</code> and <code>Set</code>, but with severe restrictions on their functionality:
 
 <ul>
 
-  <li><code>WeakMap</code> supports only <code>new</code>, <code>.has()</code>, <code>.get()</code>, <code>.set()</code>, and <code>.delete()</code>.</li>
+  <li><p><code>WeakMap</code> supports only <code>new</code>, <code>.has()</code>, <code>.get()</code>, <code>.set()</code>, and <code>.delete()</code>.</p></li>
 
-  <li><code>WeakSet</code> supports only <code>new</code>, <code>.has()</code>, <code>.add()</code>, and <code>.delete()</code>.</li>
+  <li><p><code>WeakSet</code> supports only <code>new</code>, <code>.has()</code>, <code>.add()</code>, and <code>.delete()</code>.</p></li>
+
+  <li><p>The values stored in a <code>WeakSet</code> and the keys stored in a <code>WeakMap</code> must be objects.</p></li>
 
 </ul>
 
-<p>There's another restriction, too: the values stored in a <code>WeakSet</code> and the keys stored in a <code>WeakMap</code> must be  Why would anyone 
-???
+<p>Note that neither type of weak collection is iterable. You can't get entries out of a weak collection except by asking for them specifically, passing in the key you're interested in.</p>
+
+<p>These carefully crafted restrictions enable the garbage collector to collect dead objects out of live weak collections. The effect is similar to what you could get with weak references or weak-keyed dictionaries, but ES6 weak collections get the memory management benefits <em>without exposing the fact that GC happened to scripts.</em></p>
 
 
-<h3>JS is different, part 3: GC nondeterminism</h3>
+<h3>JS is different, part 3: Hiding GC nondeterminism</h3>
 
+<p>Behind the scenes, the weak collections are implemented as <a title="Barros, A. and Ierusalimschy, R., Eliminating Cycles in Weak Tables. Journal of Universal Computer Science, 2008." href="http://www.jucs.org/jucs_14_21/eliminating_cycles_in_weak/jucs_14_21_3481_3497_barros.pdf">ephemeron tables</a>.</p>
 
-* WeakMap and WeakSet
-    * ephemerons vs. gc nondeterminism
-    * what are these things for?
-    * tradeoffs vs. symbols
+<p>In short, a <code>WeakSet</code> does not keep a strong reference to the objects it contains. When an object in a <code>WeakSet</code> is collected, it is simply removed from the <code>WeakSet</code>. <code>WeakMap</code> is similar. It does not keep a strong reference to any of its keys. If a key is alive, the associated value is alive.</p>
+
+<p>Why accept these restrictions? Why not just add weak references to JS?</p>
+
+<p>Again, the standard committee has been very reluctant to expose nondeterministic behavior to scripts. Poor cross-browser compatibility is the bane of Web development. Weak references expose implementation details of the underlying garbage collector—the very definition of platform-specific arbitrary behavior. Of course applications shouldn't depend on platform-specific details, but weak references also make it very hard to know just how much you're depending on the GC behavior in the browser you're currently testing. They're hard to reason about.</p>
+
+<p>By contrast, the ES6 weak collections have a more limited feature set, but that feature set is rock solid. The GC can manage memory effectively, but the fact that a key or value has been collected is never observable, so applications can't end up depending on it, even by accident.</p>
+
+<p>This is one case where a Web-specific concern has led to a surprising design decision that makes JS a better language.</p>
 
 
 <h3>When can I use collections in my code?</h3>
