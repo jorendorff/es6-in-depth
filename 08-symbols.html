@@ -1,33 +1,29 @@
-While putting off writing this article, I came across an Atlantic article titled "The Procrastination Doom Loop—and How to Break It" the first sentence of which was "When I woke up this morning, I had one goal: Finish this article by 11 a.m." <http://www.theatlantic.com/business/archive/2014/08/the-procrastination-loop-and-how-to-break-it/379142/> Obviously I need to read this article!
-
-To look up:
-
-- pictures for the intro
-- look up when JS was first standardized, see if ECMA 262-1 is still available
-- see what happens when a getter  (or proxy?) is defined on Object.prototype and is accessed via property access on a primitive: in `(7).name`, the getter `Object.prototype.get name()` receives a primitive this only if *both* are strict code.
-
-----
-
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-What are ES6 symbols?
+<p>What are ES6 symbols?</p>
 
-Symbols are not logos.
+<p>Symbols are not logos.</p>
 
-They're not emoji that you use in your code.
+<p>They’re not little pictures you can use in your code.</p>
 
-They're not a literary device that stands for something else.
+<code class="js"><pre>
+let 😻 = 😺 &times; 😍;  // SyntaxError
+</pre></code>
 
-They're not cymbals.
+<p>They’re not the same thing as a glyph, a code point, a code unit, or a character.</p>
 
-(It is not a good idea to use cymbals in programming. Even when used correctly by experts, they have a tendency to crash.)
+<p>They’re not a literary device that stands for something else.</p>
 
-So, what <em>are</em> symbols?
+<p>They’re definitely not the same thing as cymbals.</p>
+
+<p>(It is not a good idea to use cymbals in programming. They have a tendency to crash.)</p>
+
+<p>So, what <em>are</em> symbols?</p>
 
 
 <h3>The seventh type</h3>
 
-<p>Since JavaScript was first standardized in 1997, there have been six <dfn>types</dfn>. Until the introduction of ES6 symbols, every value in a JS program fell into exactly one of these six categories.</p>
+<p>Since JavaScript was first standardized in 1997, there have been six <dfn>types</dfn>. Until ES6, every value in a JS program fell into one of these categories.</p>
 
 <ul>
   <li>Undefined</li>
@@ -38,62 +34,66 @@ So, what <em>are</em> symbols?
   <li>Object</li>
 </ul>
 
-<p>Each type is a set of values, and the first five sets are all finite. There are, of course, only two Boolean values, <code>true</code> and <code>false</code>, and they aren't making new ones. There are rather more Number and String values. The standard says there are 18,437,736,874,454,810,627 different Numbers; that's nothing compared to the number of different possible Strings, which I think is 2<sup>144,115,188,075,855,872</sup> &minus; 1 (though I may have miscounted).</p>
+<p>Each type is a set of values. The first five sets are all finite. There are, of course, only two Boolean values, <code>true</code> and <code>false</code>, and they aren’t making new ones. There are rather more Number and String values. The standard says there are 18,437,736,874,454,810,627 different Numbers (including <code>NaN</code>, the Number whose name is short for “Not a Number”). That’s nothing compared to the number of different possible Strings, which I think is (2<sup>144,115,188,075,855,872</sup> − 1) ÷ 65,535 ...though I may have miscounted.</p>
 
-<p>The set of Object values, however, is open-ended. Each object is a unique, precious snowflake. Every time you open a Web page, there is a rush of new objects being created.</p>
+<p>The set of Object values, however, is open-ended. Each object is a unique, precious snowflake. Every time you open a Web page, a rush of new objects is created.</p>
 
-<p>ES6 symbols are values, but they're not strings. They're not objects. They're something new: a seventh type of value.</p>
+<p>ES6 symbols are values, but they’re not strings. They’re not objects. They’re something new: a seventh type of value.</p>
 
-<p>Let's talk about a scenario where they might come in handy.</p>
+<p>Let’s talk about a scenario where they might come in handy.</p>
 
 
 <h3>One simple little boolean</h3>
 
-Sometimes it would be awfully convenient to stash some extra data on a JavaScript object that really belongs to someone else.
+<p>Sometimes it would be awfully convenient to stash some extra data on a JavaScript object that really belongs to someone else.</p>
 
-For example, suppose you're writing a JS library that uses CSS transitions to make DOM elements zip around on the screen. You've noticed that trying to apply multiple CSS transitions to a single <code>div</code> at the same time doesn't work. It causes ugly, discontinuous "jumps". You think you can fix this, but first you need a way to find out if a given element is already moving.
+<p>For example, suppose you’re writing a JS library that uses CSS transitions to make DOM elements zip around on the screen. You’ve noticed that trying to apply multiple CSS transitions to a single <code>div</code> at the same time doesn’t work. It causes ugly, discontinuous “jumps”. You think you can fix this, but first you need a way to find out if a given element is already moving.</p>
 
-What can you do?
+<p>How can you solve this?</p>
 
-One way is to use CSS APIs to ask the browser if the element is moving. But that sounds like overkill. Your library should <em>already know</em> the element is moving; you're the one who set it moving in the first place!
+<p>One way is to use CSS APIs to ask the browser if the element is moving. But that sounds like overkill. Your library should <em>already know</em> the element is moving; it’s the code that set it moving in the first place!</p>
 
-So really what you want is a way to <em>keep track</code> of which elements are moving. You could keep an array of all moving elements. Each time your library is called upon to animate an element, you can search the array to see if that element is already there.
+<p>What you really want is a way to <em>keep track</em> of which elements are moving. You could keep an array of all moving elements. Each time your library is called upon to animate an element, you can search the array to see if that element is already there.</p>
 
-Hmm. A linear search will be slow if the array is big.
+<p>Hmm. A linear search will be slow if the array is big.</p>
 
-What you really want to do is just set a flag on the element:
+<p>What you really want to do is just set a flag on the element:</p>
 
-<pre>
+<code class="js"><pre>
 if (element.isMoving) {
   smoothAnimations(element);
 }
 element.isMoving = true;
-</pre>
+</pre></code>
 
-There are some potential problems with this too. They all relate to the fact that your code isn't the only code using the DOM.
+<p>There are some potential problems with this too. They all relate to the fact that your code isn’t the only code using the DOM.</p>
 
-1. Other code using <code>for-in</code> or <code>Object.keys()</code> may stumble over the property you created.
+<ol>
 
-2. Some other clever library author may have thought of this technique first, and your library would interact badly with that existing library.
+  <li><p>Other code using <code>for-in</code> or <code>Object.keys()</code> may stumble over the property you created.</p></li>
 
-3. Some other clever library author may think of it in the future, and your library would interact badly with that future library.
+  <li><p>Some other clever library author may have thought of this technique first, and your library would interact badly with that existing library.</p></li>
 
-4. The standard committee may decide to add an <code>.isMoving()</code> method to all elements. Then you're <em>really</em> hosed!
+  <li><p>Some other clever library author may think of it in the future, and your library would interact badly with that future library.</p></li>
 
-Of course you can address the last three problems by choosing a string so tedious or so silly that nobody else would ever name anything that:
+  <li><p>The standard committee may decide to add an <code>.isMoving()</code> method to all elements. Then you’re <em>really</em> hosed!</p></li>
 
-<pre>
+</ol>
+
+<p>Of course you can address the last three problems by choosing a string so tedious or so silly that nobody else would ever name anything that:</p>
+
+<code class="js"><pre>
 if (element.__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__) {
   smoothAnimations(element);
 }
 element.__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__ = true;
-</pre>
+</pre></code>
 
-This seems not quite worth the eye strain.
+<p>This seems not quite worth the eye strain.</p>
 
-You could generate a practically unique name for the property using cryptography:
+<p>You could generate a practically unique name for the property using cryptography:</p>
 
-<pre>
+<code class="js"><pre>
 // get 1024 Unicode characters of gibberish
 var isMoving = SecureRandom.generateName();
 
@@ -103,37 +103,37 @@ if (element[isMoving]) {
   smoothAnimations(element);
 }
 element[isMoving] = true;
-</pre>
+</pre></code>
 
-The <code>object[name]</code> syntax lets you use literally any string as a property name. So this will work: collisions are virtually impossible, and your code looks OK.</p>
+<p>The <code>object[name]</code> syntax lets you use literally any string as a property name. So this will work: collisions are virtually impossible, and your code looks OK.</p>
 
-But this is going to lead to a bad debugging experience. Every time you <code>console.log()</code> an element with that property on it, you'll be looking a huge string of garbage. And what if you need more than one property like this? How do you keep them straight? They'll have different names every time you reload.
+<p>But this is going to lead to a bad debugging experience. Every time you <code>console.log()</code> an element with that property on it, you’ll be looking a huge string of garbage. And what if you need more than one property like this? How do you keep them straight? They’ll have different names every time you reload.</p>
 
-Why is this so hard? We just want one little boolean!
+<p>Why is this so hard? We just want one little boolean!</p>
 
 
 <h3>Symbols are the answer</h3>
 
-Symbols are values that programs can create and use as property keys without risking collisions.
+<p>Symbols are values that programs can create and use as property keys without risking name collisions.</p>
 
-<pre>
+<code class="js"><pre>
 var mySymbol = Symbol();
-</pre>
+</pre></code>
 
-Calling <code>Symbol()</code> creates a new symbol, a value that's not equal to any other value.
+<p>Calling <code>Symbol()</code> creates a new symbol, a value that’s not equal to any other value.</p>
 
-Just like a string or number, you can use a symbol as a property key. Because it's not equal to any string, this symbol-keyed property is guaranteed not to collide with any other property.
+<p>Just like a string or number, you can use a symbol as a property key. Because it’s not equal to any string, this symbol-keyed property is guaranteed not to collide with any other property.</p>
 
-<pre>
+<code class="js"><pre>
 obj[mySymbol] = "ok!";  // guaranteed not to collide
 console.log(obj[mySymbol]);  // ok!
-</pre>
+</pre></code>
 
-Here is how you could use a symbol in the situation from above:
+<p>Here is how you could use a symbol in the situation discussed above:</p>
 
-<pre>
+<code class="js"><pre>
 // create a unique symbol
-var isMoving = Symbol("isMoving");  // the string is just for display
+var isMoving = Symbol("isMoving");
 
 ...
 
@@ -141,78 +141,95 @@ if (element[isMoving]) {
   smoothAnimations(element);
 }
 element[isMoving] = true;
-</pre>
+</pre></code>
 
-A few notes about this code:
+<p>A few notes about this code:</p>
 
 <ul>
-  <li><p>The string <code>"isMoving"</code> in <code>Symbol("isMoving")</code> is called a description. It's helpful for debugging. It's shown when you write the symbol to <code>console.log()</code>, and possibly in error messages. But this string is not used for anything else; you can have several distinct symbols with the same description.</p></li>
+  <li><p>The string <code>"isMoving"</code> in <code>Symbol("isMoving")</code> is called a <dfn>description</dfn>. It’s helpful for debugging. It’s shown when you write the symbol to <code>console.log()</code>, when you convert it to a string using <code>.toString()</code>, and possibly in error messages. That’s all.</p></li>
 
-  <li><p><code>element[isMoving]</code> is called a <dfn>symbol-keyed property</dfn>. It's simply a property whose name is not a string, but a symbol.</p></li>
+  <li><p><code>element[isMoving]</code> is called a <dfn>symbol-keyed property</dfn>. It’s simply a property whose name is a symbol rather than a string. Apart from that, it is in every way a normal property.</p></li>
 
-  <li><p>Like array elements, symbol-keyed properties can't be accessed using a dot, as in <code>obj.name</code>. They must be accessed using square brackets.</p></li>
+  <li><p>Like array elements, symbol-keyed properties can’t be accessed using dot syntax, as in <code>obj.name</code>. They must be accessed using square brackets.</p></li>
 
-  <li><p>It's trivial to access a symbol-keyed property if you've already got the symbol. In the above example, we can get and set <code>element[isMoving]</code> easily, and we could also ask <code>if (isMoving in element)<code> or even <code>delete element[isMoving]</code> if we needed to. However, this is only possible as long as <code>isMoving</code> is in scope. This makes symbols a mechanism for weak encapsulation: a module that creates a few symbols for itself can use them on arbitrary objects without any fear of accidental collision with other modules.</p></li>
+  <li><p>It’s trivial to access a symbol-keyed property if you’ve already got the symbol. The above example shows how to get and set <code>element[isMoving]</code>, and we could also ask <code>if (isMoving in element)</code> or even <code>delete element[isMoving]</code> if we needed to.</p></li>
 
-  <li><p>Symbol keys are not exposed by JavaScript's most common introspective features. A <code>for-in</code> loop, for instance, only loops over an object's string keys. Any symbol keys are skipped. <code>Object.keys(obj)</code> and <code>Object.getOwnPropertyNames()</code> do the same. It is possible, however, to
+  <li><p>On the other hand, all of that is only possible as long as <code>isMoving</code> is in scope. This makes symbols a mechanism for weak encapsulation: a module that creates a few symbols for itself can use them on whatever objects it wants to, <strong>without fear of colliding</strong> with properties created by other code.</p></li>
+</ul>
 
+<p>Because symbol keys were designed to avoid collisions, JavaScript’s most common object-inspection features simply ignore symbol keys. A <code>for-in</code> loop, for instance, only loops over an object’s string keys. Symbol keys are skipped. <code>Object.keys(obj)</code> and <code>Object.getOwnPropertyNames(obj)</code> do the same. But symbols are not exactly private: it is possible to use the new API <code>Object.getOwnPropertySymbols(obj)</code> to list the symbol keys of an object. Another new API, <code>Reflect.ownKeys(obj)</code>, returns both string and symbol keys. (We’ll discuss the <code>Reflect</code> API in full in an upcoming post.)</p>
 
-
-
-
-
-
+<p>Libraries and frameworks will likely find many uses for symbols, and as we’ll see later, the language itself is using of them for a wide range of purposes.</p>
 
 
+<h3>But what are symbols, exactly?</h3>
+
+<code class="js"><pre>
+&gt; typeof Symbol()
+"symbol"
+</pre></code>
+
+<p>Symbols aren’t exactly like anything else.</p>
+
+<p>They’re immutable once created. You can’t set properties on them (and if you try that in strict mode, you’ll get a TypeError). They can be property names. These are all string-like qualities.</p>
+
+<p>On the other hand, each symbol is unique, distinct from all others (even others that have the same description) and you can easily create new ones. These are object-like qualities.</p>
+
+<p>ES6 symbols are similar to the <a href="https://en.wikipedia.org/wiki/Symbol_%28programming%29" target="_blank">more traditional symbols</a> in languages like Lisp and Ruby, but not so closely integrated into the language. In Lisp, all identifiers are symbols. In JS, identifiers and most property keys are still considered strings. Symbols are just an extra option.</p>
+
+<p>One quick caveat about symbols: unlike almost anything else in the language, they can’t be automatically converted to strings. Trying to concatenate a symbol with strings will result in a TypeError.</p>
+
+<code class="js"><pre>
+&gt; var sym = Symbol("&lt;3");
+&gt; "your symbol is " + sym
+// TypeError: can't convert symbol to string
+&gt; `your symbol is ${sym}`
+// TypeError: can't convert symbol to string
+</pre></code>
+
+<p>You can avoid this by explicitly converting the symbol to a string, writing <code>String(sym)</code> or <code>sym.toString()</code>.</p>
 
 
+<h3>Three sets of symbols</h3>
+
+<p>There are three ways to obtain a symbol.</p>
+
+<ul>
+  <li><p><strong>Call <code>Symbol()</code>.</strong> As we already discussed, this returns a new unique symbol each time it’s called.</p></li>
+
+  <li><p><strong>Call <code>Symbol.for(string)</code>.</strong> This accesses a set of existing symbols called the <dfn>symbol registry</dfn>. Unlike the unique symbols defined by <code>Symbol()</code>, symbols in the symbol registry are shared. If you call <code>Symbol.for("cat")</code> thirty times, it will return the <em>same</em> symbol each time. The registry is useful when multiple web pages, or multiple modules within the same web page, need to share a symbol.</p></li>
+
+  <li><p><strong>Use symbols like <code>Symbol.iterator</code>, defined by the standard.</strong> A few symbols are defined by the standard itself. Each one has its own special purpose.</p></li>
+</ul>
+
+<p>If you still aren’t sure if symbols will be all that useful, this last category is interesting, because they show how symbols have already proven useful in practice.</p>
 
 
+<h3>How the ES6 spec is using well-known symbols</h3>
+
+<p>We’ve already seen one way that ES6 uses a symbol to avoid conflicts with existing code. A few weeks ago, in <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">the post on iterators</a>, we saw that the loop <code>for (var item of myArray)</code> starts by calling <code>myArray[Symbol.iterator]()</code>. I mentioned that this method could have been called <code>myArray.iterator()</code>, but a symbol is better for backward compatibility.</p>
+
+<p>Now that we know what symbols are all about, it’s easy to understand why this was done and what it means.</p>
+
+<p>Here are a few of the other places where ES6 uses well-known symbols. (These features are not implemented in Firefox yet.)</p>
+
+<ul>
+  <li><p><strong>Making <code>instanceof</code> extensible.</strong> In ES6, the expression <code><var>object</var> instanceof <var>constructor</var></code> is specified as a method of the constructor: <code>constructor[Symbol.hasInstance](object)</code>. This means it is extensible.</p></li>
+
+  <li><p><strong>Eliminating conflicts between new features and old code.</strong> This is seriously obscure, but we found that certain ES6 <code>Array</code> methods broke existing web sites <em>just by being there.</em> Other Web standards had similar problems: simply adding new methods in the browser would break existing sites. However, the breakage was mainly caused by something called <dfn>dynamic scoping</dfn>, so ES6 introduces a special symbol, <code>Symbol.unscopables</code>, that Web standards can use to prevent certain methods from getting involved in dynamic scoping.</p></li>
+
+  <li><p><strong>Supporting new kinds of string-matching.</strong> In ES5, <code>str.match(myObject)</code> tried to convert <code>myObject</code> to a <code>RegExp</code>. In ES6, it first checks to see if <code>myObject</code> has a method <code>myObject[Symbol.match](str)</code>. Now libraries can provide custom string-parsing classes that work in all the places where <code>RegExp</code> objects work.</p></li>
+</ul>
+
+<p>Each of these uses is quite narrow. It’s hard to see any of these features by themselves having a major impact in my day-to-day code. The long view is more interesting. Well-known symbols are JavaScript’s improved version of the <code>__doubleUnderscores</code> in PHP and Python. The standard will use them in the future to add new hooks into the language with no risk to your existing code.</p>
 
 
+<h3>When can I use ES6 symbols?</h3>
 
-*   "symbol" in common English unrelated to ES6 symbols
-*   ES6 symbols vs. symbols in other languages
-    *   Ruby basically only has registry symbols
-    *   Lisp implementations often have something called GENSYM
-*   what are symbols??
-    *   THEY ARE NOTHING BUT MADE-UP PROPERTY KEYS.
-    need to figure out where in here we get examples, and what those look like
-    *   guaranteed never to collide with any string property key.
-    *   all symbols are immutable and contain no data of their own
-        except an optional description string, useful for debugging
-    *   collision is impossible since unlike strings, unique symbols are unforgeable
-    *   symbols are not objects
-        *   can't set properties on them (strict error)
-        *   technically inherit properties from Symbol.prototype,
-            just like Strings get all their methods from String.prototype,
-            but Symbol.prototype doesn't have anything interesting on it
-            (just a toString method and some other odds and ends)
-        *   Object(sym) returns a wrapper object, these objects are useless
-            very much like Number, String, and Boolean objects
-    *   symbols are not strings
-        *   "x" === "x", equality by value,
-            but Symbol("x") !== Symbol("x"), equality by identity.
-    *   there are three sets of symbols
-        *   gensyms - for use by programs
-        *   registry - for use by programs, communication
-        *   well-known - these are defined by the standard, each one is custom
-            *   we already saw one of these: Symbol.iterator
-segue from well-known symbols
-*   what use is the spec itself making of symbols?
-    *   they are the __magic__ method names of JS
-        (though in some cases like .next(), the spec just uses a string)
-    *   Symbol.iterator is the big one, but each use is totally unique and off-the-wall
-    *   you probably won't use these, but let's take a look
-    *   @@toPrimitive is a method now
-    *   @@hasInstance too
-    *   @@unscopables, to prevent invalidating old bad code
-    *   @@split, @@search etc. duck-typing for regexp workalikes!!!
-    *   @@isConcatSpreadable???
-* conclusion
-    *   symbols are weird
-    *   they enable the standard committee to add new extension points to the language
-        without any risk that old code could accidentally trigger them
-    *   i implemented them in Firefox, so if they ever behave like cymbals, you know who to talk to
-    *   you can use them in...
-* next week
+<p>Symbols are implemented in Firefox 36 and Chrome 38. I implemented them for Firefox myself, so if your symbols ever act like cymbals, you’ll know who to talk to.</p>
+
+<p>To support browsers that do not yet have native support for ES6 symbols, you can use a polyfill, such as <a href="https://github.com/zloirock/core-js#ecmascript-6-symbols" target="_blank">core.js</a>. Since symbols are not exactly like anything previously in the language, the polyfill isn’t perfect. <a href="https://github.com/zloirock/core-js#caveats-when-using-symbol-polyfill" target="_blank">Read the caveats.</a></p>
+
+<p>Next week, we’ll have <em>two</em> new posts. First, we’ll cover some long-awaited features that are finally coming to JavaScript in ES6—and complain about them. We’ll start with two features that date back almost to the dawn of programming. We’ll continue with two features that are very similar, but <em>powered by ephemerons.</em>  So please join us next week as we look at ES6 collections in depth.</p>
+
+<p><em>And,</em> stick around for a bonus post by Gastón Silva on a topic that isn’t an ES6 feature at all, but might provide the nudge you need to start using ES6 in your own projects. See you then!</p>
