@@ -1,6 +1,6 @@
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p>Yesterday, the ES6 specification, officially titled <i>ECMA-262, 6th Edition, ECMAScript 2015 Language Specification</i>, cleared the final hurdle and was approved as an Ecma standard. Congratulations to TC39 and everyone who contributed. <strong>ES6 is in the books!</strong></p>
+<p>Earlier this week, the ES6 specification, officially titled <i>ECMA-262, 6th Edition, ECMAScript 2015 Language Specification</i>, cleared the final hurdle and was approved as an Ecma standard. Congratulations to TC39 and everyone who contributed. ES6 is in the books!</p>
 
 <p>Even better news: it will not be six more years before the next update. The standard committee now aims to produce a new edition roughly every 12 months. <a href="https://github.com/tc39/ecma262">Proposals for the 7th Edition</a> are already in development.</p>
 
@@ -17,16 +17,16 @@
 
 <p>How this influenced the final design is an interesting story. But we're not here to talk about modules.</p>
 
-<p>This post is about what the ES6 standard calls "keyed collections": <code>Set</code>, <code>Map</code>, and their weak variants. These features are, in most respects, just like the <a href="https://en.wikipedia.org/wiki/Hash_table">hash tables</a> in other languages. But the standard committee made some interesting tradeoffs along the way, because JS is different.</p>
+<p>This post is about what the ES6 standard calls "keyed collections": <code>Set</code>, <code>Map</code>, <code>WeakSet</code>, and <code>WeakMap</code>. These features are, in most respects, just like the <a href="https://en.wikipedia.org/wiki/Hash_table">hash tables</a> in other languages. But the standard committee made some interesting tradeoffs along the way, because JS is different.</p>
 
 
 <h3>Why collections?</h3>
 
-<p>Anyone familiar with the JS language knows that there's already something like a hash table built into the language: objects.</p>
+<p>Anyone familiar with JS knows that there's already something like a hash table built into the language: objects.</p>
 
-<p>A plain object, after all, is pretty much nothing but an open-ended collection of key-value pairs. You can get, set, and delete properties, iterate over them—all the things a hash table can do. So why add a new feature at all?</p>
+<p>A plain <code>Object</code>, after all, is pretty much nothing but an open-ended collection of key-value pairs. You can get, set, and delete properties, iterate over them—all the things a hash table can do. So why add a new feature at all?</p>
 
-<p>Well, many programs do use plain <code>Object</code>s to store key-value pairs, and for programs where this works well, there is no particular reason to switch to <code>Map</code> or <code>Set</code>. Still, there are some well-known issues with using objects this way:</p>
+<p>Well, many programs do use plain objects to store key-value pairs, and for programs where this works well, there is no particular reason to switch to <code>Map</code> or <code>Set</code>. Still, there are some well-known issues with using objects this way:</p>
 
 <ul>
   <li><p>Objects being used as lookup tables can't also have methods, without some risk of collision.</p></li>
@@ -38,7 +38,7 @@
   <li><p>There's no efficient way to ask how many properties an object has.</p></li>
 </ul>
 
-<p>ES6 added a new concern: plain objects are not <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">iterable</a>, so they will not cooperate with the <code>for</code>-<code>of</code> loop, the <code>...</code> operator, and so on.</p>
+<p>ES6 adds a new concern: plain objects are not <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">iterable</a>, so they will not cooperate with the <code>for</code>-<code>of</code> loop, the <code>...</code> operator, and so on.</p>
 
 <p>Again, there are plenty of programs where none of that really matters, and a plain object will continue to be the right choice. <code>Map</code> and <code>Set</code> are for the other cases.</p>
 
@@ -119,12 +119,12 @@ for (let value of set)
 
 <p>Of all these features, the constructor <code>new Set(iterable)</code> stands out as a powerhouse, because it operates at the level of whole data structures. You can use it to convert an array to a set, eliminating duplicate values with a single line of code. Or, pass it a generator: it will run the generator to completion and collect the yielded values into a set. This constructor is also how you copy an existing <code>Set</code>.</p>
 
-<p>I promised last week to complain about the new collections in ES6, and I'll start here.  :)  As nice as <code>Set</code> is, there are some missing methods that would make nice additions to a future standard:</p>
+<p>I promised last week to complain about the new collections in ES6. I'll start here. As nice as <code>Set</code> is, there are some missing methods that would make nice additions to a future standard:</p>
 
 <ul>
   <li><p>Functional helpers that are already present on arrays, like <code>.map()</code>, <code>.filter()</code>, <code>.some()</code>, and <code>.every()</code>.</p></li>
 
-  <li><p>The common mathematical operations on sets, like <code>set1.union(set2)</code> and <code>set1.intersection(set2)</code>.</p></li>
+  <li><p>Non-mutating <code>set1.union(set2)</code> and <code>set1.intersection(set2)</code>.</p></li>
 
   <li><p>Methods that can operate on many values at once: <code>set.addAll(iterable)</code>, <code>set.removeAll(iterable)</code>, and <code>set.hasAll(iterable)</code>.</p></li>
 </ul>
@@ -156,6 +156,15 @@ for (let value of set)
 
   <li><p><code>map[Symbol.iterator]()</code> returns an iterator over the entries in the map. The iterator represents each entry as a new <code>[key, value]</code> array.</p></li>
 
+  <li><p><code>map.forEach(f)</code> works like this:
+
+<code class="js"><pre>
+for (let [key, value] of map)
+  f(value, key, map);
+</pre></code>
+
+    <p>The odd argument order is, again, by analogy to <code>Array.prototype.forEach()</code>.</p>
+
   <li><p><code>map.keys()</code> returns an iterator over all the keys in the map.</p></li>
 
   <li><p><code>map.values()</code> returns an iterator over all the values in the map.</p></li>
@@ -164,17 +173,17 @@ for (let value of set)
 
 </ul>
 
-<p>What is there to complain about here? Once again, <code>Map</code> is a minimum viable data structure. Here are three features <em>not</em> present in ES6 that I think would be useful:</p>
+<p>What is there to complain about? Here are some features <em>not</em> present in ES6 that I think would be useful:</p>
 
 <ul>
-  <li><p>A facility for default values, like Python's <code>collections.defaultdict</code>.</p></li>
+  <li><p>A facility for default values, like Python's <a href="https://docs.python.org/3/library/collections.html#defaultdict-examples"><code>collections.defaultdict</code></a>.</p></li>
 
   <li><p>A helper function, <code>Map.fromObject(obj)</code>, to make it easy to write maps using object-literal syntax.</p></li>
 </ul>
 
 <p>Again, these features are easy to add.</p>
 
-<p>OK. Remember how I started this article with a bit about how unique concerns about running in the browser affect the design of JS language features? This is where we talk about that. There are three big examples.</p>
+<p>OK. Remember how I started this article with a bit about how unique concerns about running in the browser affect the design of JS language features? This is where we start to talk about that. I've got three examples. Here are the first two.</p>
 
 
 <h3>JS is different, part 1: Hash tables without hash codes?</h3>
@@ -199,7 +208,7 @@ alert(urls.size);  // 2
 
 <h3>JS is different, part 2: Surprise! Predictability!</h3>
 
-<p>You would think that deterministic behavior from a computer could hardly be surprising. But a lot of people are surprised when I tell them that <code>Map</code> and <code>Set</code> iteration visits entries in the order they were inserted into the table. It's deterministic.</p>
+<p>You would think that deterministic behavior from a computer could hardly be surprising. But people are often surprised when I tell them that <code>Map</code> and <code>Set</code> iteration visits entries in the order they were inserted into the collection. It's deterministic.</p>
 
 <p>We're used to certain aspects of hash tables being arbitrary. We've learned to accept it. But there are good reasons to try to avoid arbitrariness. As I wrote in 2012:</p>
 
@@ -217,13 +226,12 @@ alert(urls.size);  // 2
 
 <p>When all this was being discussed back in February 2012, I <a href="https://mail.mozilla.org/pipermail/es-discuss/2012-February/020541.html">argued in favor of arbitrary iteration order</a>. Then I set out to show by experiment that keeping track insertion order would make a hash table too slow. I wrote a handful of C++ microbenchmarks. <a href="https://wiki.mozilla.org/User:Jorend/Deterministic_hash_tables">The results surprised me.</a></p>
 
-<p>And that's how we ended up with hash tables that track iteration order in JS.</p>
-
+<p>And that's how we ended up with hash tables that track insertion order in JS!</p>
 
 
 <h3>WeakMap and WeakSet</h3>
 
-<p>Last week, we discussed an example involving a JS animation library. We wanted to store a boolean flag for every DOM object, like this:</p>
+<p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-symbols/">Last week,</a> we discussed an example involving a JS animation library. We wanted to store a boolean flag for every DOM object, like this:</p>
 
 <code class="js"><pre>
 if (element.isMoving) {
@@ -245,8 +253,8 @@ movingSet.add(element);
 
 <p>There is only one drawback: <code>Map</code> and <code>Set</code> objects keep a strong reference to every key and value they contain. This means that if a DOM element is removed from the document and dropped, garbage collection can't recover that memory until that element is removed from <code>movingSet</code> as well. Libraries typically have mixed success, at best, in imposing complex clean-up-after-yourself requirements on their users. So this could lead to memory leaks.</p>
 
-<p>ES6 offers a weird fix for this. Make <code>movingSet</code> a <code>WeakSet</code> rather than a <code>Set</code>.</p>
-
+<p>ES6 offers a surprising fix for this. Make <code>movingSet</code> a <code>WeakSet</code> rather than a <code>Set</code>.</p>
+???
 <p>A <code>WeakSet</code> is much like a <code>Set</code>, but 
 
 
@@ -262,10 +270,10 @@ movingSet.add(element);
 </ul>
 
 <p>There's another restriction, too: the values stored in a <code>WeakSet</code> and the keys stored in a <code>WeakMap</code> must be  Why would anyone 
+???
 
 
-
-
+<h3>JS is different, part 3: GC nondeterminism</h3>
 
 
 * WeakMap and WeakSet
@@ -274,19 +282,10 @@ movingSet.add(element);
     * tradeoffs vs. symbols
 
 
+<h3>When can I use collections in my code?</h3>
+
+<p>All four collection classes are currently shipping in Firefox, Chrome, Microsoft Edge, and Safari. To support older browsers, use a polyfill, like <a href="https://github.com/WebReflection/es6-collections">es6-collections</a>.</p>
+
+<p><code>WeakMap</code> was first implemented in Firefox by Andreas Gal, who went on to a stint as Mozilla's CTO. Tom Schuster implemented <code>WeakSet</code>. I implemented <code>Map</code> and <code>Set</code>. Thanks to Tooru Fujisawa for contributing several patches in this area.</p>
+
 <p>Next week, ES6 In Depth starts a two-week summer break. This series has covered a lot of ground, but some of ES6's most powerful features are yet to come. So please join us when we return with new content on July 9.</p>
-
-
-
-
-
-
-
-
-<p>These collection classes were designed under three interesting constraints that aim at improving interoperability and security:</p>
-
-<ul>
-  <li>Hash codes are not exposed to scripts.</li>
-  <li>Iteration happens in a deterministic order.</li>
-  <li>GC nondeterminism is not exposed to scripts.</li>
-</ul>
