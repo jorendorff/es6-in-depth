@@ -218,15 +218,15 @@ for (var value of produceValues()) {
 
 <p>So far, the conversations we've seen between a generator and its user have been pretty one-sided. To break with the theater analogy for a second:</p>
 
-<img src="images/generator-messages-small.png" alt="(fake screenshot of iPhone text messages between a generator and its user, with the user just saying 'next' repeatedly and the generator replying with values)">
+<a href="https://hacks.mozilla.org/files/2015/07/generator-messages-small.png"><img src="https://hacks.mozilla.org/files/2015/07/generator-messages-small-250x375.png" alt="(A fake screenshot of iPhone text messages between a generator and its user, with the user just saying 'next' repeatedly and the generator replying with values.)" width="250" height="375" class="alignnone size-medium wp-image-29032" /></a>
 
 <p>The user is in charge. The generator does its work on demand. But this isn't the only way to program with generators.</p>
 
-<p>In part 1, I said that generators could be used for asynchronous programming. Things you currently do with asynchronous callbacks or promise chaining could be done with generators instead. You may have wondered how exactly that is supposed to work. Why is the ability to yield (which after all is a generator's only special power) sufficient? After all, asynchronous code doesn't just yield. They <em>make stuff happen.</em> They call for data from files and databases. They fire off requests to other servers. And then they return to the event loop to wait for those asynchronous processes to finish. How do generators do this? And without callbacks, how does the generator receive data from those files and databases and servers when it comes in?</p>
+<p>In part 1, I said that generators could be used for asynchronous programming. Things you currently do with asynchronous callbacks or promise chaining could be done with generators instead. You may have wondered how exactly that is supposed to work. Why is the ability to yield (which after all is a generator's only special power) sufficient? After all, asynchronous code doesn't just yield. It <em>makes stuff happen.</em> It calls for data from files and databases. It fires off requests to servers. And then it returns to the event loop to wait for those asynchronous processes to finish. How exactly will generators do this? And without callbacks, how does the generator receive data from those files and databases and servers when it comes in?</p>
 
-<p>The only feature we are really missing is a way for the <code>.next()</code> caller to pass a value back to the generator. With just this one change, we could have a whole new kind of conversation:</p>
+<p>To start working toward the answer, consider what would happen if we just had a way for the <code>.next()</code> caller to pass a value back into the generator. With just this one change, we could have a whole new kind of conversation:</p>
 
-<img src="images/generator-messages-2-small.png" alt="(fake screenshot of iPhone text messages between a generator and its caller; each value the generator yields is an imperious demand, and the caller passes whatever the generator wants as an argument the next time it calls .next().)">
+<a href="https://hacks.mozilla.org/files/2015/07/generator-messages-2-small.png"><img src="https://hacks.mozilla.org/files/2015/07/generator-messages-2-small-250x375.png" alt="(A fake screenshot of iPhone text messages between a generator and its caller; each value the generator yields is an imperious demand, and the caller passes whatever the generator wants as an argument the next time it calls .next().)" width="250" height="375" class="alignnone size-medium wp-image-29031" /></a>
 
 <p>And a generator's <code>.next()</code> method does in fact take an optional argument, and the clever bit is that the argument then appears to the generator as the value returned by the <code>yield</code> expression. That is, <code>yield</code> isn't a statement like <code>return</code>; it's an expression that has a value, once the generator resumes.</p>
 
@@ -337,8 +337,6 @@ function* concat(iter1, iter2) {
 }
 </code></pre>
 
-<p>(For readers interested in minutiae: there is one difference between the two. In the <code>for</code>-<code>of</code> loops, <code>iter1</code> and <code>iter2</code> can't catch and suppress errors thrown by calling <code>.throw()</code> on the <code>concat</code> generator. In the example with <code>yield*</code>, they can.)</p>
-
 <p>A plain <code>yield</code> expression yields a single value; a <code>yield*</code> expression consumes an entire iterator and yields <em>all</em> values.</p>
 
 <p>The same syntax also solves another funny problem: the problem of how to call a generator from within a generator. In ordinary functions, we can scoop up a bunch of code from one function and refactor it into a separate function, without changing behavior. Obviously we'll want to refactor generators too. But we'll need a way to call the factored-out subroutine and make sure that every value we were yielding before is still yielded, even though it's a subroutine that's producing those values now. <code>yield*</code> is the way to do that.</p>
@@ -360,4 +358,4 @@ function* refactoredFunction() {
 
 <p>Well, that's it for generators! I hope you enjoyed <em>that</em> as much as I did, too. It's good to be back.</p>
 
-<p>Next week, we'll talk about yet another mindblowing feature that's totally new in ES6, a new kind of object so subtle you may end up using one without even knowing it's there. Please join us next week for a look at ES6 proxies in depth.</p>
+<p>Next week, we'll talk about yet another mindblowing feature that's totally new in ES6, a new kind of object so subtle, so tricky, that you may end up using one without even knowing it's there. Please join us next week for a look at ES6 proxies in depth.</p>
