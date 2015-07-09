@@ -2,7 +2,7 @@
 
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p>Welcome back to ES6 In Depth! I hope you had as much fun as I did during our summer break. But the life of a programmer cannot be all fireworks and lemonade. It's time to pick up where we left off—and I've got the perfect topic to resume with.</p>
+<p>Welcome back to ES6 In Depth! I hope you had as much fun as I did during our summer break. But the life of a programmer cannot be all fireworks and lemonade. It’s time to pick up where we left off—and I’ve got the perfect topic to resume with.</p>
 
 <p>Back in May, I wrote about generators, a new kind of function introduced in ES6. I called them the most magical feature in ES6. I talked about how they might be the future of asynchronous programming. And then I wrote this:</p>
 
@@ -12,14 +12,14 @@
 
 <p>Now is the time.</p>
 
-<p><a title="ES6 In Depth: Generators" href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">You can find part 1 of this article here.</a> It's probably best to read that before reading this. Go on, it's fun. It's... a little long and bewildering. But there's a talking cat!</p>
+<p><a title="ES6 In Depth: Generators" href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/" target="_blank">You can find part 1 of this article here.</a> It’s probably best to read that before reading this. Go on, it’s fun. It’s... a little long and bewildering. But there’s a talking cat!</p>
 
 
 <h3>A quick revue</h3>
 
-<p>Last time, we focused on the basic behavior of generators. It's a little <em>strange</em>, perhaps, but not hard to understand. A generator-function is a lot like a regular function. The main difference is that the body of a generator-function doesn't run all at once. It runs a little bit at a time, pausing each time execution reaches a <code>yield</code> expression.</p>
+<p>Last time, we focused on the basic behavior of generators. It’s a little <em>strange</em>, perhaps, but not hard to understand. A generator-function is a lot like a regular function. The main difference is that the body of a generator-function doesn’t run all at once. It runs a little bit at a time, pausing each time execution reaches a <code>yield</code> expression.</p>
 
-<p>There's a detailed explanation in <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">part 1</a>, but we never did a thorough worked example of how all the parts come together. Let's do that now.</p>
+<p>There’s a detailed explanation in <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/" target="_blank">part 1</a>, but we never did a thorough worked example of how all the parts come together. Let’s do that now.</p>
 
 <code class="js"><pre>
 function* someWords() {
@@ -138,25 +138,25 @@ After a while, the GARBAGE COLLECTOR enters, picks up the
 lifeless GENERATOR, and carries it offstage.
 </pre>
 
-<p>All right—it's not exactly <i>Hamlet</i>. But you get the picture.</p>
+<p>All right—it’s not exactly <i>Hamlet</i>. But you get the picture.</p>
 
 <p>As you can see in the play, when a generator object first appears, it is paused. It wakes up and runs for a bit each time its <code>.next()</code> method is called.</p>
 
-<p>The action is synchronous and single-threaded. Note that only one of these characters is actually doing anything at any given time. The characters never interrupt each other or talk over one another. They take turns speaking, and whoever's talking can go on as long as they want. (Just like Shakespeare!)</p>
+<p>The action is synchronous and single-threaded. Note that only one of these characters is actually doing anything at any given time. The characters never interrupt each other or talk over one another. They take turns speaking, and whoever’s talking can go on as long as they want. (Just like Shakespeare!)</p>
 
-<p>And some version of this drama unfolds each time a generator is fed to a <code>for</code>-<code>of</code> loop. There is always this sequence of <code>.next()</code> method calls that do not appear anywhere in your code. Here I've put it all onstage, but for you and your programs, all this will happen behind the scenes, because generators and the <code>for</code>-<code>of</code> loop were designed to work together, via <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-iterator-interface">the iterator interface</a>.</p>
+<p>And some version of this drama unfolds each time a generator is fed to a <code>for</code>-<code>of</code> loop. There is always this sequence of <code>.next()</code> method calls that do not appear anywhere in your code. Here I’ve put it all onstage, but for you and your programs, all this will happen behind the scenes, because generators and the <code>for</code>-<code>of</code> loop were designed to work together, via <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-iterator-interface" target="_blank">the iterator interface</a>.</p>
 
 <p>So to summarize everything up to this point:</p>
 
 <ul>
   <li>Generator objects are polite brass robots that yield values.</li>
-  <li>Each robot's programming consists of a single chunk of code: the body of the generator function that created it.</li>
+  <li>Each robot’s programming consists of a single chunk of code: the body of the generator function that created it.</li>
 </ul>
 
 
 <h3>How to shut down a generator</h3>
 
-<p>Generators have several fiddly extra features that I didn't cover in part 1:</p>
+<p>Generators have several fiddly extra features that I didn’t cover in part 1:</p>
 
 <ul>
 <li><code>generator.return()</code></li>
@@ -165,9 +165,9 @@ lifeless GENERATOR, and carries it offstage.
 <li><code>yield*</code></li>
 </ul>
 
-<p>I skipped them mainly because without understanding <em>why</em> those features exist, it's hard to care about them, much less keep them all straight in your head. But as we think more about how our programs will use generators, we'll see the reasons.</p>
+<p>I skipped them mainly because without understanding <em>why</em> those features exist, it’s hard to care about them, much less keep them all straight in your head. But as we think more about how our programs will use generators, we’ll see the reasons.</p>
 
-<p>Here's a pattern you've probably used at some point:</p>
+<p>Here’s a pattern you’ve probably used at some point:</p>
 
 <code class="js"><pre>
 function doThings() {
@@ -182,7 +182,7 @@ function doThings() {
 doThings();
 </pre></code>
 
-<p>The cleanup might involve closing connections or files, freeing system resources, or just updating the DOM to turn off an "in progress" spinner. We want this to happen whether our work finishes successfully or not, so it goes in a <code>finally</code> block.</p>
+<p>The cleanup might involve closing connections or files, freeing system resources, or just updating the DOM to turn off an “in progress” spinner. We want this to happen whether our work finishes successfully or not, so it goes in a <code>finally</code> block.</p>
 
 <p>How would this look in a generator?</p>
 
@@ -201,13 +201,13 @@ for (var value of produceValues()) {
 }
 </pre></code>
 
-<p>This looks all right. But there is a subtle issue here: the call <code>work(value)</code> isn't inside the <code>try</code> block. If it throws an exception, what happens to our cleanup step?</p>
+<p>This looks all right. But there is a subtle issue here: the call <code>work(value)</code> isn’t inside the <code>try</code> block. If it throws an exception, what happens to our cleanup step?</p>
 
 <p>Or suppose the <code>for</code>-<code>of</code> loop contains a <code>break</code> or <code>return</code> statement. What happens to the cleanup step then?</p>
 
 <p>It executes anyway. ES6 has your back.</p>
 
-<p>When we first discussed <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">iterators and the <code>for</code>-<code>of</code> loop</a>, we said the iterator interface contains an optional <code>.return()</code> method which the language automatically calls whenever iteration exits before the iterator says it's done. Generators support this method. Calling <code>myGenerator.return()</code> causes the generator to run any <code>finally</code> blocks and then exit, just as if the current <code>yield</code> point had been mysteriously transformed into a <code>return</code> statement.</p>
+<p>When we first discussed <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">iterators and the <code>for</code>-<code>of</code> loop</a>, we said the iterator interface contains an optional <code>.return()</code> method which the language automatically calls whenever iteration exits before the iterator says it’s done. Generators support this method. Calling <code>myGenerator.return()</code> causes the generator to run any <code>finally</code> blocks and then exit, just as if the current <code>yield</code> point had been mysteriously transformed into a <code>return</code> statement.</p>
 
 <p>Note that the <code>.return()</code> is not called automatically by the language in <em>all</em> contexts, only in cases where the language uses the iteration protocol. So it is possible for a generator to be garbage collected without ever running its <code>finally</code> block.</p>
 
@@ -216,19 +216,19 @@ for (var value of produceValues()) {
 
 <h3>Generators in charge</h3>
 
-<p>So far, the conversations we've seen between a generator and its user have been pretty one-sided. To break with the theater analogy for a second:</p>
+<p>So far, the conversations we’ve seen between a generator and its user have been pretty one-sided. To break with the theater analogy for a second:</p>
 
 <a href="https://hacks.mozilla.org/files/2015/07/generator-messages-small.png"><img src="https://hacks.mozilla.org/files/2015/07/generator-messages-small-250x375.png" alt="(A fake screenshot of iPhone text messages between a generator and its user, with the user just saying 'next' repeatedly and the generator replying with values.)" width="250" height="375" class="alignnone size-medium wp-image-29032" /></a>
 
-<p>The user is in charge. The generator does its work on demand. But this isn't the only way to program with generators.</p>
+<p>The user is in charge. The generator does its work on demand. But this isn’t the only way to program with generators.</p>
 
-<p>In part 1, I said that generators could be used for asynchronous programming. Things you currently do with asynchronous callbacks or promise chaining could be done with generators instead. You may have wondered how exactly that is supposed to work. Why is the ability to yield (which after all is a generator's only special power) sufficient? After all, asynchronous code doesn't just yield. It <em>makes stuff happen.</em> It calls for data from files and databases. It fires off requests to servers. And then it returns to the event loop to wait for those asynchronous processes to finish. How exactly will generators do this? And without callbacks, how does the generator receive data from those files and databases and servers when it comes in?</p>
+<p>In part 1, I said that generators could be used for asynchronous programming. Things you currently do with asynchronous callbacks or promise chaining could be done with generators instead. You may have wondered how exactly that is supposed to work. Why is the ability to yield (which after all is a generator’s only special power) sufficient? After all, asynchronous code doesn’t just yield. It <em>makes stuff happen.</em> It calls for data from files and databases. It fires off requests to servers. And then it returns to the event loop to wait for those asynchronous processes to finish. How exactly will generators do this? And without callbacks, how does the generator receive data from those files and databases and servers when it comes in?</p>
 
 <p>To start working toward the answer, consider what would happen if we just had a way for the <code>.next()</code> caller to pass a value back into the generator. With just this one change, we could have a whole new kind of conversation:</p>
 
 <a href="https://hacks.mozilla.org/files/2015/07/generator-messages-2-small.png"><img src="https://hacks.mozilla.org/files/2015/07/generator-messages-2-small-250x375.png" alt="(A fake screenshot of iPhone text messages between a generator and its caller; each value the generator yields is an imperious demand, and the caller passes whatever the generator wants as an argument the next time it calls .next().)" width="250" height="375" class="alignnone size-medium wp-image-29031" /></a>
 
-<p>And a generator's <code>.next()</code> method does in fact take an optional argument, and the clever bit is that the argument then appears to the generator as the value returned by the <code>yield</code> expression. That is, <code>yield</code> isn't a statement like <code>return</code>; it's an expression that has a value, once the generator resumes.</p>
+<p>And a generator’s <code>.next()</code> method does in fact take an optional argument, and the clever bit is that the argument then appears to the generator as the value returned by the <code>yield</code> expression. That is, <code>yield</code> isn’t a statement like <code>return</code>; it’s an expression that has a value, once the generator resumes.</p>
 
 <pre>
   var results = yield getDataAndLatte(request.areaCode);
@@ -237,13 +237,13 @@ for (var value of produceValues()) {
 This does a lot of things for a single line of code:
 
 <ul>
-  <li>It calls <code>getDataAndLatte()</code>. Let's say that function returns the string <code>"get me the database records for area code..."</code> that we saw in the screenshot.</li>
+  <li>It calls <code>getDataAndLatte()</code>. Let’s say that function returns the string <code>"get me the database records for area code..."</code> that we saw in the screenshot.</li>
   <li>It pauses the generator, yielding the string value.</li>
   <li>At this point, any amount of time could pass.</li>
   <li>Eventually, someone calls <code>.next({data: ..., coffee: ...})</code>. We store that object in the local variable <code>results</code> and continue on the next line of code.</li>
 </ul>
 
-<p>To show that in context, here's code for the entire conversation shown above:</p>
+<p>To show that in context, here’s code for the entire conversation shown above:</p>
 
 <code class="js"><pre>
 function* handle(request) {
@@ -256,9 +256,9 @@ function* handle(request) {
 
 <p>Note how <code>yield</code> still just means exactly what it meant before: pause the generator and pass a value back to the caller. But how things have changed! This generator expects very specific supportive behavior from its caller. It seems to expect the caller to act like an administrative assistant.</p>
 
-<p>Ordinary functions are not usually like that. They tend to exist to serve their caller's needs. But generators are code you can have a conversation with, and that makes for a wider range of possible relationships between generators and their callers.</p>
+<p>Ordinary functions are not usually like that. They tend to exist to serve their caller’s needs. But generators are code you can have a conversation with, and that makes for a wider range of possible relationships between generators and their callers.</p>
 
-<p>What might this administrative assistant generator-runner look like? It doesn't have to be all that complicated. It might look like this.</p>
+<p>What might this administrative assistant generator-runner look like? It doesn’t have to be all that complicated. It might look like this.</p>
 
 <code class="js"><pre>
 function runGeneratorOnce(g, result) {
@@ -283,14 +283,14 @@ function runGeneratorOnce(g, result) {
 
 <p>In May, I mentioned <code>Q.async()</code> as an example of a library that treats generators as asynchronous processes and automatically runs them as needed. <code>runGeneratorOnce</code> is that sort of thing. In practice, generator will not yield strings spelling out what they need the caller to do. They will probably yield Promise objects.</p>
 
-<p>If you already understand promises, and now you understand generators, you might want to try modifying <code>runGeneratorOnce</code> to support promises. It's a difficult exercise, but once you're done, you'll be able to write complex asynchronous algorithms using promises as straight-line code, not a <code>.then()</code> or a callback in sight.</p>
+<p>If you already understand promises, and now you understand generators, you might want to try modifying <code>runGeneratorOnce</code> to support promises. It’s a difficult exercise, but once you’re done, you’ll be able to write complex asynchronous algorithms using promises as straight-line code, not a <code>.then()</code> or a callback in sight.</p>
 
 
 <h3>How to blow up a generator</h3>
 
 <p>Did you notice how <code>runGeneratorOnce</code> handles errors? It ignores them!</p>
 
-<p>Well, that's not good. We would really like to report the error to the generator somehow. And generators support this too: you can call <code>generator.throw(error)</code> rather than <code>generator.next(result)</code>. This causes the <code>yield</code> expression to throw. Like <code>.return()</code>, the generator will typically be killed, but if the current yield point is in a <code>try</code> block, then <code>catch</code> and <code>finally</code> blocks are honored, so the generator may recover.</p>
+<p>Well, that’s not good. We would really like to report the error to the generator somehow. And generators support this too: you can call <code>generator.throw(error)</code> rather than <code>generator.next(result)</code>. This causes the <code>yield</code> expression to throw. Like <code>.return()</code>, the generator will typically be killed, but if the current yield point is in a <code>try</code> block, then <code>catch</code> and <code>finally</code> blocks are honored, so the generator may recover.</p>
 
 <p>Modifying <code>runGeneratorOnce</code> to make sure <code>.throw()</code> gets called appropriately is another great exercise. Keep in mind that exceptions thrown inside generators are always propagated to the caller. So <code>generator.throw(error)</code> will throw <code>error</code> right back at you unless the generator catches it!</p>
 
@@ -304,20 +304,20 @@ function runGeneratorOnce(g, result) {
 
 <li>Someone may call <code>generator.throw(error)</code>. The generator behaves as if the <code>yield</code> expression were a call to a function that threw <code>error</code>.</li>
 
-<li>Or, maybe nobody will do any of those things. The generator might stay frozen forever. (Yes, it is possible for a generator to enter a <code>try</code> block and simply <em>never</em> execute the <code>finally</code> block. A generator can even be reclaimed by the garbage collecter while it's in this state.)</li>
+<li>Or, maybe nobody will do any of those things. The generator might stay frozen forever. (Yes, it is possible for a generator to enter a <code>try</code> block and simply <em>never</em> execute the <code>finally</code> block. A generator can even be reclaimed by the garbage collector while it’s in this state.)</li>
 
 </ul>
 
 <p>This is not much more complicated than a plain old function call. Only <code>.return()</code> is really a new possibility.</p>
 
-<p>In fact, <code>yield</code> has a lot in common with function calls. When you call a function, you're temporarily paused, right? The function you called is in control. It might return. It might throw. Or it might just loop forever.</p>
+<p>In fact, <code>yield</code> has a lot in common with function calls. When you call a function, you’re temporarily paused, right? The function you called is in control. It might return. It might throw. Or it might just loop forever.</p>
 
 
 <h3>Generators working together</h3>
 
 <p>Let me show off one more feature. Suppose we write a simple generator-function to concatenate two iterable objects:
 
-<code><pre>
+<code class="js"><pre>
 function* concat(iter1, iter2) {
   for (var value of iter1) {
     yield value;
@@ -330,7 +330,7 @@ function* concat(iter1, iter2) {
 
 <p>ES6 provides a shorthand for this:</p>
 
-<code><pre>
+<code class="js"><pre>
 function* concat(iter1, iter2) {
   yield* iter1;
   yield* iter2;
@@ -339,9 +339,9 @@ function* concat(iter1, iter2) {
 
 <p>A plain <code>yield</code> expression yields a single value; a <code>yield*</code> expression consumes an entire iterator and yields <em>all</em> values.</p>
 
-<p>The same syntax also solves another funny problem: the problem of how to call a generator from within a generator. In ordinary functions, we can scoop up a bunch of code from one function and refactor it into a separate function, without changing behavior. Obviously we'll want to refactor generators too. But we'll need a way to call the factored-out subroutine and make sure that every value we were yielding before is still yielded, even though it's a subroutine that's producing those values now. <code>yield*</code> is the way to do that.</p>
+<p>The same syntax also solves another funny problem: the problem of how to call a generator from within a generator. In ordinary functions, we can scoop up a bunch of code from one function and refactor it into a separate function, without changing behavior. Obviously we’ll want to refactor generators too. But we’ll need a way to call the factored-out subroutine and make sure that every value we were yielding before is still yielded, even though it’s a subroutine that’s producing those values now. <code>yield*</code> is the way to do that.</p>
 
-<code><pre>
+<code class="js"><pre>
 function* factoredOutChunkOfCode() { ... }
 
 function* refactoredFunction() {
@@ -354,8 +354,8 @@ function* refactoredFunction() {
 <p>Think of one brass robot delegating subtasks to another. You can see how important this idea is for writing large generator-based projects and keeping the code clean and organized, just as functions are crucial for organizing synchronous code.</p>
 
 
-<h3>Finis</h3>
+<h3>Exeunt</h3>
 
-<p>Well, that's it for generators! I hope you enjoyed <em>that</em> as much as I did, too. It's good to be back.</p>
+<p>Well, that’s it for generators! I hope you enjoyed <em>that</em> as much as I did, too. It’s good to be back.</p>
 
-<p>Next week, we'll talk about yet another mindblowing feature that's totally new in ES6, a new kind of object so subtle, so tricky, that you may end up using one without even knowing it's there. Please join us next week for a look at ES6 proxies in depth.</p>
+<p>Next week, we’ll talk about yet another mind-blowing feature that’s totally new in ES6, a new kind of object so subtle, so tricky, that you may end up using one without even knowing it’s there. Please join us next week for a look at ES6 proxies in depth.</p>
