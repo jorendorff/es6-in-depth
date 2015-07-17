@@ -69,11 +69,11 @@ var obj = new Proxy({}, {
 
 <p>By "outline", I mean an API boundary. An interface. Interfaces specify how two bits of code interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You know you can replace either side, and the other side won't care.</p>
 
-<p>It's when there's <em>not</em> an existing interface that you have to get creative. Several of my all-time favorite hacks have involved drawing an API boundary where previously there was none, and bringing that interface into existence via a prodigious engineering effort.</p>
+<p>It's when there's <em>not</em> an existing interface that you have to get creative. Some of the coolest software hacks of all time have involved drawing an API boundary where previously there was none, and bringing that interface into existence via a prodigious engineering effort.</p>
 
 <p><a href="https://en.wikipedia.org/wiki/Virtual_memory">Virtual memory</a>, <a href="https://en.wikipedia.org/wiki/Hardware_virtualization">Hardware virtualization</a>, <a href="https://en.wikipedia.org/wiki/Docker_%28software%29">Docker</a>, <a href="http://valgrind.org/">Valgrind</a>, <a href="http://rr-project.org/">rr</a>—to various degrees all of these projects involved driving new and rather unexpected interfaces into existing systems. In some cases, it took years and new operating system features and even new hardware to make the new boundary work well.</p>
 
-<p>The best virtualization hacks bring with them a new understanding of whatever's being virtualized. To write an API for something, you have to understand it. Once you understand it, you can do amazing things.</p>
+<p>The best virtualization hacks bring with them a new understanding of whatever's being virtualized. To write an API for something, you have to understand it. Once you understand, you can do amazing things.</p>
 
 <p>ES6 introduces virtualization support for JavaScript's most fundamental concept: the object.</p>
 
@@ -83,7 +83,7 @@ var obj = new Proxy({}, {
 <p>No, really. Take a moment. Think it over.</p>
 
 <figure>
-  <img src="images/thinker.jpg">
+  <a href="https://hacks.mozilla.org/files/2015/07/thinker.jpg"><img src="https://hacks.mozilla.org/files/2015/07/thinker-500x274.jpg" alt="(picture of Auguste Rodin's sculpture, The Thinker)" width="500" height="274" class="alignnone size-large wp-image-29063" /></a>
   <figcaption><a href="https://www.flickr.com/photos/mustangjoe/5966894496/">Photo credit: Joe deSousa.</a></figcaption>
 </figure>
 
@@ -254,8 +254,8 @@ var proxy = new Proxy(target, handler);
 <p>Until now, there's no way it <em>could</em> work. But with proxies this is only a few lines of code. We just need to tap into <var>tree</var>.[[Get]](). If you like a challenge, you might want to try implementing this yourself before reading on.</p>
 
 <figure>
-<img src="images/maple-tap.jpg">
-<figcaption style="font-style: italic">Not the right way to tap into a tree in JS. <a href="https://www.flickr.com/photos/chiotsrun/5446345665/">Photo credit: Chiot's Run.</a></figcaption>
+  <a href="https://hacks.mozilla.org/files/2015/07/maple-tap.jpg"><img src="https://hacks.mozilla.org/files/2015/07/maple-tap-500x333.jpg" alt="(picture of a tap in a maple tree)" width="500" height="333" class="alignnone size-large wp-image-29062" /></a>
+  <figcaption style="font-style: italic">Not the right way to tap into a tree in JS. <a href="https://www.flickr.com/photos/chiotsrun/5446345665/">Photo credit: Chiot's Run.</a></figcaption>
 </figure>
 
 <p>Here's my solution:</p>
