@@ -1,0 +1,402 @@
+*** PLEASE DO NOT POST OR EDIT ***
+
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>"A way of seeing is also a way of not seeing." —Kenneth Burke</p>
+
+<p>Here is the sort of thing we are going to do today.</p>
+
+<code class="js"><pre>
+var obj = new Proxy({}, {
+  get: function (target, key, receiver) {
+    console.log(`getting ${key}!`);
+    return Reflect.get(target, key, receiver);
+  },
+  set: function (target, key, value, receiver) {
+    console.log(`setting ${key}!`);
+    return Reflect.set(target, key, value, receiver);
+  }
+});
+</pre></code>
+
+<p>That's a little complicated for a first example. I'll explain all the parts later. For now, check out the object we created:</p>
+
+<code class="js"><pre>
+&gt; obj.count = 1;
+    setting count!
+&gt; ++obj.count;
+    getting count!
+    setting count!
+    2
+</pre></code>
+
+<p>To make it clear what's going on here: we are intercepting property accesses on this object. We are overloading the <code>"."</code> operator.</p>
+
+
+<h3>How it's done</h3>
+
+<p>The best trick in computing is called <dfn>virtualization</dfn>. It's a very general-purpose technique for doing astonishing things. Here's how it works.</p>
+
+<ol>
+
+  <li>
+    <p>Take any picture.</p>
+
+    <figure>
+      <img src="images/power-plant.jpg">
+      <figcaption><a href="https://www.flickr.com/photos/martini_dk/369891979">Photo credit: Martin Nikolaj Bech</a></figcaption>
+    </figure>
+  </li>
+
+  <li>
+    <p>Draw an outline around something in the picture.</p>
+    <figure>
+      <img src="images/power-plant-with-outline.png">
+    </figure>
+  </li>
+
+  <li>
+    <p>Now replace either everything inside the outline, or everything outside the outline, with something totally unexpected. There is just one rule: your replacement must behave enough like what was there before that <em>nobody on the other side of the line notices that anything has changed.</em></p>
+    <figure>
+      <img src="images/wind-farm.png">
+      <figcaption><a href="https://www.flickr.com/photos/bevgoodwin/8671334130/">Photo credit: Beverley Goodwin.</a></figcaption>
+    </figure>
+  </li>
+
+</ol>
+
+<p>You'll be familiar with this kind of hack from classic computer science films such as <i>The Truman Show</i> and <i>The Matrix</i>, where a person is inside the outline, and the rest of the world has been replaced with an elaborate illusion of normalcy.</p>
+
+<p>In order to satisfy the rule, your replacement may need to be cunningly designed. But the real trick is in drawing the right outline.</p>
+
+XXX ???
+
+<p>My favorite example is <a href="http://rr-project.org/">rr</a>, a tool for recording and deterministically replaying nondeterministic programs. When recording, rr draws an outline around a group of Linux processes. It replaces everything <em>outside</em> that boundary with code that records all input that enters those processes. Later, when you replay, the exterior is replaced with code that plays back the same input. This and some scheduler tricks account for almost all of the nondeterminism in programs, so you get nice, deterministic playback. It's amazing for debugging.</p>
+
+<p>Clever, right?</p>
+
+<p>So by "outline" or "boundary", I mean an API boundary. Interfaces specify how two parts interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You can easily replace either side, and the other side won't care.</p>
+
+<p>It's when there's <em>not</em> an existing interface that you have to get creative. Several of my all-time favorite hacks have involved drawing an API boundary where previously there was none, and bringing that interface into existence via a prodigious engineering effort.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Virtual_memory">Virtual memory</a>, <a href="https://en.wikipedia.org/wiki/Hardware_virtualization">Hardware virtualization</a>, <a href="https://en.wikipedia.org/wiki/Docker_%28software%29">Docker</a>, <a href="http://valgrind.org/">Valgrind</a>, <a href="http://rr-project.org/">rr</a>—to various degrees all of these projects involved driving new and unexpected API boundaries into existing systems. In some cases, it took years and new operating system features and even new hardware to make the new boundary work well.</p>
+
+<p>The best virtualization hacks bring with them a new understanding of whatever's being virtualized. To write an API for something, you have to understand it. Once you understand it, you can do amazing things.</p>
+
+<p>ES6 introduces virtualization support for JavaScript's most fundamental concept: the object.</p>
+
+
+<h3>What is an object?</h3>
+
+<p>No, really. Take a moment. Think it over.</p>
+
+<figure>
+<img src="images/thinker.jpg">
+<figcaption><a href="https://www.flickr.com/photos/mustangjoe/5966894496/">Photo credit: Joe deSousa.</a></figcaption>
+</figure>
+
+<p>This question is too hard for me. I've yet to hear a satisfying definition.</p>
+
+<p>Is that surprising? Defining fundamental concepts is always hard—check out the first few definitions in <a href="http://aleph0.clarku.edu/~djoyce/java/elements/bookI/bookI.html">Euclid's <i>Elements</i></a> sometime. The ECMAScript language specification is in good company, therefore, when it unhelpfully defines an object as a "member of the type Object".</p>
+
+<p>Later, the spec adds that "An Object is a collection of properties." That's not bad. If you want a definition, that will do for now. We'll come back to it later.</p>
+
+<p>I said before that <em>to write an API for something, you have to understand it.</em> So in a way, I've promised that if we get through all this, we're going to understand objects better. And we'll be able to do amazing things. XXX ???</p>
+
+<p>So let's follow in the footsteps of the ECMAScript standard committee and see what it would take to define an API, an interface, for JavaScript objects. What sort of methods do we need? What can objects <em>do?</em></p>
+
+<p>That depends somewhat on the object. DOM Element objects can do certain things; AudioNode objects do other things. But there are a few fundamental abilities all objects share.</p>
+
+<ul>
+  <li>Objects have properties. You can get and set properties, delete them, and so on.</li>
+  <li>Objects have prototypes. This is how inheritance works in JS.</li>
+  <li>Some objects are functions or constructors. You can call them.</li>
+</ul>
+
+<p>Almost everything JS programs do with objects is done using properties, prototypes, and functions. Even the special behavior of an Element or AudioNode object is accessed by calling methods, which are just inherited function properties.</p>
+
+<p>So when the ECMAScript standard committee defined a set of 14 <dfn>internal methods</dfn>, the common interface for all objects, it should come as no surprise that they ended up focusing on these three things.</p>
+
+<p>The full list can be found in <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#table-5">tables 5 and 6 of the ES6 standard</a>. Here I'll just describe a few. The weird double brackets, [[ ]], emphasize that these are <em>internal</em> methods, hidden from ordinary JS code. You can't call, delete, or overwrite these like ordinary methods.</p>
+
+<ul>
+  <li>
+    <p><strong><var>obj</var>.[[Get]](<var>key</var>, <var>receiver</var>)</strong> - Get the value of a property.</p>
+
+    <p>Called when JS code does: <code>obj.prop</code> or <code>obj[key]</code>.</p>
+
+    <p>We'll talk about the mysterious <var>receiver</var> argument later. XXX ???</p>
+  </li>
+
+  <li>
+    <p><strong><var>obj</var>.[[Set]](<var>key</var>, <var>value</var>, <var>receiver</var>)</strong> - Assign to a property of an object.</p>
+
+    <p>Called when JS code does: <code>obj.prop =&nbsp;value</code> or <code>obj[key] =&nbsp;value</code>.</p>
+
+    <p>In an assignment like <code>obj.prop += 2</code>, the [[Get]] method is called first, and the [[Set]] method afterwards. Same goes for <code>++</code> and <code>--</code>.</p>
+  </li>
+
+  <li>
+    <p><strong><var>obj</var>.[[HasProperty]](<var>key</var>)</strong> - Test whether a property exists.</p>
+
+    <p>Called when JS code does: <code>key&nbsp;in&nbsp;obj</code>.</p>
+
+    <p>[[Get]], [[Set]], and [[HasProperty]] all search the prototype chain if needed.</p>
+  </li>
+
+  <li>
+    <p><strong><var>obj</var>.[[Enumerate]]()</strong> - List <var>obj</var>'s enumerable properties.</p>
+
+    <p>Called when JS code does: <code>for (key in obj) ...</code>.</p>
+
+    <p>This returns an iterator object, and that's how a <code>for</code>-<code>in</code> loop gets an object's property names.</p>
+  </li>
+
+  <li>
+    <p><strong><var>obj</var>.[[GetPrototypeOf]]()</strong> - Return <var>obj</var>'s prototype.</p>
+
+    <p>Called when JS code does: <code>obj.__proto__</code> or <code>Object.getPrototypeOf(obj)</code>.</p>
+  </li>
+
+  <li>
+    <p><strong><var>functionObj</var>.[[Call]](<var>thisValue</var>, <var>arguments</var>)</strong> - Call a function.</p>
+
+    <p>Called when JS code does: <code>functionObj()</code> or <code>x.method()</code>.</p>
+
+    <p>Optional. Not every object is a function.</p>
+  </li>
+
+  <li>
+    <p><strong><var>constructorObj</var>.[[Construct]](<var>arguments</var>, <var>newTarget</var>)</strong> - Invoke a constructor.</p>
+
+    <p>Called when JS code does: <code>new Date(2890, 6, 2)</code>, for example.</p>
+
+    <p>Optional. Not every object is a constructor.</p>
+
+    <p>(The <var>newTarget</var> argument plays a role in subclassing. We'll cover it in a future post.)</p>
+  </li>
+</ul>
+
+<p>Maybe you can guess at some of the other seven.</p>
+
+<p>Throughout the ES6 standard, wherever possible, any bit of syntax or builtin function that does anything with objects is specified in terms of the 14 internal methods. When we start talking about overriding these internal methods in a moment, remember, we're talking about overriding the behavior of core syntax like <code>obj.prop</code>, builtin functions like <code>Object.keys()</code>, and more.</p>
+
+
+<h3><code>Proxy</code></h3>
+
+<p>ES6 defines a new global constructor, <code>Proxy</code>. This constructor takes two arguments: a <em>target</em> object and a <em>handler</em> object. So a simple example would look like this:
+
+<code class="js"><pre>
+var target = {}, handler = {};
+var proxy = new Proxy(target, handler);
+</pre></code>
+
+<p>Let's set aside the handler object for a moment and focus on how <var>proxy</var> and <var>target</var> are related.</p>
+
+<p>I can tell you how <var>proxy</var> is going to behave in one sentence. All of <var>proxy</var>'s internal methods are forwarded to <var>target</var>. That is, if something calls <var>proxy</var>.[[Enumerate]](), it'll just return <var>target</var>.[[Enumerate]]().</p>
+
+<p>Let's try it out. We'll do something that causes <var>proxy</var>.[[Set]]() to be called.</p>
+
+<code class="js"><pre>
+proxy.color = "pink";
+</pre></code>
+
+<p>OK, what just happened? <var>proxy</var>.[[Set]]() should have called <var>target</var>.[[Set]](), so that should have made a new property on <var>target</var>. Did it?</p>
+
+<code class="js"><pre>
+&gt; target.color
+    "pink"
+</pre></code>
+
+<p>It did. And the same goes for all the other internal methods. This proxy will, for the most part, behave exactly the same as its target.</p>
+
+<p>There are limits to the fidelity of the illusion. You'll find that <code>proxy !== target</code>. And a proxy will sometimes flunk type checks that the target would pass. Even if a proxy's target is a DOM Element, for example, the proxy isn't <em>really</em> an Element; so something like <code>document.body.appendChild(proxy)</code> will fail with a <code>TypeError</code>.</p>
+
+
+<h3>Proxy handlers</h3>
+
+<p>Now let's return to the handler object. This is what makes proxies useful. The handler object's methods can override any of the proxy's internal methods.</p>
+
+<p>For example, if you'd like to intercept all attempts to assign to an object's properties, you can do that by defining a <code>handler.set()</code> method:</p>
+
+<code class="js"><pre>
+var target = {};
+var handler = {
+  set: function (target, key, value, recevier) {
+    throw new Error("Please don't set properties on this object.");
+  }
+};
+var proxy = new Proxy(target, handler);
+
+&gt; proxy.name = "angelina";
+    Error: Please don't set properties on this object.
+</pre></code>
+
+<p>The full list of handler methods is <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy">documented on the MDN page for <code>Proxy</code></a>. There are 14 methods, and they line up with the 14 internal methods defined in ES6.</p>
+
+<p>All handler methods are optional. If an internal method is not intercepted by the handler, then it's forwarded to the target, as we saw before.</p>
+
+
+<h3>Example: "Impossible" auto-populating objects</h3>
+
+<p>We now know enough about proxies to try using them for something really weird, something that's impossible without proxies.</p>
+
+<p>Here's our first exercise. Make a function <code>Tree()</code> that can do <em>this:</em></p>
+
+<code class="js"><pre>
+&gt; var tree = Tree();
+&gt; tree
+    { }
+&gt; tree.branch1.branch2.twig = "green";
+&gt; tree
+    { branch1: { branch2: { twig: "green" } } }
+&gt; tree.branch1.branch3.twig = "yellow";
+    { branch1: { branch2: { twig: "green" },
+                 branch3: { twig: "yellow" }}}
+</pre></code>
+
+<p>Note how all the intermediate objects <var>branch1</var>, <var>branch2</var>, and <var>branch3</var>, are magically autocreated when they're needed. Convenient, right? How could it possibly work?</p>
+
+<p>Until now, there's no way it <em>could</em> work. But with proxies this is only a few lines of code. We just need to tap into <var>tree</var>.[[Get]](). If you like a challenge, you might want to try implementing this yourself before reading on.</p>
+
+<figure>
+<img src="images/maple-tap.jpg">
+<figcaption style="font-style: italic">Not the right way to tap into a tree in JS. <a href="https://www.flickr.com/photos/chiotsrun/5446345665/">Photo credit: Chiot's Run.</a></figcaption>
+</figure>
+
+<p>Here's my solution:</p>
+
+<code class="js"><pre>
+function Tree() {
+  return new Proxy({}, handler);
+}
+
+var handler = {
+  get: function (target, key, receiver) {
+    if (!(key in target)) {
+      target[key] = Tree();  // auto-create a sub-Tree
+    }
+    return Reflect.get(target, key, receiver);
+  }
+};
+</pre></code>
+
+<p>Note the call to <code>Reflect.get()</code> at the end. It turns out it's an extremely common need, in proxy handler methods, to be able to say "now just do the default behavior of delegating to <var>target</var>". So ES6 defines a new <code>Reflect</code> object with 14 methods on it that you can use to do exactly that.</p>
+
+
+<h3>Example: A read-only view</h3>
+
+<p>I think I may have given the false impression that proxies are easy to use. Let's do one more worked example.</p>
+
+<p>This time our assignment is more complex: we have to implement a function, <code>readOnlyView(object)</code>, that takes any object and returns a proxy that behaves just like that object, <em>except</em> without the ability to mutate it. So, for example, it should behave like this:</p>
+
+<code class="js"><pre>
+&gt; var newMath = readOnlyView(Math);
+&gt; newMath.PI
+    3.141592653589793
+&gt; newMath.PI = 3;
+    Error: can't modify read-only view
+&gt; delete newMath.PI;
+    Error: can't modify read-only view
+</pre></code>
+
+XXX ???
+
+<code class="js"><pre>
+function NOPE() { throw Error("can't modify read-only view"); }
+
+var handler = {
+  // Override all five mutating methods.
+  set: NOPE,
+  defineProperty: NOPE,
+  deleteProperty: NOPE,
+  preventExtensions: NOPE,
+  setPrototypeOf: NOPE
+};
+
+function readOnlyView(target) {
+  return new Proxy(target, handler);
+}
+</pre></code>
+
+<p>This does in fact prevent assignment, property definition, and so on via the read-only view.</p>
+
+<p>But here we come to the first indication that using proxies correctly is tricky. Do you see the loopholes in this scheme?</p>
+
+<p>Well, the proxy can't prevent anyone from modifying the target directly, if they have a direct reference to it, but that's inherent to what the words "read-only view" mean, so let's say that's OK.</p>
+
+<p>A bigger problem is that the [[Get]] method, and others, may still return mutable objects. So even if you only have a </p>
+
+<p>To solve that, we must add a <code>handler.get()</code> method:</p>
+
+<code class="js"><pre>
+var handler = {
+  // Override all five mutating methods.
+  ...
+
+  // Wrap other results in read-only views.
+  get: function (target, key, receiver) {
+    // TODO: Getting properties should mostly work,
+    //       but don't return a mutable object.
+  },
+
+  ...
+};
+</pre></code>
+
+???
+
+<p>The [[Get]] method can return a mutating method:</p>
+
+<code class="js"><pre>
+&gt; var arrayView = readOnlyView([]);
+&gt; arrayView.push(1);
+&gt; 
+</pre></code>
+
+???
+
+----
+
+XXX ??? MORE POINTS TO HIT:
+
+*   Invariant enforcement
+
+*   Revocable proxies
+
+*   use case: detecting/logging object accesses
+
+*   membranes; synergy with WeakMap
+    (mention Firefox security membranes and the khuey hack)
+
+----
+
+
+
+
+
+
+<h3>What is an object now?</h3>
+
+<p>I think where we left it was: "An Object is a collection of properties."</p>
+
+<p>I'm not totally happy with this definition, because XXX ???
+
+<p>But that doesn't accurately describe proxies. Even the <code>Tree</code> proxy we wrote above is not a collection of properties. Its <em>target</em> is, certainly; but the <code>Tree</code> itself shares that object's collection of properties. It has none of its own.</p>
+
+<p>What has happened is that by figuring out what an object can do, standardizing those methods, and adding virtualization as a first-class feature that everyone can use, the ECMAScript standard committee has expanded the realm of possibilities. Objects can be almost anything now.</p>
+
+<p>Maybe the only honest answer to the question "What is an object?" now is "Anything that implements the 12 required internal methods."</p>
+
+<p>Sometimes defining something changes it.</p>
+
+
+<h3>Can I use Proxies today?</h3>
+
+<p>Nope. Only Firefox supports proxies, and there is no polyfill.</p>
+
+<p>Proxies were first implemented in 2010, by Andreas Gal, with code reviews by Blake Kaplan. The standard committee then completely redesigned the feature. Eddy Bruel implemented the new spec in 2012.</p>
+
+<p>I implemented <code>Reflect</code>, with code reviews by Jeff Walden. It'll be in Firefox Nightly starting this weekend—all except <code>Reflect.enumerate</code>, which is not implemented yet.</p>
+
+<p>Next, we'll be talking about the most controversial feature in ES6, and who better to present it than the Mozilla engineer who's implementing it in Firefox? So please join us next week as Eric Faust presents ES6 classes in depth.</p>
