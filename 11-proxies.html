@@ -2,8 +2,6 @@
 
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p>"A way of seeing is also a way of not seeing." —Kenneth Burke</p>
-
 <p>Here is the sort of thing we are going to do today.</p>
 
 <code class="js"><pre>
@@ -30,7 +28,7 @@ var obj = new Proxy({}, {
     2
 </pre></code>
 
-<p>To make it clear what's going on here: we are intercepting property accesses on this object. We are overloading the <code>"."</code> operator.</p>
+<p>What's going on here? We are intercepting property accesses on this object. We are overloading the <code>"."</code> operator.</p>
 
 
 <h3>How it's done</h3>
@@ -69,17 +67,11 @@ var obj = new Proxy({}, {
 
 <p>In order to satisfy the rule, your replacement may need to be cunningly designed. But the real trick is in drawing the right outline.</p>
 
-XXX ???
-
-<p>My favorite example is <a href="http://rr-project.org/">rr</a>, a tool for recording and deterministically replaying nondeterministic programs. When recording, rr draws an outline around a group of Linux processes. It replaces everything <em>outside</em> that boundary with code that records all input that enters those processes. Later, when you replay, the exterior is replaced with code that plays back the same input. This and some scheduler tricks account for almost all of the nondeterminism in programs, so you get nice, deterministic playback. It's amazing for debugging.</p>
-
-<p>Clever, right?</p>
-
-<p>So by "outline" or "boundary", I mean an API boundary. Interfaces specify how two parts interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You can easily replace either side, and the other side won't care.</p>
+<p>By "outline", I mean an API boundary. An interface. Interfaces specify how two bits of code interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You know you can replace either side, and the other side won't care.</p>
 
 <p>It's when there's <em>not</em> an existing interface that you have to get creative. Several of my all-time favorite hacks have involved drawing an API boundary where previously there was none, and bringing that interface into existence via a prodigious engineering effort.</p>
 
-<p><a href="https://en.wikipedia.org/wiki/Virtual_memory">Virtual memory</a>, <a href="https://en.wikipedia.org/wiki/Hardware_virtualization">Hardware virtualization</a>, <a href="https://en.wikipedia.org/wiki/Docker_%28software%29">Docker</a>, <a href="http://valgrind.org/">Valgrind</a>, <a href="http://rr-project.org/">rr</a>—to various degrees all of these projects involved driving new and unexpected API boundaries into existing systems. In some cases, it took years and new operating system features and even new hardware to make the new boundary work well.</p>
+<p><a href="https://en.wikipedia.org/wiki/Virtual_memory">Virtual memory</a>, <a href="https://en.wikipedia.org/wiki/Hardware_virtualization">Hardware virtualization</a>, <a href="https://en.wikipedia.org/wiki/Docker_%28software%29">Docker</a>, <a href="http://valgrind.org/">Valgrind</a>, <a href="http://rr-project.org/">rr</a>—to various degrees all of these projects involved driving new and rather unexpected interfaces into existing systems. In some cases, it took years and new operating system features and even new hardware to make the new boundary work well.</p>
 
 <p>The best virtualization hacks bring with them a new understanding of whatever's being virtualized. To write an API for something, you have to understand it. Once you understand it, you can do amazing things.</p>
 
@@ -91,17 +83,17 @@ XXX ???
 <p>No, really. Take a moment. Think it over.</p>
 
 <figure>
-<img src="images/thinker.jpg">
-<figcaption><a href="https://www.flickr.com/photos/mustangjoe/5966894496/">Photo credit: Joe deSousa.</a></figcaption>
+  <img src="images/thinker.jpg">
+  <figcaption><a href="https://www.flickr.com/photos/mustangjoe/5966894496/">Photo credit: Joe deSousa.</a></figcaption>
 </figure>
 
-<p>This question is too hard for me. I've yet to hear a satisfying definition.</p>
+<p>This question is too hard for me! I've never heard a really satisfying definition.</p>
 
 <p>Is that surprising? Defining fundamental concepts is always hard—check out the first few definitions in <a href="http://aleph0.clarku.edu/~djoyce/java/elements/bookI/bookI.html">Euclid's <i>Elements</i></a> sometime. The ECMAScript language specification is in good company, therefore, when it unhelpfully defines an object as a "member of the type Object".</p>
 
 <p>Later, the spec adds that "An Object is a collection of properties." That's not bad. If you want a definition, that will do for now. We'll come back to it later.</p>
 
-<p>I said before that <em>to write an API for something, you have to understand it.</em> So in a way, I've promised that if we get through all this, we're going to understand objects better. And we'll be able to do amazing things. XXX ???</p>
+<p>I said before that <em>to write an API for something, you have to understand it.</em> So in a way, I've promised that if we get through all this, we're going to understand objects better, and we'll be able to do amazing things.</p>
 
 <p>So let's follow in the footsteps of the ECMAScript standard committee and see what it would take to define an API, an interface, for JavaScript objects. What sort of methods do we need? What can objects <em>do?</em></p>
 
@@ -125,7 +117,7 @@ XXX ???
 
     <p>Called when JS code does: <code>obj.prop</code> or <code>obj[key]</code>.</p>
 
-    <p>We'll talk about the mysterious <var>receiver</var> argument later. XXX ???</p>
+    <p>The <var>receiver</var> argument is used as the this value if we have to call a getter.</p>
   </li>
 
   <li>
@@ -179,7 +171,9 @@ XXX ???
 
 <p>Maybe you can guess at some of the other seven.</p>
 
-<p>Throughout the ES6 standard, wherever possible, any bit of syntax or builtin function that does anything with objects is specified in terms of the 14 internal methods. When we start talking about overriding these internal methods in a moment, remember, we're talking about overriding the behavior of core syntax like <code>obj.prop</code>, builtin functions like <code>Object.keys()</code>, and more.</p>
+<p>Throughout the ES6 standard, wherever possible, any bit of syntax or builtin function that does anything with objects is specified in terms of the 14 internal methods. ES6 drew a clear boundary around the brains of an object. What proxies let you do is replace the standard kind of brains with arbitrary JS code.</p>
+
+<p>When we start talking about overriding these internal methods in a moment, remember, we're talking about overriding the behavior of core syntax like <code>obj.prop</code>, builtin functions like <code>Object.keys()</code>, and more.</p>
 
 
 <h3><code>Proxy</code></h3>
@@ -292,15 +286,17 @@ var handler = {
 
 <code class="js"><pre>
 &gt; var newMath = readOnlyView(Math);
-&gt; newMath.PI
-    3.141592653589793
-&gt; newMath.PI = 3;
+&gt; newMath.min(54, 40);
+    40
+&gt; newMath.max = Math.min;
     Error: can't modify read-only view
-&gt; delete newMath.PI;
+&gt; delete newMath.sin;
     Error: can't modify read-only view
 </pre></code>
 
-XXX ???
+<p>How can we implement this?</p>
+
+<p>The first step is to intercept all internal methods that would modify the target object if we let them through. There are five of those.</p>
 
 <code class="js"><pre>
 function NOPE() { throw Error("can't modify read-only view"); }
@@ -319,42 +315,41 @@ function readOnlyView(target) {
 }
 </pre></code>
 
-<p>This does in fact prevent assignment, property definition, and so on via the read-only view.</p>
+<p>This works. It prevents assignment, property definition, and so on via the read-only view.</p>
 
-<p>But here we come to the first indication that using proxies correctly is tricky. Do you see the loopholes in this scheme?</p>
+<p>Are there any loopholes in this scheme?</p>
 
-<p>Well, the proxy can't prevent anyone from modifying the target directly, if they have a direct reference to it, but that's inherent to what the words "read-only view" mean, so let's say that's OK.</p>
+<p>The biggest problem is that the [[Get]] method, and others, may still return mutable objects. So even if some object <code>x</code> is a read-only view, <code>x.prop</code> may be mutable! That's a huge hole.</p>
 
-<p>A bigger problem is that the [[Get]] method, and others, may still return mutable objects. So even if you only have a </p>
-
-<p>To solve that, we must add a <code>handler.get()</code> method:</p>
+<p>To plug it, we must add a <code>handler.get()</code> method:</p>
 
 <code class="js"><pre>
 var handler = {
-  // Override all five mutating methods.
   ...
 
   // Wrap other results in read-only views.
   get: function (target, key, receiver) {
-    // TODO: Getting properties should mostly work,
-    //       but don't return a mutable object.
+    // Start by just doing the default behavior.
+    var result = Reflect.get(target, key, receiver);
+
+    // Make sure not to return a mutable object!
+    if (Object(result) === result) {
+      // result is an object.
+      return readOnlyView(result);
+    }
+    // result is a primitive, so already immutable.
+    return result;
   },
 
   ...
 };
 </pre></code>
 
-???
+<p>This is not sufficient either. Similar code is needed for other methods, including <code>getPrototypeOf</code> and <code>getOwnPropertyDescriptor</code>.</p>
 
-<p>The [[Get]] method can return a mutating method:</p>
+<p>Then there are further problems. When a getter or method is called via this kind of proxy, the this value passed to the getter or method will typically be the proxy itself. But as we saw earlier, many accessors and methods perform a type check that the proxy won't pass. It would be better to substitute the target object for the proxy here. Can you figure out how to do it?</p>
 
-<code class="js"><pre>
-&gt; var arrayView = readOnlyView([]);
-&gt; arrayView.push(1);
-&gt; 
-</pre></code>
-
-???
+<p>The lesson to draw from this is that creating a proxy is easy, but creating a proxy with intuitive behavior is quite hard.</p>
 
 
 <h3>Odds and ends</h3>
@@ -362,19 +357,15 @@ var handler = {
 <ul>
 
   <li>
-    <p><strong>Proxy use cases.</strong> So, what are proxies really good for?</p>
+    <p><strong>Proxy use cases.</strong> What are proxies really good for?</p>
 
     <p>They're certainly useful whenever you want to observe or log accesses to an object. They'll be handy for debugging. Test frameworks could use them for mocking.</p>
 
+    <p>Proxies are useful if you need behavior that's just slightly past what an ordinary object can do: lazily populating properties, for example.</p>
+
     <p>I almost hate to bring this up, but one of the best ways to see what's going on in code that uses proxies is to wrap a proxy's handler object in <em>another proxy</em> that logs to the console every time a handler method is accessed.</p>
 
-    <p>They can be used to restrict access to an object, as we did with <code>readOnlyView</code>. That sort of use case is rare in application JS, but Firefox uses proxies internally to implement <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko/Script_security">security boundaries</a> between different domains. They're an integral part of our security system.</p>
-  </li>
-
-  <li>
-    <p><strong>Object invariants.</strong> In situations involving non-configurable properties and inextensibility, ES6 requires proxy handler methods to report results that are consistent with the target object's current state. That is, if a proxy's <code>handler.getOwnPropertyDescriptor()</code> method reports that a property is non-configurable, then the target object must also have a non-configurable property with the same name and attributes. ES6 does this so that it can enforce certain invariants across all objects, even proxies.</p>
-
-    <p>So if you ever see an error message like <code>"proxy can't report a non-existent property as non-configurable"</code>, this is the cause. The most likely remedy is to change what the proxy is reporting about itself. Another possibility is to mutate the target on the fly to reflect whatever the proxy is reporting.</p>
+    <p>Proxies can be used to restrict access to an object, as we did with <code>readOnlyView</code>. That sort of use case is rare in application code, but Firefox uses proxies internally to implement <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko/Script_security">security boundaries</a> between different domains. They're an integral part of our security system.</p>
   </li>
 
   <li>
@@ -387,6 +378,11 @@ var handler = {
     <p><strong>Revocable proxies.</strong> ES6 also defines another function, <code>Proxy.revocable(target, handler)</code>, that creates a proxy, just like <code>new Proxy(target, handler)</code>, except this proxy can be <dfn>revoked</dfn> later. (<code>Proxy.revocable</code> returns an object with a <code>.proxy</code> property and a <code>.revoke</code> method.) Once a proxy is revoked, it simply doesn't work anymore; all its internal methods throw.</p>
   </li>
 
+  <li>
+    <p><strong>Object invariants.</strong> In certain situations, ES6 requires proxy handler methods to report results that are consistent with the <em>target</em> object's state. It does this in order to enforce rules about immutability across all objects, even proxies. For example, a proxy can't claim to be inextensible unless its target really is inextensible.</p>
+
+    <p>The exact rules are hard to follow, but if you ever see an error message like <code>"proxy can't report a non-existent property as non-configurable"</code>, this is the cause. The most likely remedy is to change what the proxy is reporting about itself. Another possibility is to mutate the target on the fly to reflect whatever the proxy is reporting.</p>
+  </li>
 </ul>
 
 
@@ -394,15 +390,17 @@ var handler = {
 
 <p>I think where we left it was: "An Object is a collection of properties."</p>
 
-<p>I'm not totally happy with this definition, even taking for granted that we throw in prototypes and callability as well. Because the word "collection" is pretty generous, given how ill-defined a proxy can be. Its handler methods could do anything. They could return random results.</p>
+<p>I'm not totally happy with this definition, even taking for granted that we throw in prototypes and callability as well. Because the word "collection" is pretty generous, given how poorly defined a proxy can be. Its handler methods could do anything. They could return random results.</p>
 
-<p>What has happened is that by figuring out what an object can do, standardizing those methods, and adding virtualization as a first-class feature that everyone can use, the ECMAScript standard committee has expanded the realm of possibilities.</p>
+<p>By figuring out what an object can do, standardizing those methods, and adding virtualization as a first-class feature that everyone can use, the ECMAScript standard committee has expanded the realm of possibilities.</p>
 
 <p>Objects can be almost anything now.</p>
 
 <p>Maybe the most honest answer to the question "What is an object?" now is to take the 12 required internal methods as a definition. An object is something in a JS program that has a [[Get]] operation, a [[Set]] operation, and so on.</p>
 
-<p>And here we are at the end! Do we understand objects better? I'm not totally sure about that one, actually. Did we do amazing things? Yeah.</p>
+<hr>
+
+<p>Do we understand objects better after all that? I'm not totally sure. Did we do amazing things? I think so.</p>
 
 
 <h3>Can I use Proxies today?</h3>
