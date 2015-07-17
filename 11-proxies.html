@@ -356,44 +356,58 @@ var handler = {
 
 ???
 
-----
 
-XXX ??? MORE POINTS TO HIT:
+<h3>Odds and ends</h3>
 
-*   Invariant enforcement
+<ul>
 
-*   Revocable proxies
+  <li>
+    <p><strong>Proxy use cases.</strong> So, what are proxies really good for?</p>
 
-*   use case: detecting/logging object accesses
+    <p>They're certainly useful whenever you want to observe or log accesses to an object. They'll be handy for debugging. Test frameworks could use them for mocking.</p>
 
-*   membranes; synergy with WeakMap
-    (mention Firefox security membranes and the khuey hack)
+    <p>I almost hate to bring this up, but one of the best ways to see what's going on in code that uses proxies is to wrap a proxy's handler object in <em>another proxy</em> that logs to the console every time a handler method is accessed.</p>
 
-----
+    <p>They can be used to restrict access to an object, as we did with <code>readOnlyView</code>. That sort of use case is rare in application JS, but Firefox uses proxies internally to implement <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko/Script_security">security boundaries</a> between different domains. They're an integral part of our security system.</p>
+  </li>
 
+  <li>
+    <p><strong>Object invariants.</strong> In situations involving non-configurable properties and inextensibility, ES6 requires proxy handler methods to report results that are consistent with the target object's current state. That is, if a proxy's <code>handler.getOwnPropertyDescriptor()</code> method reports that a property is non-configurable, then the target object must also have a non-configurable property with the same name and attributes. ES6 does this so that it can enforce certain invariants across all objects, even proxies.</p>
 
+    <p>So if you ever see an error message like <code>"proxy can't report a non-existent property as non-configurable"</code>, this is the cause. The most likely remedy is to change what the proxy is reporting about itself. Another possibility is to mutate the target on the fly to reflect whatever the proxy is reporting.</p>
+  </li>
 
+  <li>
+    <p><strong>Proxies ♥ WeakMaps.</strong> In our <code>readOnlyView</code> example, we create a new proxy every time an object is accessed. It could save a lot of memory to cache every proxy we create in a <code>WeakMap</code>, so that however many times an object is passed to <code>readOnlyView</code>, only a single proxy is created for it.</p>
 
+    <p>This is one of the motivating use cases for <code>WeakMap</code>.</p>
+  </li>
+
+  <li>
+    <p><strong>Revocable proxies.</strong> ES6 also defines another function, <code>Proxy.revocable(target, handler)</code>, that creates a proxy, just like <code>new Proxy(target, handler)</code>, except this proxy can be <dfn>revoked</dfn> later. (<code>Proxy.revocable</code> returns an object with a <code>.proxy</code> property and a <code>.revoke</code> method.) Once a proxy is revoked, it simply doesn't work anymore; all its internal methods throw.</p>
+  </li>
+
+</ul>
 
 
 <h3>What is an object now?</h3>
 
 <p>I think where we left it was: "An Object is a collection of properties."</p>
 
-<p>I'm not totally happy with this definition, because XXX ???
+<p>I'm not totally happy with this definition, even taking for granted that we throw in prototypes and callability as well. Because the word "collection" is pretty generous, given how ill-defined a proxy can be. Its handler methods could do anything. They could return random results.</p>
 
-<p>But that doesn't accurately describe proxies. Even the <code>Tree</code> proxy we wrote above is not a collection of properties. Its <em>target</em> is, certainly; but the <code>Tree</code> itself shares that object's collection of properties. It has none of its own.</p>
+<p>What has happened is that by figuring out what an object can do, standardizing those methods, and adding virtualization as a first-class feature that everyone can use, the ECMAScript standard committee has expanded the realm of possibilities.</p>
 
-<p>What has happened is that by figuring out what an object can do, standardizing those methods, and adding virtualization as a first-class feature that everyone can use, the ECMAScript standard committee has expanded the realm of possibilities. Objects can be almost anything now.</p>
+<p>Objects can be almost anything now.</p>
 
-<p>Maybe the only honest answer to the question "What is an object?" now is "Anything that implements the 12 required internal methods."</p>
+<p>Maybe the most honest answer to the question "What is an object?" now is to take the 12 required internal methods as a definition. An object is something in a JS program that has a [[Get]] operation, a [[Set]] operation, and so on.</p>
 
-<p>Sometimes defining something changes it.</p>
+<p>And here we are at the end! Do we understand objects better? I'm not totally sure about that one, actually. Did we do amazing things? Yeah.</p>
 
 
 <h3>Can I use Proxies today?</h3>
 
-<p>Nope. Only Firefox supports proxies, and there is no polyfill.</p>
+<p>Nope! Only Firefox supports proxies, and there is no polyfill. So feel free to experiment with proxies, even though they all look very similar and could be extremely hard to debug! There's no danger of your proxies escaping into production... yet.</p>
 
 <p>Proxies were first implemented in 2010, by Andreas Gal, with code reviews by Blake Kaplan. The standard committee then completely redesigned the feature. Eddy Bruel implemented the new spec in 2012.</p>
 
