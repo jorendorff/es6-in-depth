@@ -41,7 +41,7 @@ var obj = new Proxy({}, {
     <p>Take any picture.</p>
 
     <figure>
-      <img src="images/power-plant.jpg">
+      <a href="https://hacks.mozilla.org/files/2015/07/power-plant.jpg"><img src="https://hacks.mozilla.org/files/2015/07/power-plant-500x266.jpg" alt="(picture of a coal power plant)" width="500" height="266" class="alignnone size-large wp-image-29059" /></a>
       <figcaption><a href="https://www.flickr.com/photos/martini_dk/369891979">Photo credit: Martin Nikolaj Bech</a></figcaption>
     </figure>
   </li>
@@ -49,14 +49,14 @@ var obj = new Proxy({}, {
   <li>
     <p>Draw an outline around something in the picture.</p>
     <figure>
-      <img src="images/power-plant-with-outline.png">
+      <a href="https://hacks.mozilla.org/files/2015/07/power-plant-with-outline.png"><img src="https://hacks.mozilla.org/files/2015/07/power-plant-with-outline-500x266.png" alt="(same photo, with the power plant circled)" width="500" height="266" class="alignnone size-large wp-image-29060" /></a>
     </figure>
   </li>
 
   <li>
-    <p>Now replace either everything inside the outline, or everything outside the outline, with something totally unexpected. There is just one rule: your replacement must behave enough like what was there before that <em>nobody on the other side of the line notices that anything has changed.</em></p>
+    <p>Now replace either everything inside the outline, or everything outside the outline, with something totally unexpected. There is just one rule, the Rule of Backwards Compatibility. Your replacement must behave enough like what was there before that <em>nobody on the other side of the line notices that anything has changed.</em></p>
     <figure>
-      <img src="images/wind-farm.png">
+      <a href="https://hacks.mozilla.org/files/2015/07/wind-farm.png"><img src="https://hacks.mozilla.org/files/2015/07/wind-farm-500x266.png" alt="(the circled part is replaced with a wind farm)" width="500" height="266" class="alignnone size-large wp-image-29061" /></a>
       <figcaption><a href="https://www.flickr.com/photos/bevgoodwin/8671334130/">Photo credit: Beverley Goodwin.</a></figcaption>
     </figure>
   </li>
@@ -65,7 +65,7 @@ var obj = new Proxy({}, {
 
 <p>You'll be familiar with this kind of hack from classic computer science films such as <i>The Truman Show</i> and <i>The Matrix</i>, where a person is inside the outline, and the rest of the world has been replaced with an elaborate illusion of normalcy.</p>
 
-<p>In order to satisfy the rule, your replacement may need to be cunningly designed. But the real trick is in drawing the right outline.</p>
+<p>In order to satisfy the Rule of Backwards Compatibility, your replacement may need to be cunningly designed. But the real trick is in drawing the right outline.</p>
 
 <p>By "outline", I mean an API boundary. An interface. Interfaces specify how two bits of code interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You know you can replace either side, and the other side won't care.</p>
 
