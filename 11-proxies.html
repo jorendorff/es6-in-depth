@@ -347,7 +347,7 @@ var handler = {
 
 <p>This is not sufficient either. Similar code is needed for other methods, including <code>getPrototypeOf</code> and <code>getOwnPropertyDescriptor</code>.</p>
 
-<p>Then there are further problems. When a getter or method is called via this kind of proxy, the this value passed to the getter or method will typically be the proxy itself. But as we saw earlier, many accessors and methods perform a type check that the proxy won’t pass. It would be better to substitute the target object for the proxy here. Can you figure out how to do it?</p>
+<p>Then there are further problems. When a getter or method is called via this kind of proxy, the <code>this</code> value passed to the getter or method will typically be the proxy itself. But as we saw earlier, many accessors and methods perform a type check that the proxy won’t pass. It would be better to substitute the target object for the proxy here. Can you figure out how to do it?</p>
 
 <p>The lesson to draw from this is that creating a proxy is easy, but creating a proxy with intuitive behavior is quite hard.</p>
 
@@ -359,7 +359,7 @@ var handler = {
   <li>
     <p><strong>What are proxies really good for?</strong></p>
 
-    <p>They’re certainly useful whenever you want to observe or log accesses to an object. They’ll be handy for debugging. Test frameworks could use them to mock real objects.</p>
+    <p>They’re certainly useful whenever you want to observe or log accesses to an object. They’ll be handy for debugging. Testing frameworks could use them to create <a href="https://en.wikipedia.org/wiki/Mock_object" target="_blank">mock objects</a>.</p>
 
     <p>Proxies are useful if you need behavior that’s just slightly past what an ordinary object can do: lazily populating properties, for example.</p>
 
