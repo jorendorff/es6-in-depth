@@ -405,7 +405,11 @@ var handler = {
 
 <h3>Can I use Proxies today?</h3>
 
-<p>Nope! Only Firefox supports proxies, and there is no polyfill. So feel free to experiment with proxies! Create a hall of mirrors where there seem to be thousands of copies of every object, all alike, and it’s impossible to debug anything! Now is the time. There’s no danger of your ill-advised proxy code escaping into production... yet.</p>
+<p>Nope! Not on the Web, anyway. Only Firefox and Microsoft Edge support proxies, and there is no polyfill.</p>
+
+<p>Using proxies in Node.js or io.js requires both an off-by-default option (<code>--harmony_proxies</code>) <em>and</em> the <a href="https://github.com/tvcutsem/harmony-reflect" target="_blank">harmony-reflect</a> polyfill, since V8 implements an older version of the <code>Proxy</code> specification. (A previous version of this article had incorrect information about this. Thanks to Mörre and Aaron Powell for correcting my mistakes in the comments.)</p>
+
+<p>So feel free to experiment with proxies! Create a hall of mirrors where there seem to be thousands of copies of every object, all alike, and it’s impossible to debug anything! Now is the time. There’s little danger of your ill-advised proxy code escaping into production... yet.</p>
 
 <p>Proxies were first implemented in 2010, by Andreas Gal, with code reviews by Blake Kaplan. The standard committee then completely redesigned the feature. Eddy Bruel implemented the new spec in 2012.</p>
 
