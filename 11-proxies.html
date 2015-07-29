@@ -65,7 +65,7 @@ var obj = new Proxy({}, {
 
 <p>In order to satisfy the Rule of Backwards Compatibility, your replacement may need to be cunningly designed. But the real trick is in drawing the right outline.</p>
 
-<p>By “outline”, I mean an API boundary. An interface. Interfaces specify how two bits of code interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You know you can replace either side, and the other side won’t care.</p>
+<p>By <em>outline</em>, I mean an API boundary. An interface. Interfaces specify how two bits of code interact and what each part expects of the other. So if an interface is designed into the system, the outline is already drawn for you. You know you can replace either side, and the other side won’t care.</p>
 
 <p>It’s when there’s <em>not</em> an existing interface that you have to get creative. Some of the coolest software hacks of all time have involved drawing an API boundary where previously there was none, and bringing that interface into existence via a prodigious engineering effort.</p>
 
@@ -95,7 +95,7 @@ var obj = new Proxy({}, {
 
 <p>So let’s follow in the footsteps of the ECMAScript standard committee and see what it would take to define an API, an interface, for JavaScript objects. What sort of methods do we need? What can objects <em>do?</em></p>
 
-<p>That depends somewhat on the object. DOM Element objects can do certain things; AudioNode objects do other things. But there are a few fundamental abilities all objects share.</p>
+<p>That depends somewhat on the object. DOM Element objects can do certain things; AudioNode objects do other things. But there are a few fundamental abilities all objects share:</p>
 
 <ul>
   <li>Objects have properties. You can get and set properties, delete them, and so on.</li>
@@ -105,7 +105,7 @@ var obj = new Proxy({}, {
 
 <p>Almost everything JS programs do with objects is done using properties, prototypes, and functions. Even the special behavior of an Element or AudioNode object is accessed by calling methods, which are just inherited function properties.</p>
 
-<p>So when the ECMAScript standard committee defined a set of 14 <dfn>internal methods</dfn>, the common interface for all objects, it should come as no surprise that they ended up focusing on these three things.</p>
+<p>So when the ECMAScript standard committee defined a set of 14 <dfn>internal methods</dfn>, the common interface for all objects, it should come as no surprise that they ended up focusing on these three fundamental things.</p>
 
 <p>The full list can be found in <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#table-5" target="_blank">tables 5 and 6 of the ES6 standard</a>. Here I’ll just describe a few. The weird double brackets, [[ ]], emphasize that these are <em>internal</em> methods, hidden from ordinary JS code. You can’t call, delete, or overwrite these like ordinary methods.</p>
 
@@ -273,7 +273,7 @@ var handler = {
 };
 </pre></code>
 
-<p>Note the call to <code>Reflect.get()</code> at the end. It turns out it’s an extremely common need, in proxy handler methods, to be able to say “now just do the default behavior of delegating to <var>target</var>”. So ES6 defines a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect" target="_blank"><code>Reflect</code> object</a> with 14 methods on it that you can use to do exactly that.</p>
+<p>Note the call to <code>Reflect.get()</code> at the end. It turns out there’s an extremely common need, in proxy handler methods, to be able to say “now just do the default behavior of delegating to <var>target</var>." So ES6 defines a new <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect" target="_blank"><code>Reflect</code> object</a> with 14 methods on it that you can use to do exactly that.</p>
 
 
 <h3>Example: A read-only view</h3>
@@ -297,7 +297,9 @@ var handler = {
 <p>The first step is to intercept all internal methods that would modify the target object if we let them through. There are five of those.</p>
 
 <code class="js"><pre>
-function NOPE() { throw Error("can't modify read-only view"); }
+function NOPE() {
+  throw new Error("can't modify read-only view");
+}
 
 var handler = {
   // Override all five mutating methods.
@@ -357,7 +359,7 @@ var handler = {
   <li>
     <p><strong>What are proxies really good for?</strong></p>
 
-    <p>They’re certainly useful whenever you want to observe or log accesses to an object. They’ll be handy for debugging. Test frameworks could use them for mocking.</p>
+    <p>They’re certainly useful whenever you want to observe or log accesses to an object. They’ll be handy for debugging. Test frameworks could use them to mock real objects.</p>
 
     <p>Proxies are useful if you need behavior that’s just slightly past what an ordinary object can do: lazily populating properties, for example.</p>
 
@@ -379,7 +381,7 @@ var handler = {
   <li>
     <p><strong>Object invariants.</strong> In certain situations, ES6 requires proxy handler methods to report results that are consistent with the <em>target</em> object’s state. It does this in order to enforce rules about immutability across all objects, even proxies. For example, a proxy can’t claim to be inextensible unless its target really is inextensible.</p>
 
-    <p>The exact rules are hard to follow, but if you ever see an error message like <code>"proxy can't report a non-existent property as non-configurable"</code>, this is the cause. The most likely remedy is to change what the proxy is reporting about itself. Another possibility is to mutate the target on the fly to reflect whatever the proxy is reporting.</p>
+    <p>The exact rules are too complex to go into here, but if you ever see an error message like <code>"proxy can't report a non-existent property as non-configurable"</code>, this is the cause. The most likely remedy is to change what the proxy is reporting about itself. Another possibility is to mutate the target on the fly to reflect whatever the proxy is reporting.</p>
   </li>
 </ul>
 
