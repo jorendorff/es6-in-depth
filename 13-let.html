@@ -2,7 +2,7 @@
 
 <p>The feature I’d like to talk about today is at once humble and startlingly ambitious.</p>
 
-<p>When Brendan Eich designed the first version of JavaScript back in 1995, he got plenty of things wrong, including things that have been part of the language ever since, like the <code>Date</code> object and objects automatically . However, the things he got right are stunningly important things, in hindsight: objects; prototypes; first-class functions with lexical scoping; mutability by default. The language has good bones. It was better than anyone realized at first.</p>
+<p>When Brendan Eich designed the first version of JavaScript back in 1995, he got plenty of things wrong, including things that have been part of the language ever since, like the <code>Date</code> object and objects automatically converting to <code>NaN</code> when you accidentally multiply them. However, the things he got right are stunningly important things, in hindsight: objects; prototypes; first-class functions with lexical scoping; mutability by default. The language has good bones. It was better than anyone realized at first.</p>
 
 <p>Still, Brendan made one particular design decision that bears on today’s article—a decision that I think can be fairly characterized as a mistake. It’s a little thing. A subtle thing. You might use the language for years and not even notice it. But it matters, because this mistake is in the side of the language that we now think of as “the good parts”.</p>
 
@@ -15,11 +15,11 @@
 
 <p>One is that the scope of variables declared in blocks is not just the block. It’s the entire function.</p>
 
-<p>Most likely you’ve never noticed this before. I’m afraid it’s one of those things you won’t be able to un-see. Let’s walk through a scenario where this leads to a tricky bug.</p>
+<p>You may never have noticed this before. I’m afraid it’s one of those things you won’t be able to un-see. Let’s walk through a scenario where it leads to a tricky bug.</p>
 
 <p>Say you have some existing code that uses a variable named <var>t</var>:</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 function runTowerExperiment(tower, startTime) {
   var t = startTime;
 
@@ -32,7 +32,7 @@ function runTowerExperiment(tower, startTime) {
 
 <p>Everything works great, so far. Now you want to add bowling ball speed measurements, so you add a little <code>if</code>-statement to the inner callback function.</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 function runTowerExperiment(tower, startTime) {
   var t = startTime;
 
@@ -60,7 +60,7 @@ function runTowerExperiment(tower, startTime) {
 
 <p>You can guess what happens when you run this code. It’s totally straightforward:</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 var messages = ["Hi!", "I'm a web page!", "alert() is fun!"];
 
 for (var i = 0; i < messages.length; i++) {
@@ -74,7 +74,7 @@ for (var i = 0; i < messages.length; i++) {
 
 <p>Still, I could be persuaded to give up all that clunkiness and bad behavior... if it means I can make a talking cat.</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 var messages = ["Meow!", "I'm a talking cat!", "callbacks are fun!"];
 
 for (var i = 0; i < messages.length; i++) {
@@ -105,13 +105,13 @@ for (var i = 0; i < messages.length; i++) {
 
 <p>It looks like this:</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 let t = readTachymeter();
 </pre></code>
 
 <p>Or this:</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 for (let i = 0; i < messages.length; i++) {
   ...
 }
@@ -146,7 +146,7 @@ for (let i = 0; i < messages.length; i++) {
   <li>
     <p><strong>It’s an error to try to use a <code>let</code> variable before its declaration is reached.</strong> The variable is <dfn>uninitialized</dfn> until control flow reaches the line of code where it’s declared. For example:</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 function update() {
   console.log("current time:", t);  // ReferenceError
   ...
@@ -189,7 +189,7 @@ function update() {
 
 <p>Variables declared with <code>const</code> are just like <code>let</code> except that you can’t assign to them, except at the point where they’re declared. It’s a <code>SyntaxError</code>.</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 const MAX_CAT_SIZE_KG = 3000; // 🙀
 
 MAX_CAT_SIZE_KG = 5000; // SyntaxError
@@ -198,7 +198,7 @@ MAX_CAT_SIZE_KG++; // nice try, but still a SyntaxError
 
 <p>Sensibly enough, you can’t declare a <code>const</code> without giving it a value.</p>
 
-<code class="javascript"><pre>
+<code class="js"><pre>
 const theFairest;  // SyntaxError, you troublemaker
 </pre></code>
 
