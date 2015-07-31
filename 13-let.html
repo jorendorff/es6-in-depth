@@ -11,7 +11,7 @@
 
 <h3>Problem #1: Blocks are not scopes</h3>
 
-<p>The rule sounds so innocent: <strong>The scope of a <code>var</code> declared in a JS function is the whole body of that function.</strong> But there are two ways this can have groan-inducing consequences.</p>
+<p>The rule sounds so innocent: <strong>The <a href="http://robertnyman.com/2008/10/09/explaining-javascript-scope-and-closures/" target="_blank">scope</a> of a <code>var</code> declared in a JS function is the whole body of that function.</strong> But there are two ways this can have groan-inducing consequences.</p>
 
 <p>One is that the scope of variables declared in blocks is not just the block. It’s the entire function.</p>
 
@@ -49,7 +49,9 @@ function runTowerExperiment(tower, startTime) {
 
 <p>Oh, dear. You’ve unwittingly added a second variable named <var>t</var>. Now, in the “code that uses <var>t</var>”, which was working fine before, <code>t</code> refers to the new inner variable <var>t</var> rather than the existing outer variable.</p>
 
-<p>It’s a nasty bug: all your calculations using <var>t</var> will start producing <code>NaN</code>. It’ll be hard to track down, too, especially if your code is larger than this toy example.</p>
+<p>The scope of a <code>var</code> in JavaScript is like the bucket-of-paint tool in Photoshop. It extends in both directions from the declaration, forwards and backwards, and it just keeps going until it reaches a function boundary. Since this variable <var>t</var>’s scope extends so far backwards, it has to be created as soon as we enter the function. This is called <dfn>hoisting</dfn>. I like to imagine the JS engine lifting each <code>var</code> and <code>function</code> to the top of the enclosing function with a tiny code crane.</p>
+
+<p>Now, hoisting has its good points. Without it, lots of perfectly cromulent techniques that work fine in the global scope wouldn’t work inside an <a href="https://en.wikipedia.org/wiki/Immediately-invoked_function_expression" target="_blank">IIFE</a>. But in this case, hoisting is causing a nasty bug: all your calculations using <var>t</var> will start producing <code>NaN</code>. It’ll be hard to track down, too, especially if your code is larger than this toy example.</p>
 
 <p>Adding a new block of code caused a mysterious error in code <em>before</em> that block. Is it just me, or is that really weird? We don’t expect effects to precede causes.</p>
 
@@ -75,7 +77,7 @@ for (var i = 0; i < messages.length; i++) {
 <p>Still, I could be persuaded to give up all that clunkiness and bad behavior... if it means I can make a talking cat.</p>
 
 <code class="js"><pre>
-var messages = ["Meow!", "I'm a talking cat!", "callbacks are fun!"];
+var messages = ["Meow!", "I'm a talking cat!", "Callbacks are fun!"];
 
 for (var i = 0; i < messages.length; i++) {
   setTimeout(function () {
@@ -84,24 +86,31 @@ for (var i = 0; i < messages.length; i++) {
 }
 </pre></code>
 
-<p><a href="http://jsfiddle.net/8t2q8wfr/2/" target="_blank">See this code working incorrectly in action!</a></p>
+<p><a href="http://jsfiddle.net/8t2q8wfr/3/" target="_blank">See this code working incorrectly in action!</a></p>
 
-<p>But something’s wrong. Instead of saying all three messages in order, the cat says “undefined” three times!</p>
+<p>But something’s wrong. Instead of saying all three messages in order, the cat says “undefined” three times.</p>
 
 <p>Can you spot the bug?</p>
 
-<p>The problem here is that there is only one variable <var>i</var>. It’s shared by the loop itself and all three timeout callbacks. When the loop finishes running, the value of <var>i</var> is 3 (because <code>messages.length</code> is 3). None of the callbacks have been called yet. So when the first timeout fires, and calls <code>cat.say(messages[i])</code>, it’s using <code>messages[3]</code>. Which of course is <code>undefined</code>.</p>
+<figure>
+  <a href="https://hacks.mozilla.org/files/2015/07/7994751456_e8d2019876_o.jpg"><img src="https://hacks.mozilla.org/files/2015/07/7994751456_e8d2019876_o.jpg" alt="(Photo of a caterpillar well camouflaged on the bark of a tree. Gujarat, India.)" width="404" height="604" class="size-full wp-image-29109" /></a>
+  <figcaption>Photo credit: <a href="https://www.flickr.com/photos/nevilzaveri/7994751456/" target="_blank">nevil saveri</a></figcaption>
+</figure>
 
-<p>There are many ways to fix this (<a href="http://jsfiddle.net/sybn4h33/1/" target="_blank">here’s one</a>), but this is a second problem caused by the <code>var</code> scope rule. It would be awfully nice never to have this kind of problem in the first place.</p>
+<p>The problem here is that there is only one variable <var>i</var>. It’s shared by the loop itself and all three timeout callbacks. When the loop finishes running, the value of <var>i</var> is 3 (because <code>messages.length</code> is 3), and none of the callbacks have been called yet.</p>
+
+<p>So when the first timeout fires, and calls <code>cat.say(messages[i])</code>, it’s using <code>messages[3]</code>. Which of course is <code>undefined</code>.</p>
+
+<p>There are many ways to fix this (<a href="http://jsfiddle.net/sybn4h33/2/" target="_blank">here’s one</a>), but this is a second problem caused by the <code>var</code> scoping rules. It would be awfully nice never to have this kind of problem in the first place.</p>
 
 
 <h3><code>let</code> is the new <code>var</code></h3>
 
 <p>For the most part, design mistakes in JavaScript (other programming languages too, but <em>especially</em> JavaScript) can’t be fixed. Backwards compatibility means never changing the behavior of existing JS code on the Web. Even the standard committee has no power to, say, fix the weird quirks in JavaScript’s automatic semicolon insertion. Browser makers simply will not implement breaking changes, because that kind of change punishes their users.</p>
 
-<p>So about ten years ago, when Brendan Eich decided to fix this problem, there was only really one way to do it.</p>
+<p>So about ten years ago, when Brendan Eich decided to fix this problem, there was really only one way to do it.</p>
 
-<p>He added a new keyword, <code>let</code>, that could be used to declare variables, much like <code>var</code>, but with better scoping rules.</p>
+<p>He added a new keyword, <code>let</code>, that could be used to declare variables, just like <code>var</code>, but with better scoping rules.</p>
 
 <p>It looks like this:</p>
 
@@ -126,7 +135,7 @@ for (let i = 0; i < messages.length; i++) {
   <li>
     <p><strong><code>let</code> variables are block-scoped.</strong> The scope of a variable declared with <code>let</code> is just the enclosing block, not the whole enclosing function.</p>
 
-    <p>This means the <code>runTowerExperiment</code> example can be fixed simply by changing <code>var</code> to <code>let</code>. If you use <code>let</code> everywhere, you will never have that kind of bug.</p>
+    <p>There’s still hoisting with <code>let</code>, but it’s not as indiscriminate. The <code>runTowerExperiment</code> example can be fixed simply by changing <code>var</code> to <code>let</code>. If you use <code>let</code> everywhere, you will never have that kind of bug.</p>
   </li>
 
   <li>
@@ -171,10 +180,10 @@ function update() {
     <p>If you have several scripts that all declare the same global variable, you’d better keep using <code>var</code> for that. If you switch to <code>let</code>, whichever script loads second will fail with an error.</p>
 
     <p>Or use ES6 modules. But that’s a story for another day.</p>
-
+  </li>
 </ul>
 
-<p>(Crunchy syntax details: <code>let</code> is a reserved word in strict mode code. In non-strict-mode code, for the sake of backward compatibility, you can still declare variables, functions, and arguments named <code>let</code>—you can write <code>var&nbsp;let = 'q';</code>! Not that you would do that. And even in non-strict code, <code>let&nbsp;let;</code> is right out.)</p>
+<p>(Crunchy syntax details: <code>let</code> is a reserved word in strict mode code. In non-strict-mode code, for the sake of backward compatibility, you can still declare variables, functions, and arguments named <code>let</code>—you can write <code>var&nbsp;let = 'q';</code>! Not that you would do that. And <code>let&nbsp;let;</code> is not allowed at all.)</p>
 
 <p>Apart from those differences, <code>let</code> and <code>var</code> are pretty much the same. They both support declaring multiple variables separated by commas, for example, and they both support <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/" target="_blank">destructuring</a>.</p>
 
@@ -220,6 +229,6 @@ const theFairest;  // SyntaxError, you troublemaker
 
 <p>io.js supports <code>let</code> and <code>const</code>, but only in strict-mode code. Node.js support is the same, but the <code>--harmony</code> option is also required.</p>
 
-<p>Brendan Eich implemented the first version of <code>let</code> in Firefox ten years ago. The feature was thoroughly redesigned during the standardization process. Shu-yu Guo is upgrading our implementation to match the standard, with code reviews by Jeff Walden and others.</p>
+<p>Brendan Eich implemented the first version of <code>let</code> in Firefox <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7" target="_blank">nine years ago</a>. The feature was thoroughly redesigned during the standardization process. Shu-yu Guo is upgrading our implementation to match the standard, with code reviews by Jeff Walden and others.</p>
 
-<p>Well, we’re in the home stretch. The end of our epic tour of ES6 features is in sight. In two weeks, we’ll finish up with what’s probably the most eagerly awaited ES6 feature of them all. But first, next week, we’ll extend our earlier coverage of a new feature that’s just super. So please join us next week when Eric Faust returns with a look at ES6 subclassing in depth.</p>
+<p>Well, we’re in the home stretch. The end of our epic tour of ES6 features is in sight. In two weeks, we’ll finish up with what’s probably the most eagerly awaited ES6 feature of them all. But first, next week we’ll have a post that <code>extends</code> our earlier coverage of a <code>new</code> feature that’s just <code>super</code>. So please join us as Eric Faust returns with a look at ES6 subclassing in depth.</p>
