@@ -86,7 +86,7 @@ for (var i = 0; i < messages.length; i++) {
 }
 </pre></code>
 
-<p><a href="http://jsfiddle.net/8t2q8wfr/3/" target="_blank">See this code working incorrectly in action!</a></p>
+<p><a href="http://jsfiddle.net/8t2q8wfr/4/" target="_blank">See this code working incorrectly in action!</a></p>
 
 <p>But something’s wrong. Instead of saying all three messages in order, the cat says “undefined” three times.</p>
 
@@ -101,7 +101,7 @@ for (var i = 0; i < messages.length; i++) {
 
 <p>So when the first timeout fires, and calls <code>cat.say(messages[i])</code>, it’s using <code>messages[3]</code>. Which of course is <code>undefined</code>.</p>
 
-<p>There are many ways to fix this (<a href="http://jsfiddle.net/sybn4h33/2/" target="_blank">here’s one</a>), but this is a second problem caused by the <code>var</code> scoping rules. It would be awfully nice never to have this kind of problem in the first place.</p>
+<p>There are many ways to fix this (<a href="http://jsfiddle.net/sybn4h33/3/" target="_blank">here’s one</a>), but this is a second problem caused by the <code>var</code> scoping rules. It would be awfully nice never to have this kind of problem in the first place.</p>
 
 
 <h3><code>let</code> is the new <code>var</code></h3>
