@@ -1,16 +1,19 @@
 https://etherpad.mozilla.org/ES6series
 
-- [2015-04-17] Initial message: ES6 is coming. (History and brief overview) (Florian and/or Jean-Yves, maybe Sphinx)
-- [2015-04-24] Iterators and for/of loops - jorendorff
-- [2015-05-01] Generators - jorendorff
-- [2015-05-07] Template strings - jorendorff
-- [2015-05-15] Default parameters and rest parameters - benjamin
-- [2015-05-21] Destructuring assignment - fitzgen (plan to update/adapt http://fitzgeraldnick.com/weblog/50/ for hacks)
-- [2015-05-28] Classes and method syntax - efaust
-- [2015-06-05] Let and const
-- [2015-06-12] Symbols
-- [2015-06-19] Arrow functions
-- [2015-06-26] Proxies and Reflect - jorendorff
-- [2015-07-03] Map, Set, and WeakMap
-- [2015-07-10] Special message for ES6 becoming a standard.
-
+- [2015-04-23] Introduction - jorendorff
+- [2015-04-29] Iterators and the for-of loop - jorendorff
+- [2015-05-07] Generators - jorendorff
+- [2015-05-14] Template strings - jorendorff
+- [2015-05-21] Default parameters and rest parameters - benjamin
+- [2015-05-28] Destructuring - fitzgen
+- [2015-06-04] Arrow functions - jorendorff
+- [2015-06-11] Symbols - jorendorff
+- [2015-06-17] Babel and Broccoli - gsilva
+- [2015-06-19] Collections - jorendorff
+- [2015-07-09] Generators, continued - jorendorff
+- [2015-07-17] Proxies - jorendorff
+- [2015-07-22] Classes - efaust
+- [2015-07-31] let and const - jorendorff
+- [2015-08-06] Subclassing - efaust
+- [2015-08-13] Modules - jorendorff (or jonco?)
+- [2015-08-20] The future - jorendorff
