@@ -1,0 +1,225 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>The feature I’d like to talk about today is at once humble and startlingly ambitious.</p>
+
+<p>When Brendan Eich designed the first version of JavaScript back in 1995, he got plenty of things wrong, including things that have been part of the language ever since, like the <code>Date</code> object and objects automatically . However, the things he got right are stunningly important things, in hindsight: objects; prototypes; first-class functions with lexical scoping; mutability by default. The language has good bones. It was better than anyone realized at first.</p>
+
+<p>Still, Brendan made one particular design decision that bears on today’s article—a decision that I think can be fairly characterized as a mistake. It’s a little thing. A subtle thing. You might use the language for years and not even notice it. But it matters, because this mistake is in the side of the language that we now think of as “the good parts”.</p>
+
+<p>It has to do with variables.</p>
+
+
+<h3>Problem #1: Blocks are not scopes</h3>
+
+<p>The rule sounds so innocent: <strong>The scope of a <code>var</code> declared in a JS function is the whole body of that function.</strong> But there are two ways this can have groan-inducing consequences.</p>
+
+<p>One is that the scope of variables declared in blocks is not just the block. It’s the entire function.</p>
+
+<p>Most likely you’ve never noticed this before. I’m afraid it’s one of those things you won’t be able to un-see. Let’s walk through a scenario where this leads to a tricky bug.</p>
+
+<p>Say you have some existing code that uses a variable named <var>t</var>:</p>
+
+<code class="javascript"><pre>
+function runTowerExperiment(tower, startTime) {
+  var t = startTime;
+
+  tower.on("tick", function () {
+    ... code that uses t ...
+  });
+  ... more code ...
+}
+</pre></code>
+
+<p>Everything works great, so far. Now you want to add bowling ball speed measurements, so you add a little <code>if</code>-statement to the inner callback function.</p>
+
+<code class="javascript"><pre>
+function runTowerExperiment(tower, startTime) {
+  var t = startTime;
+
+  tower.on("tick", function () {
+    ... code that uses t ...
+    if (bowlingBall.altitude() <= 0) {
+      var t = readTachymeter();
+      ...
+    }
+  });
+  ... more code ...
+}
+</pre></code>
+
+<p>Oh, dear. You’ve unwittingly added a second variable named <var>t</var>. Now, in the “code that uses <var>t</var>”, which was working fine before, <code>t</code> refers to the new inner variable <var>t</var> rather than the existing outer variable.</p>
+
+<p>It’s a nasty bug: all your calculations using <var>t</var> will start producing <code>NaN</code>. It’ll be hard to track down, too, especially if your code is larger than this toy example.</p>
+
+<p>Adding a new block of code caused a mysterious error in code <em>before</em> that block. Is it just me, or is that really weird? We don’t expect effects to precede causes.</p>
+
+<p>But this is a piece of cake compared to the <em>second</em> <code>var</code> problem.</p>
+
+
+<h3>Problem #2: Variable oversharing in loops</h3>
+
+<p>You can guess what happens when you run this code. It’s totally straightforward:</p>
+
+<code class="javascript"><pre>
+var messages = ["Hi!", "I'm a web page!", "alert() is fun!"];
+
+for (var i = 0; i < messages.length; i++) {
+  alert(messages[i]);
+}
+</pre></code>
+
+<p>If you’ve been following <a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">this series</a>, you know I like to use <code>alert()</code> for example code. Maybe you also know that <code>alert()</code> is a terrible API. It’s synchronous. So while an alert is visible, input events are not delivered. Your JS code—and in fact your whole UI—is basically paused until the user clicks OK.</p>
+
+<p>All of which makes <code>alert()</code> the wrong choice for almost anything you want to do in a web page. I use it because I think all those same things make <code>alert()</code> a great teaching tool.</p>
+
+<p>Still, I could be persuaded to give up all that clunkiness and bad behavior... if it means I can make a talking cat.</p>
+
+<code class="javascript"><pre>
+var messages = ["Meow!", "I'm a talking cat!", "callbacks are fun!"];
+
+for (var i = 0; i < messages.length; i++) {
+  setTimeout(function () {
+    cat.say(messages[i]);
+  }, i * 1500);
+}
+</pre></code>
+
+<p><a href="http://jsfiddle.net/8t2q8wfr/2/" target="_blank">See this code working incorrectly in action!</a></p>
+
+<p>But something’s wrong. Instead of saying all three messages in order, the cat says “undefined” three times!</p>
+
+<p>Can you spot the bug?</p>
+
+<p>The problem here is that there is only one variable <var>i</var>. It’s shared by the loop itself and all three timeout callbacks. When the loop finishes running, the value of <var>i</var> is 3 (because <code>messages.length</code> is 3). None of the callbacks have been called yet. So when the first timeout fires, and calls <code>cat.say(messages[i])</code>, it’s using <code>messages[3]</code>. Which of course is <code>undefined</code>.</p>
+
+<p>There are many ways to fix this (<a href="http://jsfiddle.net/sybn4h33/1/" target="_blank">here’s one</a>), but this is a second problem caused by the <code>var</code> scope rule. It would be awfully nice never to have this kind of problem in the first place.</p>
+
+
+<h3><code>let</code> is the new <code>var</code></h3>
+
+<p>For the most part, design mistakes in JavaScript (other programming languages too, but <em>especially</em> JavaScript) can’t be fixed. Backwards compatibility means never changing the behavior of existing JS code on the Web. Even the standard committee has no power to, say, fix the weird quirks in JavaScript’s automatic semicolon insertion. Browser makers simply will not implement breaking changes, because that kind of change punishes their users.</p>
+
+<p>So about ten years ago, when Brendan Eich decided to fix this problem, there was only really one way to do it.</p>
+
+<p>He added a new keyword, <code>let</code>, that could be used to declare variables, much like <code>var</code>, but with better scoping rules.</p>
+
+<p>It looks like this:</p>
+
+<code class="javascript"><pre>
+let t = readTachymeter();
+</pre></code>
+
+<p>Or this:</p>
+
+<code class="javascript"><pre>
+for (let i = 0; i < messages.length; i++) {
+  ...
+}
+</pre></code>
+
+<p><code>let</code> and <code>var</code> are different, so if you just do a global search-and-replace throughout your code, that could break parts of your code that (probably unintentionally) depend on the quirks of <code>var</code>. But for the most part, in new ES6 code, you should just stop using <code>var</code> and use <code>let</code> everywhere instead. Hence the slogan: “<code>let</code> is the new <code>var</code>”.</p>
+
+<p>What exactly are the differences between <code>let</code> and <code>var</code>? Glad you asked!</p>
+
+<ul>
+
+  <li>
+    <p><strong><code>let</code> variables are block-scoped.</strong> The scope of a variable declared with <code>let</code> is just the enclosing block, not the whole enclosing function.</p>
+
+    <p>This means the <code>runTowerExperiment</code> example can be fixed simply by changing <code>var</code> to <code>let</code>. If you use <code>let</code> everywhere, you will never have that kind of bug.</p>
+  </li>
+
+  <li>
+    <p><strong>Global <code>let</code> variables are not properties on the global object.</strong> That is, you won’t access them by writing <code>window.variableName</code>. Instead, they live in the scope of an invisible block that notionally encloses all JS code that runs in a web page.</p>
+  </li>
+
+  <li>
+    <p><strong>Loops of the form <code>for&nbsp;(let x...)</code> create a fresh binding for <var>x</var> in each iteration.</strong></p>
+
+    <p>This is a very subtle difference. It means that if a <code>for&nbsp;(let...)</code> loop executes multiple times, and that loop contains a closure, as in our talking cat example, each closure will capture a different copy of the loop variable, rather than all closures capturing the same loop variable.</p>
+
+    <p>So the talking cat example, too, can be fixed just by changing <code>var</code> to <code>let</code>.</p>
+
+    <p>This applies to all three kinds of <code>for</code> loop: <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank"><code>for</code>-<code>of</code></a>, <code>for</code>-<code>in</code>, and the old-school C kind with semicolons.</p>
+  </li>
+
+  <li>
+    <p><strong>It’s an error to try to use a <code>let</code> variable before its declaration is reached.</strong> The variable is <dfn>uninitialized</dfn> until control flow reaches the line of code where it’s declared. For example:</p>
+
+<code class="javascript"><pre>
+function update() {
+  console.log("current time:", t);  // ReferenceError
+  ...
+  let t = readTachymeter();
+}
+</code></pre>
+
+    <p>This rule is there to help you catch bugs. Instead of <code>NaN</code> results, you’ll get an exception on the line of code where the problem is.</p>
+
+    <p>This period when the variable is in scope, but uninitialized, is called the <dfn>temporal dead zone</dfn>. I keep waiting for this inspired bit of jargon to make the leap to science fiction. Nothing yet.</p>
+
+    <p>(Crunchy performance details: In most cases, you can tell whether the declaration has run or not just by looking at the code, so the JavaScript engine does not actually need to perform an extra check every time the variable is accessed to make sure it’s been initialized. However, inside a closure, it sometimes isn’t clear. In those cases the JavaScript engine will do a run-time check. That means <code>let</code> can be a touch slower than <code>var</code>.)</p>
+
+    <p>(Crunchy alternate-universe scoping details: In some programming languages, the scope of a variable starts at the point of the declaration, instead of reaching backwards to cover the whole enclosing block. The standard committee considered using that kind of scoping rule for <code>let</code>. That way, the use of <code>t</code> that causes a ReferenceError here simply wouldn’t be in the scope of the later <code>let t</code>, so it wouldn’t refer to that variable at all. It could refer to a <var>t</var> in an enclosing scope. But this approach did not work well with closures or with function hoisting, so it was eventually abandoned.)</p>
+  </li>
+
+  <li>
+    <p><strong>Redeclaring a variable with <code>let</code> is a <code>SyntaxError</code>.</strong></p>
+
+    <p>This rule, too, is there to help you detect trivial mistakes. Still, this is the difference that is most likely to cause you some issues if you attempt a global <code>let</code>-to-<code>var</code> conversion, because it applies even to global <code>let</code> variables.</p>
+
+    <p>If you have several scripts that all declare the same global variable, you’d better keep using <code>var</code> for that. If you switch to <code>let</code>, whichever script loads second will fail with an error.</p>
+
+    <p>Or use ES6 modules. But that’s a story for another day.</p>
+
+</ul>
+
+<p>(Crunchy syntax details: <code>let</code> is a reserved word in strict mode code. In non-strict-mode code, for the sake of backward compatibility, you can still declare variables, functions, and arguments named <code>let</code>—you can write <code>var&nbsp;let = 'q';</code>! Not that you would do that. And even in non-strict code, <code>let&nbsp;let;</code> is right out.)</p>
+
+<p>Apart from those differences, <code>let</code> and <code>var</code> are pretty much the same. They both support declaring multiple variables separated by commas, for example, and they both support <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/" target="_blank">destructuring</a>.</p>
+
+<p>Note that <code>class</code> declarations behave like <code>let</code>, not <code>var</code>. If you load a script containing a <code>class</code> multiple times, the second time you’ll get an error for redeclaring the class.</p>
+
+
+<h3><code>const</code></h3>
+
+<p>Right, one more thing!</p>
+
+<p>ES6 also introduces a third keyword that you can use alongside <code>let</code>: <code>const</code>.</p>
+
+<p>Variables declared with <code>const</code> are just like <code>let</code> except that you can’t assign to them, except at the point where they’re declared. It’s a <code>SyntaxError</code>.</p>
+
+<code class="javascript"><pre>
+const MAX_CAT_SIZE_KG = 3000; // 🙀
+
+MAX_CAT_SIZE_KG = 5000; // SyntaxError
+MAX_CAT_SIZE_KG++; // nice try, but still a SyntaxError
+</pre></code>
+
+<p>Sensibly enough, you can’t declare a <code>const</code> without giving it a value.</p>
+
+<code class="javascript"><pre>
+const theFairest;  // SyntaxError, you troublemaker
+</pre></code>
+
+
+<h3>Secret agent namespace</h3>
+
+<p><i>“Namespaces are one honking great idea—let’s do more of those!” —Tim Peters, “The Zen of Python”</i></p>
+
+<p>Behind the scenes, nested scopes are one of the core concepts that programming languages are built around. It’s been this way since what, <a href="https://en.wikipedia.org/wiki/ALGOL" target="_blank">ALGOL</a>? Something like 57 years. And it’s truer today than ever.</p>
+
+<p>Before ES3, JavaScript only had global scopes and function scopes. (Let’s ignore <code>with</code> statements.) ES3 introduced <code>try</code>-<code>catch</code> statements, which meant adding a new kind of scope, used only for the exception variable in <code>catch</code> blocks. ES5 added a scope used by strict <code>eval()</code>. ES6 adds block scopes, for-loop scopes, the new global <code>let</code> scope, module scopes, and additional scopes that are used when evaluating default values for arguments.</p>
+
+<p>All the extra scopes added from ES3 onward are necessary to make JavaScript’s procedural and object-oriented features work as smoothly, precisely, and intuitively as closures—and cooperate seamlessly <em>with</em> closures. Maybe you never noticed any of these scoping rules before today. If so, the language is doing its job.</p>
+
+
+<h3>Can I use <code>let</code> and <code>const</code> now?</h3>
+
+<p>Yes. To use them on the web, you’ll have to use an ES6 compiler such as <a href="http://babeljs.io/" target="_blank">Babel</a>, <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a>, or <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>. (Babel and Traceur do not support the temporal dead zone yet.)</p>
+
+<p>io.js supports <code>let</code> and <code>const</code>, but only in strict-mode code. Node.js support is the same, but the <code>--harmony</code> option is also required.</p>
+
+<p>Brendan Eich implemented the first version of <code>let</code> in Firefox ten years ago. The feature was thoroughly redesigned during the standardization process. Shu-yu Guo is upgrading our implementation to match the standard, with code reviews by Jeff Walden and others.</p>
+
+<p>Well, we’re in the home stretch. The end of our epic tour of ES6 features is in sight. In two weeks, we’ll finish up with what’s probably the most eagerly awaited ES6 feature of them all. But first, next week, we’ll extend our earlier coverage of a new feature that’s just super. So please join us next week when Eric Faust returns with a look at ES6 subclassing in depth.</p>
