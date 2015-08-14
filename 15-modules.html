@@ -34,7 +34,7 @@
   ... several methods doing image processing ...
 }
 
-// This helper functions isn't exported.
+// This helper function isn't exported.
 function resizeCanvas() {
   ...
 }
@@ -43,7 +43,7 @@ function resizeCanvas() {
 
 <p>You can <code>export</code> any top-level <code>function</code>, <code>class</code>, <code>var</code>, <code>let</code>, or <code>const</code>.</p>
 
-<p>And that's really all you need to know to write a module! You don't have to put everything in an IIFE or a callback. Just go ahead and declare everything you need. Since the code is a module, not a script, all the declarations will be scoped to that module, <em>not</em> globally visible across all scripts and modules. Export the declarations that make up the module's public API, and you're done.</p>
+<p>And that's really all you need to know to write a module! You don't have to put everything in an <a href="https://en.wikipedia.org/wiki/Immediately-invoked_function_expression" target="_blank">IIFE</a> or a callback. Just go ahead and declare everything you need. Since the code is a module, not a script, all the declarations will be scoped to that module, <em>not</em> globally visible across all scripts and modules. Export the declarations that make up the module's public API, and you're done.</p>
 
 <p>Apart from exports, the code in a module is pretty much just normal code. It can use globals like <code>Object</code> and <code>Array</code>. If your module runs in a web browser, it can use <code>document</code> and <code>XMLHttpRequest</code>.</p>
 
@@ -68,7 +68,7 @@ function go() {
 import {detectCats, Kittydar} from "kittydar.js";
 </pre></code>
 
-<p>When you run a module containing an <code>import</code> declaration, the modules it imports are loaded first, then each module body is executed in a depth-first traversal of the dependency graph, stopping at cycles.</p>
+<p>When you run a module containing an <code>import</code> declaration, the modules it imports are loaded first, then each module body is executed in a depth-first traversal of the dependency graph, avoiding cycles by skipping anything already loaded.</p>
 
 <p>And those are the basics of modules. It's really quite simple. ;-)</p>
 
@@ -85,7 +85,7 @@ function detectCats(canvas, options) { ... }
 class Kittydar { ... }
 </pre></code>
 
-<p>An <code>export</code> list doesn't have to be the first thing in the file; it can appear anywhere in a module file's top-level scope. You can have multiple <code>export</code> lists, or mix <code>export</code> lists with other <code>export</code> declarations, as long as no name is exported more than once.
+<p>An <code>export</code> list doesn't have to be the first thing in the file; it can appear anywhere in a module file's top-level scope. You can have multiple <code>export</code> lists, or mix <code>export</code> lists with other <code>export</code> declarations, as long as no name is exported more than once.</p>
 
 
 <h3>Renaming imports and exports</h3>
@@ -121,7 +121,7 @@ export {
 
 <h3>Default exports</h3>
 
-<p>The new standard is designed to interoperate with existing CommonJS and AMD modules. So suppose you've got a Node project and you've done <code>npm install lodash</code>. Your ES6 code can import individual functions from Lodash:</p>
+<p>The new standard is designed to interoperate with existing CommonJS and AMD modules. So suppose you have a Node project and you've done <code>npm&nbsp;install&nbsp;lodash</code>. Your ES6 code can import individual functions from Lodash:</p>
 
 <code class="js"><pre>
 import {each, map} from "lodash";
@@ -258,7 +258,7 @@ export * from "singapore";
 
 </ul>
 
-<p>The system is quite nice as long as your needs are static. But you can imagine needing to a hack sometimes, right?</p>
+<p>The system is quite nice as long as your needs are static. But you can imagine needing a little hack sometimes, right?</p>
 
 <p>That's why whatever module-loading system you use will have a programmatic API to go alongside ES6's static <code>import/export</code> syntax. For example, <a href="http://webpack.github.io/docs/code-splitting.html">webpack includes an API</a> that you can use for "code splitting", loading some bundles of modules lazily on demand. The same API can help you break most of the other rules listed above.</p>
 
