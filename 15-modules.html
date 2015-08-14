@@ -1,0 +1,277 @@
+<p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
+
+<p>When I started on Mozilla's JavaScript team back in 2007, the joke was that the length of a typical JavaScript program was one line.</p>
+
+<p>This was two years after Google Maps launched. Not long before that, the predominant use of JavaScript had been form validation, and sure enough, your average <code>&lt;input onchange=&gt;</code> handler would be... one line of code.</p>
+
+<p>Things have changed. JavaScript projects have grown to jaw-dropping sizes, and the community has developed tools for working at scale. One of the most basic things you need is a module system, a way to spread your work across multiple files and directories—but still make sure all your bits of code can access one another as needed—but also be able to load all that code efficiently. So naturally, JavaScript has a module system. Several, actually. There are also several package managers, tools for installing all that software and coping with high-level dependencies. You might think ES6, with its new module syntax, is a little late to the party.</p>
+
+<p>Well, today we'll see whether ES6 adds anything to these existing systems, and whether or not future standards and tools will be able to build on it. But first, let's just dive in and see what ES6 modules look like.</p>
+
+
+<h3>Module basics</h3>
+
+<p>An ES6 module is a file containing JS code. There's no special <code>module</code> keyword; a module mostly reads just like a script. There are two differences.</p>
+
+<ul>
+  <li><p>ES6 modules are automatically strict-mode code, even if you don't write <code>"use strict";</code> in them.</p></li>
+  <li><p>You can use <code>import</code> and <code>export</code> in modules.</p></li>
+</ul>
+
+<p>Let's talk about <code>export</code> first. Everything declared inside a module is local to the module, by default. If you want something declared in a module to be public, so that other modules can use it, you must <em>export</em> that feature. There are a few ways to do this. The simplest way is to add the <code>export</code> keyword.</p>
+
+<code class="js"><pre>
+// kittydar.js - Find the locations of all the cats in an image.
+// (<a href="https://harthur.github.io/kittydar/">Heather Arthur wrote this library for real</a>)
+// (but she didn't use modules, because it was 2013)
+
+<strong>export</strong> function detectCats(canvas, options) {
+  var kittydar = new Kittydar(options);
+  return kittydar.detectCats(canvas);
+}
+
+<strong>export</strong> class Kittydar {
+  ... several methods doing image processing ...
+}
+
+// This helper functions isn't exported.
+function resizeCanvas() {
+  ...
+}
+...
+</pre></code>
+
+<p>You can <code>export</code> any top-level <code>function</code>, <code>class</code>, <code>var</code>, <code>let</code>, or <code>const</code>.</p>
+
+<p>And that's really all you need to know to write a module! You don't have to put everything in an IIFE or a callback. Just go ahead and declare everything you need. Since the code is a module, not a script, all the declarations will be scoped to that module, <em>not</em> globally visible across all scripts and modules. Export the declarations that make up the module's public API, and you're done.</p>
+
+<p>Apart from exports, the code in a module is pretty much just normal code. It can use globals like <code>Object</code> and <code>Array</code>. If your module runs in a web browser, it can use <code>document</code> and <code>XMLHttpRequest</code>.</p>
+
+
+<p>In a separate file, we can import and use the <code>detectCats()</code> function:</p>
+
+<code class="js"><pre>
+// demo.js - Kittydar demo program
+
+import {detectCats} from "kittydar.js";
+
+function go() {
+    var canvas = document.getElementById("catpix");
+    var cats = detectCats(canvas);
+    drawRectangles(canvas, cats);
+}
+</pre></code>
+
+<p>To import multiple names from a module, you would write:</p>
+
+<code class="js"><pre>
+import {detectCats, Kittydar} from "kittydar.js";
+</pre></code>
+
+<p>When you run a module containing an <code>import</code> declaration, the modules it imports are loaded first, then each module body is executed in a depth-first traversal of the dependency graph, stopping at cycles.</p>
+
+<p>And those are the basics of modules. It's really quite simple. ;-)</p>
+
+
+<h3>Export lists</h3>
+
+<p>Rather than tagging each exported feature, you can write out a single list of all the names you want to export, wrapped in curly braces:</p>
+
+<code class="js"><pre>
+export {detectCats, Kittydar};
+
+// no `export` keyword required here
+function detectCats(canvas, options) { ... }
+class Kittydar { ... }
+</pre></code>
+
+<p>An <code>export</code> list doesn't have to be the first thing in the file; it can appear anywhere in a module file's top-level scope. You can have multiple <code>export</code> lists, or mix <code>export</code> lists with other <code>export</code> declarations, as long as no name is exported more than once.
+
+
+<h3>Renaming imports and exports</h3>
+
+<p>Once in a while, an imported name happens to collide with some other name that you also need to use. So ES6 lets you rename things when you import them:</p>
+
+<code class="js"><pre>
+// suburbia.js
+
+// Both these modules export something named `flip`.
+// To import them both, we must rename at least one.
+import {flip as flipOmelet} from "eggs.js";
+import {flip as flipHouse} from "real-estate.js";
+...
+</pre></code>
+
+<p>Similarly, you can rename things when you export them. This is handy if you want to export the same value under two different names, which occasionally happens:</p>
+
+<code class="js"><pre>
+// unlicensed_nuclear_accelerator.js - media streaming without drm
+// (not a real library, but maybe it should be)
+
+function v1() { ... }
+function v2() { ... }
+
+export {
+  v1 as streamV1,
+  v2 as streamV2,
+  v2 as streamLatestVersion
+};
+</pre></code>
+
+
+<h3>Default exports</h3>
+
+<p>The new standard is designed to interoperate with existing CommonJS and AMD modules. So suppose you've got a Node project and you've done <code>npm install lodash</code>. Your ES6 code can import individual functions from Lodash:</p>
+
+<code class="js"><pre>
+import {each, map} from "lodash";
+
+each([3, 2, 1], x => console.log(x));
+</pre></code>
+
+<p>But perhaps you've gotten used to seeing <code>_.each</code> rather than <code>each</code> and you still want to write things that way. Or maybe you want to use <code>_</code> as a function, since <a href="https://lodash.com/docs#_">that's a useful thing to do in Lodash</a>.</p>
+
+<p>For that, you can use a slightly different syntax: import the module without curly braces.</p>
+
+<code class="js"><pre>
+import _ from "lodash";
+</pre></code>
+
+<p>This shorthand is equivalent to <code>import&nbsp;{default&nbsp;as&nbsp;_}&nbsp;from&nbsp;"lodash";</code>. All CommonJS and AMD modules are presented to ES6 as having a <code>default</code> export, which is the same thing that you would get if you asked <code>require()</code> for that module—that is, the <code>exports</code> object.</p>
+
+<p>ES6 modules were designed to let you export multiple things, but for existing CommonJS modules, the default export is all you get. For example, as of this writing, the famous <a href="https://github.com/Marak/colors.js">colors</a> package doesn't have any special ES6 support as far as I can tell. It's a collection of CommonJS modules, like most packages on npm. But you can import it right into your ES6 code.</p>
+
+<code class="js"><pre>
+// ES6 equivalent of `var colors = require("colors/safe");`
+import colors from "colors/safe";
+</pre></code>
+
+<p>If you'd like your own ES6 module to have a default export, that's easy to do. There's nothing magic about a default export; it's just like any other export, except it's named <code>"default"</code>. You can use the renaming syntax we already talked about:</p>
+
+<code class="js"><pre>
+let myObject = {
+  field1: value1,
+  field2: value2
+};
+export {myObject as default};
+</pre></code>
+
+<p>Or better yet, use this shorthand:</p>
+
+<code class="js"><pre>
+<strong>export default</strong> {
+  field1: value1,
+  field2: value2
+};
+</pre></code>
+
+<p>The keywords <code>export default</code> can be followed by any value: a function, a class, an object literal, you name it.</p>
+
+
+<h3>Module objects</h3>
+
+<p>Sorry this is so long. But JavaScript is not alone: for some reason, module systems in all languages tend to have a ton of individually small, boring convenience features. Fortunately, there's just one thing left. Well, two things.</p>
+
+<code class="js"><pre>
+import * as cows from "cows";
+</pre></code>
+
+<p>When you <code>import&nbsp;*</code>, what's imported is a <dfn>module namespace object</dfn>. Its properties are the module's exports. So if the "cows" module exports a function named <code>moo()</code>, then after importing "cows" this way, you can write: <code>cows.moo()</code>.</p>
+
+
+<h3>Aggregating modules</h3>
+
+<p>Sometimes the main module of a package is little more than importing all the package's other modules and exporting them in a unified way. To simplify this kind of code, there's an all-in-one import-and-export shorthand:</p>
+
+<code class="js"><pre>
+// world-foods.js - good stuff from all over
+
+// import "sri-lanka" and re-export some of its exports
+export {Tea, Cinnamon} from "sri-lanka";
+
+// import "equitorial-guinea" and re-export some of its exports
+export {Coffee, Cocoa} from "equitorial-guinea";
+
+// import "singapore" and export ALL of its exports
+export * from "singapore";
+</pre></code>
+
+<p>Each one of these <code>export-from</code> statements is similar to an <code>import-from</code> statement followed by an <code>export</code>. Unlike a real import, this doesn't add the re-exported bindings to your scope. So don't use this shorthand if you plan to write some code in <code>world-foods.js</code> that makes use of <code>Tea</code>. You'll find that it's not there.</p>
+
+<p>If any name exported by "singapore" happened to collide with the other exports, that would be an error, so use <code>export&nbsp;*</code> with care.</p>
+
+<p>Whew! We're done with syntax! On to the interesting parts.</p>
+
+
+
+<h3>What does <code>import</code> actually do?</h3>
+
+<p>Would you believe... <em>nothing?</em></p>
+
+<p>Oh, you're not that gullible. Well, would you believe the standard <em>mostly doesn't say</em> what <code>import</code> does? And that this is a good thing?</p>
+
+<p>ES6 leaves the details of module loading entirely <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hostresolveimportedmodule">up to the implementation</a>. The rest of module execution is <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-toplevelmoduleevaluationjob">specified in detail</a>.</p>
+
+<p>Roughly speaking, when you tell the JS engine to run a module, it has to behave as though these four steps are happening:</p>
+
+<ol>
+
+  <li><p>Parsing: The implementation reads the source code of the module and checks for syntax errors.</p></li>
+
+  <li><p>Loading: The implementation loads all imported modules (recursively). This is the part that isn't standardized yet.<p></li>
+
+  <li>
+    <p>Linking: For each newly loaded module, the implementation creates a module scope and fills it with all the bindings declared in that module, including things imported from other modules.</p>
+
+    <p>This is the part where if you try to <code>import {cake} from "paleo"</code>, but the "paleo" module doesn't actually export anything named <code>cake</code>, you'll get an error. And that's too bad, because you were <em>so close</em> to actually running some JS code. And having cake!</p></li>
+
+  <li><p>Run time: Finally, the implementation runs the statements in the body of each newly-loaded module. By this time, <code>import</code> processing is already finished, so when execution reaches a line of code where there's an <code>import</code> declaration... nothing happens!</p></li>
+
+</ol>
+
+<p>See? I told you the answer was "nothing". I don't lie about programming languages.</p>
+
+<p>But now we get to the fun part of this system. There's a cool trick. Because the system doesn't specify how loading works, and because you can figure out all the dependencies ahead of time by looking at the <code>import</code> declarations in the source code, an implementation of ES6 is free to do all the work at compile time and bundle all your modules into a single file to ship them over the network! And tools like <a href="http://www.2ality.com/2015/04/webpack-es6.html">webpack</a> actually do this.</p>
+
+<p>This is a big deal, because loading scripts over the network takes time, and every time you fetch one, you may find that it contains <code>import</code> declarations that require you to load dozens more. A naive loader would require a lot of network round trips. But with webpack, not only can you use ES6 with modules today, you get all the software engineering benefits with no run-time performance hit.</p>
+
+<p>A detailed specification of module loading in ES6 was originally planned—and built. One reason it isn't in the final standard is that there wasn't consensus on how to achieve this bundling feature. I hope someone figures it out, because as we'll see, module loading really should be standardized. And bundling is too good to give up.</p>
+
+
+<h3>Static vs. dynamic—Or: rules and how to break them</h3>
+
+<p>For a dynamic language, JavaScript has gotten itself a surprisingly static module system.</p>
+
+<ul>
+
+  <li><p>All flavors of <code>import</code> and <code>export</code> are allowed only at toplevel in a module. There are no conditional imports or exports, and you can't use <code>import</code> in function scope.</p></li>
+
+  <li><p>All exported identifiers must be explicitly exported by name in the source code. You can't programmatically loop through an array and export a bunch of names in a data-driven way.</p></li>
+  
+  <li><p>Module objects are frozen. There is no way to hack a new feature into a module object, polyfill style.</p></li>
+
+  <li><p><em>All</em> of a module's dependencies must be loaded, parsed, and linked eagerly, before any module code runs. There's no syntax for an <code>import</code> that can be loaded lazily, on demand.</p></li>
+
+  <li><p>There is no error recovery for <code>import</code> errors. An app may have hundreds of modules in it, and if anything fails to load or link, nothing runs. You can't <code>import</code> in a <code>try/catch</code> block. (The upside here is that because the system is so static, webpack can detect those errors for you at compile time.)</p></li>
+
+  <li><p>There is no hook allowing a module to run some code before its dependencies load. This means that modules have no control over how their dependencies are loaded.</p></li>
+
+</ul>
+
+<p>The system is quite nice as long as your needs are static. But you can imagine needing to a hack sometimes, right?</p>
+
+<p>That's why whatever module-loading system you use will have a programmatic API to go alongside ES6's static <code>import/export</code> syntax. For example, <a href="http://webpack.github.io/docs/code-splitting.html">webpack includes an API</a> that you can use for "code splitting", loading some bundles of modules lazily on demand. The same API can help you break most of the other rules listed above.</p>
+
+<p>The ES6 module <em>syntax</em> is very static, and that's good—it's paying off in the form of powerful compile-time tools. But the static syntax was designed to work alongside a rich dynamic, programmatic loader API.</p>
+
+
+
+<h3>When can I use ES6 modules?</h3>
+
+<p>To use modules today, you'll need a compiler such as <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> or <a href="http://babeljs.io/" target="_blank">Babel</a>. Earlier in this series, <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">Gastón I. Silva showed how to use Babel and Broccoli</a> to compile ES6 code for the web; building on that article, Gastón has <a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">a working example with support for ES6 modules</a>. <a href="http://www.2ality.com/2015/04/webpack-es6.html">This post by Axel Rauschmayer</a> contains an example using Babel and webpack.</p>
+
+<p>The ES6 module system was designed mainly by Dave Herman and Sam Tobin-Hochstadt, who defended the static parts of the system against all comers (including me) through what seemed like years of controversy. Jon Coppeard is implementing modules in Firefox. Additional work on a <a href="https://github.com/whatwg/loader">JavaScript Loader Standard</a> is underway. Work to add something like <code>&lt;script type=module&gt;</code> to HTML is expected to follow.</p>
+
+<p>And that's ES6.</p>
+
+<p>This has been so much fun that I don't want it to end. Maybe we should do just one more episode. We could talk about odds and ends in the ES6 spec that weren't big enough to merit their own article. And maybe a little bit about what the future holds. Please join me next week for the stunning conclusion of ES6 In Depth.</p>
