@@ -189,8 +189,8 @@ import * as cows from "cows";
 // import "sri-lanka" and re-export some of its exports
 export {Tea, Cinnamon} from "sri-lanka";
 
-// import "equitorial-guinea" and re-export some of its exports
-export {Coffee, Cocoa} from "equitorial-guinea";
+// import "equatorial-guinea" and re-export some of its exports
+export {Coffee, Cocoa} from "equatorial-guinea";
 
 // import "singapore" and export ALL of its exports
 export * from "singapore";
@@ -238,7 +238,7 @@ export * from "singapore";
 <p>A detailed specification of module loading in ES6 was originally planned—and built. One reason it isn't in the final standard is that there wasn't consensus on how to achieve this bundling feature. I hope someone figures it out, because as we'll see, module loading really should be standardized. And bundling is too good to give up.</p>
 
 
-<h3>Static vs. dynamic—Or: rules and how to break them</h3>
+<h3>Static vs. dynamic, or: rules and how to break them</h3>
 
 <p>For a dynamic language, JavaScript has gotten itself a surprisingly static module system.</p>
 
@@ -268,7 +268,7 @@ export * from "singapore";
 
 <h3>When can I use ES6 modules?</h3>
 
-<p>To use modules today, you'll need a compiler such as <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> or <a href="http://babeljs.io/" target="_blank">Babel</a>. Earlier in this series, <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">Gastón I. Silva showed how to use Babel and Broccoli</a> to compile ES6 code for the web; building on that article, Gastón has <a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">a working example with support for ES6 modules</a>. <a href="http://www.2ality.com/2015/04/webpack-es6.html">This post by Axel Rauschmayer</a> contains an example using Babel and webpack.</p>
+<p>To use modules today, you'll need a compiler such as <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> or <a href="http://babeljs.io/" target="_blank">Babel</a>. Earlier in this series, <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">Gastón I. Silva showed how to use Babel and Broccoli</a> to compile ES6 code for the web; building on that article, Gastón has <a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">a working example with support for ES6 modules</a>. This <a href="http://www.2ality.com/2015/04/webpack-es6.html">post by Axel Rauschmayer</a> contains an example using Babel and webpack.</p>
 
 <p>The ES6 module system was designed mainly by Dave Herman and Sam Tobin-Hochstadt, who defended the static parts of the system against all comers (including me) through what seemed like years of controversy. Jon Coppeard is implementing modules in Firefox. Additional work on a <a href="https://github.com/whatwg/loader">JavaScript Loader Standard</a> is underway. Work to add something like <code>&lt;script type=module&gt;</code> to HTML is expected to follow.</p>
 
