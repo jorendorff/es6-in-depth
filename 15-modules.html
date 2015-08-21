@@ -22,7 +22,7 @@
 
 <code class="js"><pre>
 // kittydar.js - Find the locations of all the cats in an image.
-// (<a href="https://harthur.github.io/kittydar/">Heather Arthur wrote this library for real</a>)
+// (<a href="https://harthur.github.io/kittydar/" target="_blank">Heather Arthur wrote this library for real</a>)
 // (but she didn't use modules, because it was 2013)
 
 <strong>export</strong> function detectCats(canvas, options) {
@@ -129,7 +129,7 @@ import {each, map} from "lodash";
 each([3, 2, 1], x => console.log(x));
 </pre></code>
 
-<p>But perhaps you've gotten used to seeing <code>_.each</code> rather than <code>each</code> and you still want to write things that way. Or maybe you want to use <code>_</code> as a function, since <a href="https://lodash.com/docs#_">that's a useful thing to do in Lodash</a>.</p>
+<p>But perhaps you've gotten used to seeing <code>_.each</code> rather than <code>each</code> and you still want to write things that way. Or maybe you want to use <code>_</code> as a function, since <a href="https://lodash.com/docs#_" target="_blank">that's a useful thing to do in Lodash</a>.</p>
 
 <p>For that, you can use a slightly different syntax: import the module without curly braces.</p>
 
@@ -139,7 +139,7 @@ import _ from "lodash";
 
 <p>This shorthand is equivalent to <code>import&nbsp;{default&nbsp;as&nbsp;_}&nbsp;from&nbsp;"lodash";</code>. All CommonJS and AMD modules are presented to ES6 as having a <code>default</code> export, which is the same thing that you would get if you asked <code>require()</code> for that module—that is, the <code>exports</code> object.</p>
 
-<p>ES6 modules were designed to let you export multiple things, but for existing CommonJS modules, the default export is all you get. For example, as of this writing, the famous <a href="https://github.com/Marak/colors.js">colors</a> package doesn't have any special ES6 support as far as I can tell. It's a collection of CommonJS modules, like most packages on npm. But you can import it right into your ES6 code.</p>
+<p>ES6 modules were designed to let you export multiple things, but for existing CommonJS modules, the default export is all you get. For example, as of this writing, the famous <a href="https://github.com/Marak/colors.js" target="_blank">colors</a> package doesn't have any special ES6 support as far as I can tell. It's a collection of CommonJS modules, like most packages on npm. But you can import it right into your ES6 code.</p>
 
 <code class="js"><pre>
 // ES6 equivalent of `var colors = require("colors/safe");`
@@ -210,7 +210,7 @@ export * from "singapore";
 
 <p>Oh, you're not that gullible. Well, would you believe the standard <em>mostly doesn't say</em> what <code>import</code> does? And that this is a good thing?</p>
 
-<p>ES6 leaves the details of module loading entirely <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hostresolveimportedmodule">up to the implementation</a>. The rest of module execution is <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-toplevelmoduleevaluationjob">specified in detail</a>.</p>
+<p>ES6 leaves the details of module loading entirely <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hostresolveimportedmodule" target="_blank">up to the implementation</a>. The rest of module execution is <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-toplevelmoduleevaluationjob" target="_blank">specified in detail</a>.</p>
 
 <p>Roughly speaking, when you tell the JS engine to run a module, it has to behave as though these four steps are happening:</p>
 
@@ -231,7 +231,7 @@ export * from "singapore";
 
 <p>See? I told you the answer was "nothing". I don't lie about programming languages.</p>
 
-<p>But now we get to the fun part of this system. There's a cool trick. Because the system doesn't specify how loading works, and because you can figure out all the dependencies ahead of time by looking at the <code>import</code> declarations in the source code, an implementation of ES6 is free to do all the work at compile time and bundle all your modules into a single file to ship them over the network! And tools like <a href="http://www.2ality.com/2015/04/webpack-es6.html">webpack</a> actually do this.</p>
+<p>But now we get to the fun part of this system. There's a cool trick. Because the system doesn't specify how loading works, and because you can figure out all the dependencies ahead of time by looking at the <code>import</code> declarations in the source code, an implementation of ES6 is free to do all the work at compile time and bundle all your modules into a single file to ship them over the network! And tools like <a href="http://www.2ality.com/2015/04/webpack-es6.html" target="_blank">webpack</a> actually do this.</p>
 
 <p>This is a big deal, because loading scripts over the network takes time, and every time you fetch one, you may find that it contains <code>import</code> declarations that require you to load dozens more. A naive loader would require a lot of network round trips. But with webpack, not only can you use ES6 with modules today, you get all the software engineering benefits with no run-time performance hit.</p>
 
@@ -260,7 +260,7 @@ export * from "singapore";
 
 <p>The system is quite nice as long as your needs are static. But you can imagine needing a little hack sometimes, right?</p>
 
-<p>That's why whatever module-loading system you use will have a programmatic API to go alongside ES6's static <code>import/export</code> syntax. For example, <a href="http://webpack.github.io/docs/code-splitting.html">webpack includes an API</a> that you can use for "code splitting", loading some bundles of modules lazily on demand. The same API can help you break most of the other rules listed above.</p>
+<p>That's why whatever module-loading system you use will have a programmatic API to go alongside ES6's static <code>import/export</code> syntax. For example, <a href="http://webpack.github.io/docs/code-splitting.html" target="_blank">webpack includes an API</a> that you can use for "code splitting", loading some bundles of modules lazily on demand. The same API can help you break most of the other rules listed above.</p>
 
 <p>The ES6 module <em>syntax</em> is very static, and that's good—it's paying off in the form of powerful compile-time tools. But the static syntax was designed to work alongside a rich dynamic, programmatic loader API.</p>
 
@@ -268,9 +268,9 @@ export * from "singapore";
 
 <h3>When can I use ES6 modules?</h3>
 
-<p>To use modules today, you'll need a compiler such as <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> or <a href="http://babeljs.io/" target="_blank">Babel</a>. Earlier in this series, <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">Gastón I. Silva showed how to use Babel and Broccoli</a> to compile ES6 code for the web; building on that article, Gastón has <a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">a working example with support for ES6 modules</a>. This <a href="http://www.2ality.com/2015/04/webpack-es6.html">post by Axel Rauschmayer</a> contains an example using Babel and webpack.</p>
+<p>To use modules today, you'll need a compiler such as <a href="https://github.com/google/traceur-compiler#what-is-traceur" target="_blank">Traceur</a> or <a href="http://babeljs.io/" target="_blank">Babel</a>. Earlier in this series, <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/" target="_blank">Gastón I. Silva showed how to use Babel and Broccoli</a> to compile ES6 code for the web; building on that article, Gastón has <a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules" target="_blank">a working example with support for ES6 modules</a>. This <a href="http://www.2ality.com/2015/04/webpack-es6.html" target="_blank">post by Axel Rauschmayer</a> contains an example using Babel and webpack.</p>
 
-<p>The ES6 module system was designed mainly by Dave Herman and Sam Tobin-Hochstadt, who defended the static parts of the system against all comers (including me) through what seemed like years of controversy. Jon Coppeard is implementing modules in Firefox. Additional work on a <a href="https://github.com/whatwg/loader">JavaScript Loader Standard</a> is underway. Work to add something like <code>&lt;script type=module&gt;</code> to HTML is expected to follow.</p>
+<p>The ES6 module system was designed mainly by Dave Herman and Sam Tobin-Hochstadt, who defended the static parts of the system against all comers (including me) through years of controversy. Jon Coppeard is implementing modules in Firefox. Additional work on a <a href="https://github.com/whatwg/loader" target="_blank">JavaScript Loader Standard</a> is underway. Work to add something like <code>&lt;script type=module&gt;</code> to HTML is expected to follow.</p>
 
 <p>And that's ES6.</p>
 
