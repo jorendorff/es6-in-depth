@@ -1,8 +1,8 @@
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-modules/" target="_blank">Last week’s article on ES6 modules</a> wrapped up a 4-month tour of the major new ES6 features.</p>
+<p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-modules/" target="_blank">Last week’s article on ES6 modules</a> wrapped up a 4-month survey of the major new features in ES6.</p>
 
-<p>This post covers over a dozen <em>more</em> new features that we never got around to talking about at length. Consider it a fun tour of all the closets and oddly-shaped upstairs rooms in this mansion of a language. Maybe a vast underground cavern or two. If you haven’t read the other part of the series, <a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">take a look</a>; this installment may not be the best place to start!</p>
+<p>This post covers over a dozen <em>more</em> new features that we never got around to talking about at length. Consider it a fun tour of all the closets and oddly-shaped upstairs rooms in this mansion of a language. Maybe a vast underground cavern or two. If you haven’t read the other parts of the series, <a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">take a look</a>; this installment may not be the best place to start!</p>
 
 <figure>
 <a href="https://hacks.mozilla.org/files/2015/08/typedarrays.png"><img src="https://hacks.mozilla.org/files/2015/08/typedarrays-500x221.png" alt="(a picture of the Batcave, inexplicably)" width="500" height="221" class="size-large wp-image-29185" /></a>
@@ -59,7 +59,7 @@ if (temperature &gt; 100) {
 
     <p>But it worked in all major browsers anyway. Sort of.</p>
 
-    <p>Not compatibly. The details are a little different in each browser. But it sort of worked, and many web pages still use it.</p>
+    <p>Not compatibly. The details were a little different in each browser. But it sort of worked, and many web pages still use it.</p>
 
     <p>ES6 standardizes this, thank goodness. The function is hoisted to the top of the enclosing block.</p>
 
@@ -78,7 +78,7 @@ if (temperature &gt; 100) {
   </li>
 
   <li>
-    <p><strong>Function names.</strong> All the major JS engines have also long supported a nonstandard <code>.name</code> property on functions that have names. ES6 standardizes this, and makes it better by inferring a sensible <code>.name</code> for some functions that have been nameless:</p>
+    <p><strong>Function names.</strong> All the major JS engines have also long supported a nonstandard <code>.name</code> property on functions that have names. ES6 standardizes this, and makes it better by inferring a sensible <code>.name</code> for some functions that were heretofore considered nameless:</p>
 
 <code class="js"><pre>
 &gt; var lessThan = function (a, b) { return a < b; };
@@ -86,7 +86,7 @@ if (temperature &gt; 100) {
     "lessThan"
 </pre></code>
 
-    <p>For other functions, such as arrow functions passed to <code>.then</code> methods, the spec still can’t figure out a name. <code><var>fn</var>.name</code> is then the empty string.</p>
+    <p>For other functions, such as callbacks that appear as arguments to <code>.then</code> methods, the spec still can’t figure out a name. <code><var>fn</var>.name</code> is then the empty string.</p>
   </li>
 </ul>
 
@@ -99,7 +99,9 @@ if (temperature &gt; 100) {
   </li>
 
   <li>
-    <p><strong>The spread operator for function calls.</strong> Back in May, we introduced <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters</a>. They’re a way for functions to receive any number of arguments, a more civilized alternative to the random, clumsy <code>arguments</code> object.</p>
+    <p><strong>The spread operator for function calls.</strong> This is nothing to do with Nutella, even though Nutella is a tasty spread. But it is a delicious feature, and I think you'll like it.</p>
+
+    <p>Back in May, we introduced <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters</a>. They’re a way for functions to receive any number of arguments, a more civilized alternative to the random, clumsy <code>arguments</code> object.</p>
 
 <code class="js"><pre>
 function log(...stuff) {  // stuff is the rest parameter.
