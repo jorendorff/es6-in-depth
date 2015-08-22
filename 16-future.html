@@ -1,19 +1,17 @@
-<meta charset="utf-8">
-
 <p><i><a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">ES6 In Depth</a> is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short.</i></p>
 
-<p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-modules/">Last week's article on ES6 modules</a> wrapped up a 4-month tour of the major new ES6 features.</p>
+<p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-modules/" target="_blank">Last week’s article on ES6 modules</a> wrapped up a 4-month tour of the major new ES6 features.</p>
 
-<p>This post covers over a dozen <em>more</em> new features that we never got around to talking about at length. Consider it a fun tour of all the closets and oddly-shaped upstairs rooms in this mansion of a language. Maybe a vast underground cavern or two. If you haven't read the other part of the series, <a href="https://hacks.mozilla.org/category/es6-in-depth/">take a look</a>; this installment may not be the best place to start!</p>
+<p>This post covers over a dozen <em>more</em> new features that we never got around to talking about at length. Consider it a fun tour of all the closets and oddly-shaped upstairs rooms in this mansion of a language. Maybe a vast underground cavern or two. If you haven’t read the other part of the series, <a href="https://hacks.mozilla.org/category/es6-in-depth/" target="_blank">take a look</a>; this installment may not be the best place to start!</p>
 
 <figure>
 <a href="https://hacks.mozilla.org/files/2015/08/typedarrays.png"><img src="https://hacks.mozilla.org/files/2015/08/typedarrays-500x221.png" alt="(a picture of the Batcave, inexplicably)" width="500" height="221" class="size-large wp-image-29185" /></a>
-<figcaption><i>"On your left, you can see typed arrays..."</i></figcaption>
+<figcaption><i>“On your left, you can see typed arrays...”</i></figcaption>
 </figure>
 
 <p>One more quick warning: Many of the features below are not widely implemented yet.</p>
 
-<p>OK. Let's get started.<p>
+<p>OK. Let’s get started.<p>
 
 
 <h3>Features you may already be using</h3>
@@ -22,9 +20,9 @@
 
 <ul>
   <li>
-    <p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray">Typed arrays</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer">ArrayBuffer</a></code>, and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView">DataView</a></code>.</strong> These were all standardized as part of WebGL, but they've been used in many other APIs since then, including Canvas, the Web Audio API, and WebRTC. They're handy whenever you need to process large volumes of raw binary or numeric data.</p>
+    <p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray" target="_blank">Typed arrays</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer" target="_blank">ArrayBuffer</a></code>, and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView" target="_blank">DataView</a></code>.</strong> These were all standardized as part of WebGL, but they’ve been used in many other APIs since then, including Canvas, the Web Audio API, and WebRTC. They’re handy whenever you need to process large volumes of raw binary or numeric data.</p>
 
-    <p>For example, if the <code>Canvas</code> rendering context is missing a feature you want, and if you're feeling sufficiently hardcore about it, you can just implement it yourself:</p>
+    <p>For example, if the <code>Canvas</code> rendering context is missing a feature you want, and if you’re feeling sufficiently hardcore about it, you can just implement it yourself:</p>
 
 <code class="js"><pre>
 var context = canvas.getContext("2d");
@@ -36,15 +34,15 @@ var pixels = image.data;  // a Uint8ClampedArray object
 context.putImageData(image, 0, 0);
 </pre></code>
 
-    <p>During standardization, typed arrays picked up <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray">methods</a> like <code>.slice()</code>, <code>.map()</code>, and <code>.filter()</code>.</p>
+    <p>During standardization, typed arrays picked up <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray" target="_blank">methods</a> like <code>.slice()</code>, <code>.map()</code>, and <code>.filter()</code>.</p>
   </li>
 
   <li>
-    <p><strong>Promises.</strong> Writing just one paragraph about promises is like eating just one potato chip. Never mind how <em>hard</em> it is; it barely even makes sense as a thing to do. What to say? Promises are the building blocks of asynchronous JS programming. They represent values that will become available later. So for example, when you call <code><a href="https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch">fetch()</a></code>, instead of blocking, it returns a <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code> object immediately. The fetch goes on in the background, and it'll call you back when the response arrives. Promises are better than callbacks alone, because they chain really nicely, they're first-class values with <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">interesting</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race">operations</a> on them, and you can get error handling right with a lot less boilerplate. They're polyfillable in the browser. If you don't already know all about promises, check out <a href="www.html5rocks.com/en/tutorials/es6/promises/">Jake Archibald's very in-depth article</a>.</p>
+    <p><strong>Promises.</strong> Writing just one paragraph about promises is like eating just one potato chip. Never mind how <em>hard</em> it is; it barely even makes sense as a thing to do. What to say? Promises are the building blocks of asynchronous JS programming. They represent values that will become available later. So for example, when you call <code><a href="https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch" target="_blank">fetch()</a></code>, instead of blocking, it returns a <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Promise</a></code> object immediately. The fetch goes on in the background, and it’ll call you back when the response arrives. Promises are better than callbacks alone, because they chain really nicely, they’re first-class values with <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all" target="_blank">interesting</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race" target="_blank">operations</a> on them, and you can get error handling right with a lot less boilerplate. They’re polyfillable in the browser. If you don’t already know all about promises, check out <a href="www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Jake Archibald’s very in-depth article</a>.</p>
   </li>
 
   <li>
-    <p><strong>Functions in block scope.</strong> You <em>shouldn't</em> be using this one, but it's possible you have been. Maybe unintentionally.</p>
+    <p><strong>Functions in block scope.</strong> You <em>shouldn’t</em> be using this one, but it’s possible you have been. Maybe unintentionally.</p>
 
     <p>In ES1-5, this code was technically illegal:</p>
 
@@ -61,11 +59,11 @@ if (temperature &gt; 100) {
 
     <p>But it worked in all major browsers anyway. Sort of.</p>
 
-    <p>Not compatibly. A little different in each browser. But it sort of worked, and many web pages still use it.</p>
+    <p>Not compatibly. The details are a little different in each browser. But it sort of worked, and many web pages still use it.</p>
 
     <p>ES6 standardizes this, thank goodness. The function is hoisted to the top of the enclosing block.</p>
 
-    <p>Unfortunately, Firefox and Safari don't implement the new standard yet. So for now, use a function expression instead:</p>
+    <p>Unfortunately, Firefox and Safari don’t implement the new standard yet. So for now, use a function expression instead:</p>
 
 <code class="js"><pre>
 if (temperature &gt; 100) {
@@ -76,7 +74,7 @@ if (temperature &gt; 100) {
 }
 </pre></code>
 
-    <p>The only reason this wasn't standardized years ago is that the backward-compatibility constraints were incredibly complicated. Nobody thought they could be solved. ES6 threads the needle by adding a <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-block-level-function-declarations-web-legacy-compatibility-semantics"><em>very</em> strange rule</a> that only applies in non-strict code. I can't explain it here. Trust me, use strict mode.</p>
+    <p>The only reason block-scoped functions weren’t standardized years ago is that the backward-compatibility constraints were incredibly complicated. Nobody thought they could be solved. ES6 threads the needle by adding a <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-block-level-function-declarations-web-legacy-compatibility-semantics" target="_blank"><em>very</em> strange rule</a> that only applies in non-strict code. I can’t explain it here. Trust me, use strict mode.</p>
   </li>
 
   <li>
@@ -88,7 +86,7 @@ if (temperature &gt; 100) {
     "lessThan"
 </pre></code>
 
-    <p>For other functions, such as arrow functions passed to <code>.then</code> methods, the spec still can't figure out a name. <code><var>fn</var>.name</code> is then the empty string.</p>
+    <p>For other functions, such as arrow functions passed to <code>.then</code> methods, the spec still can’t figure out a name. <code><var>fn</var>.name</code> is then the empty string.</p>
   </li>
 </ul>
 
@@ -97,15 +95,11 @@ if (temperature &gt; 100) {
 
 <ul>
   <li>
-    <p><strong><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign(target, ...sources)</a></code>.</strong> A new standard library function, similar to Underscore's <code><a href="http://underscorejs.org/#extend">_.extend()</a></code>.</p>
+    <p><strong><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign" target="_blank">Object.assign(target, ...sources)</a></code>.</strong> A new standard library function, similar to Underscore’s <code><a href="http://underscorejs.org/#extend" target="_blank">_.extend()</a></code>.</p>
   </li>
 
   <li>
-    <p><strong>The spread operator for function calls.</strong> This is nothing to do with Nutella, even though Nutella is a tasty spread. But it <em>is</em> a delicious feature, and I think you'll like it.</p>
-
-    <p>Hmm. Maybe there is a chance we could team up with Nutella on something, though. Mozilla Nutella. Nutilla Mozella. Nuzilla. Sorry, where was I?</p>
-
-    <p>Back in May, we introduced <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/">rest parameters</a>. They're a way for functions to receive any number of arguments, a more civilized alternative to the random, clumsy <code>arguments</code> object.</p>
+    <p><strong>The spread operator for function calls.</strong> Back in May, we introduced <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/" target="_blank">rest parameters</a>. They’re a way for functions to receive any number of arguments, a more civilized alternative to the random, clumsy <code>arguments</code> object.</p>
 
 <code class="js"><pre>
 function log(...stuff) {  // stuff is the rest parameter.
@@ -114,16 +108,16 @@ function log(...stuff) {  // stuff is the rest parameter.
 }
 </pre></code>
 
-    <p>What we didn't say is that there's matching syntax for <em>passing</em> any number of arguments to a function, a more civilized alternative to <code>fn.apply()</code>:</p>
+    <p>What we didn’t say is that there’s matching syntax for <em>passing</em> any number of arguments to a function, a more civilized alternative to <code>fn.apply()</code>:</p>
 
 <code class="js"><pre>
 // log all the values from an array
 log(...myArray);
 </pre></code>
 
-    <p>Of course it works with any <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">iterable object</a>, so you can log all the stuff in a <code>Set</code> by writing <code>log(...mySet)</code>.</p>
+    <p>Of course it works with any <a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank">iterable object</a>, so you can log all the stuff in a <code>Set</code> by writing <code>log(...mySet)</code>.</p>
 
-    <p>Unlike rest parameters, it makes sense to use the spread operator multiple times in a single argument list, interspersed freely with non-spread arguments, so you can do that:</p>
+    <p>Unlike rest parameters, it makes sense to use the spread operator multiple times in a single argument list:</p>
 
 <code class="js"><pre>
 // kicks are before trids
@@ -143,7 +137,7 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
   </li>
 
   <li>
-    <p><strong>The spread operator for building arrays.</strong> Also back in may, we talked about <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/">"rest" patterns in destructuring</a>. They're a way to get any number of elements out of an array:</p>
+    <p><strong>The spread operator for building arrays.</strong> Also back in May, we talked about <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/" target="_blank">“rest” patterns in destructuring</a>. They’re a way to get any number of elements out of an array:</p>
 
 <code class="js"><pre>
 &gt; var [head, ...tail] = [1, 2, 3, 4];
@@ -153,7 +147,7 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
     [2, 3, 4]
 </pre></code>
 
-    <p>Guess what! There's matching syntax for getting any number of elements <em>into</em> an array:</p>
+    <p>Guess what! There’s matching syntax for getting any number of elements <em>into</em> an array:</p>
 
 <code class="js"><pre>
 &gt; var reunited = [head, ...tail];
@@ -167,9 +161,9 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
   <li>
     <p><strong>Proper tail calls.</strong> This one is too amazing for me to try to explain here.</p>
 
-    <p>To understand this feature, there's no better place to start than <a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-9.html#%_chap_1"> page 1 of <i>Structure and Interpretation of Computer Programs</i></a>. If you enjoy it, just keep reading. Tail calls are explained in <a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.1">section 1.2.1, "Linear Recursion and Iteration"</a>. The ES6 standard requires that implementations be "tail-recursive", as the term is defined there.</p>
+    <p>To understand this feature, there’s no better place to start than <a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-9.html#%_chap_1" target="_blank"> page 1 of <i>Structure and Interpretation of Computer Programs</i></a>. If you enjoy it, just keep reading. Tail calls are explained in <a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.1" target="_blank">section 1.2.1, “Linear Recursion and Iteration”</a>. The ES6 standard requires that implementations be “tail-recursive”, as the term is defined there.</p>
 
-    <p>None of the major JS engines have implemented this yet. It's hard to implement. But all in good time.</p>
+    <p>None of the major JS engines have implemented this yet. It’s hard to implement. But all in good time.</p>
   </li>
 </ul>
 
@@ -178,37 +172,37 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
 
 <ul>
   <li>
-    <p><strong>Unicode version upgrade.</strong> ES5 required implementations to support at least all the characters in Unicode version 3.0. ES6 implementations must support at least Unicode 5.1.0. You can now use characters from Linear B in your function names!
+    <p><strong>Unicode version upgrade.</strong> ES5 required implementations to support at least all the characters in Unicode version 3.0. ES6 implementations must support at least Unicode 5.1.0. You can now use characters from <a href="https://en.wikipedia.org/wiki/Linear_B" target="_blank">Linear B</a> in your function names!
 
-    <p>Linear A is still a bit risky, both because it was not added to Unicode until version 7.0 and because it might be hard to maintain code written in a language that has <a href="https://en.wikipedia.org/wiki/Linear_A">never been deciphered</a>.</p>
+    <p><a href="https://en.wikipedia.org/wiki/Linear_A" target="_blank">Linear A</a> is still a bit risky, both because it was not added to Unicode until version 7.0 and because it might be hard to maintain code written in a language that has never been deciphered.</p>
 
-    <p>(Even in JavaScript engines that support the emoji added in Unicode 6.1, you can't use 😺 as a variable name. For some reason, the Unicode Consortium decided not to classify it as an identifier character. 😾)</p>
+    <p>(Even in JavaScript engines that support the emoji added in Unicode 6.1, you can’t use 😺 as a variable name. For some reason, the Unicode Consortium decided not to classify it as an identifier character. 😾)</p>
   </li>
 
   <li>
-    <p><strong>Long Unicode escape sequences.</strong> ES6, like earlier versions, supports four-digit Unicode escape sequences. They look like this: <code>\u212A</code>. These are great. You can use them in strings. Or if you're feeling playful and your project has no code review policy whatsoever, you can use them in variable names. But then, for a character like U+13021 (&#x13021;), the Egyptian hieroglyph of a guy standing on his head, there was a slight problem. The number <code>13021</code> has five digits. Five is more than four.</p>
+    <p><strong>Long Unicode escape sequences.</strong> ES6, like earlier versions, supports four-digit Unicode escape sequences. They look like this: <code>\u212A</code>. These are great. You can use them in strings. Or if you’re feeling playful and your project has no code review policy whatsoever, you can use them in variable names. But then, for a character like U+13021 (<img src="https://hacks.mozilla.org/files/2015/08/hieroglyph.png" width="18" height="24" alt="&#x13021;" style="vertical-align: -30%">), the Egyptian hieroglyph of a guy standing on his head, there's a slight problem. The number <code>13021</code> has five digits. Five is more than four.</p>
 
-    <p>In ES5, you would have to write two escapes, a UTF-16 <a href="https://en.wikipedia.org/wiki/UTF-16#Description">surrogate pair</a>. This felt exactly like living in the Dark Ages: cold, miserable, barbaric. ES6, like the dawn of the Italian Renaissance, brings tremendous change: you can now write <code>\u{13021}</code>.</p>
+    <p>In ES5, you had to write two escapes, a UTF-16 <a href="https://en.wikipedia.org/wiki/UTF-16#Description" target="_blank">surrogate pair</a>. This felt exactly like living in the Dark Ages: cold, miserable, barbaric. ES6, like the dawn of the Italian Renaissance, brings tremendous change: you can now write <code>\u{13021}</code>.</p>
   </li>
 
   <li>
-    <p><strong>Better support for characters outside the BMP.</strong> The <code>.toUpperCase()</code> and <code>.toLowerCase()</code> methods now work on strings written in <a href="https://en.wikipedia.org/wiki/Deseret_alphabet">the Deseret alphabet</a>!</p>
+    <p><strong>Better support for characters outside the BMP.</strong> The <code>.toUpperCase()</code> and <code>.toLowerCase()</code> methods now work on strings written in <a href="https://en.wikipedia.org/wiki/Deseret_alphabet" target="_blank">the Deseret alphabet</a>!</p>
 
-    <p>In the same vein, <code>String.fromCodePoint(...codePoints)</code> is a function very similar to the older <code>String.fromCharCode(...codeUnits)</code>, but with support for code points beyond the BMP.</p>
+    <p>In the same vein, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCodePoint" target="_blank">String.fromCodePoint(...codePoints)</a></code> is a function very similar to the older <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode" target="_blank">String.fromCharCode(...codeUnits)</a></code>, but with support for code points beyond the BMP.</p>
   </li>
 
   <li>
     <p><strong>Unicode RegExps.</strong> ES6 regular expressions support a new flag, the <code>u</code> flag, which causes the regular expression to treat characters outside the BMP as single characters, not as two separate code units. For example, without the <code>u</code>, <code>/./</code> only matches half of the character <code>"😭"</code>. But <code>/./<strong>u</strong></code> matches the whole thing.</p>
 
-    <p>Putting the <code>u</code> flag on a <code>RegExp</code> also enables more Unicode-aware case-insensitive matching and long Unicode escape sequences. For the whole story, see <a href="https://mathiasbynens.be/notes/es6-unicode-regex">Mathias Bynens's very detailed post</a>.</p>
+    <p>Putting the <code>u</code> flag on a <code>RegExp</code> also enables more Unicode-aware case-insensitive matching and long Unicode escape sequences. For the whole story, see <a href="https://mathiasbynens.be/notes/es6-unicode-regex" target="_blank">Mathias Bynens’s very detailed post</a>.</p>
   </li>
 
   <li>
-    <p><strong>Sticky RegExps.</strong> A non-Unicode-related feature is the <code>y</code> flag, also known as the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky">sticky flag</a>. A sticky regular expression only looks for matches starting at the exact offset given by its <code>.lastIndex</code> property. If there isn't a match there, rather than scanning forward in the string to find a match somewhere else, a sticky regexp immediately returns <code>null</code>.</p>
+    <p><strong>Sticky RegExps.</strong> A non-Unicode-related feature is the <code>y</code> flag, also known as the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky" target="_blank">sticky flag</a>. A sticky regular expression only looks for matches starting at the exact offset given by its <code>.lastIndex</code> property. If there isn’t a match there, rather than scanning forward in the string to find a match somewhere else, a sticky regexp immediately returns <code>null</code>.</p>
   </li>
 
   <li>
-    <p><strong>An official internationalization spec.</strong> ES6 implementations that provide any internationalization features must support <a href="http://www.ecma-international.org/publications/standards/Ecma-402.htm">ECMA-402, the ECMAScript 2015 Internationalization API Specification</a>. This separate standard specifies <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl">the <code>Intl</code> object</a>. Firefox, Chrome, and IE11+ already fully support it. So does Node 0.12.</p>
+    <p><strong>An official internationalization spec.</strong> ES6 implementations that provide any internationalization features must support <a href="http://www.ecma-international.org/publications/standards/Ecma-402.htm" target="_blank">ECMA-402, the ECMAScript 2015 Internationalization API Specification</a>. This separate standard specifies <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl" target="_blank">the <code>Intl</code> object</a>. Firefox, Chrome, and IE11+ already fully support it. So does Node 0.12.</p>
   </li>
 </ul>
 
@@ -217,7 +211,7 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
 
 <ul>
   <li>
-    <p><strong>Binary and octal number literals.</strong> If you need a fancy way to write the number 8,675,309, and <code>0x845fed</code> isn't doing it for you, you can now write <code>0o41057755</code> (octal) or <code>0b100001000101111111101101</code> (binary).</p>
+    <p><strong>Binary and octal number literals.</strong> If you need a fancy way to write the number 8,675,309, and <code>0x845fed</code> isn’t doing it for you, you can now write <code>0o41057755</code> (octal) or <code>0b100001000101111111101101</code> (binary).</p>
 
     <p><code>Number(str)</code> also now recognizes strings in this format: <code>Number("0b101010")</code> returns 42.</p>
 
@@ -225,19 +219,19 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
   </li>
 
   <li>
-    <p><strong>New <code>Number</code> functions and constants.</strong> These are pretty niche. If you're interested, you can browse the standard yourself, starting at <code><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-number.epsilon">Number.EPSILON</a></code>.</p>
+    <p><strong>New <code>Number</code> functions and constants.</strong> These are pretty niche. If you’re interested, you can browse the standard yourself, starting at <code><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-number.epsilon" target="_blank">Number.EPSILON</a></code>.</p>
 
-    <p>Maybe the most interesting new idea here is the "safe integer" range, from &minus;(2<sup>53</sup> - 1) to +(2<sup>53</sup> - 1) inclusive. This special range of numbers has existed as long as JS. Every integer in this range can be represented exactly as a JS number, as can its nearest neighbors. In short, it's the range where incrementing and decrementing works. Outside this range, odd integers are not exactly representable, so incrementing and decrementing numbers can't give an exact result. In case this matters to your code, the standard now offers constants <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER">Number.MIN_SAFE_INTEGER</a></code> and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER">Number.MAX_SAFE_INTEGER</a></code>, and a predicate <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger">Number.isSafeInteger(n)</a></code>.</p>
+    <p>Maybe the most interesting new idea here is the “safe integer” range, from &minus;(2<sup>53</sup> - 1) to +(2<sup>53</sup> - 1) inclusive. This special range of numbers has existed as long as JS. Every integer in this range can be represented exactly as a JS number, as can its nearest neighbors. In short, it’s the range where <code>++</code> and <code>--</code> work as expected. Outside this range, odd integers are representable as 64-bit floating-point numbers, so incrementing and decrementing the numbers that <em>are</em> representable (all of which are even) can’t give a correct result. In case this matters to your code, the standard now offers constants <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER" target="_blank">Number.MIN_SAFE_INTEGER</a></code> and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER" target="_blank">Number.MAX_SAFE_INTEGER</a></code>, and a predicate <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger" target="_blank">Number.isSafeInteger(n)</a></code>.</p>
   </li>
 
   <li>
-    <p><strong>New <code>Math</code> functions.</strong> ES6 adds <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh">hyperbolic</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh">trig</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh">functions</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh">and</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh">their</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh">inverses</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt">Math.cbrt(x)</a></code> for computing cube roots, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot">Math.hypot(x, y)</a></code> for computing the hypotenuse of a right triangle, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2">Math.log2(x)</a></code> and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10">Math.log10(x)</a></code> for computing logarithms in common bases, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32">Math.clz32(x)</a></code> to help compute integer logarithms, and a few others.</p>
+    <p><strong>New <code>Math</code> functions.</strong> ES6 adds <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh" target="_blank">hyperbolic</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh" target="_blank">trig</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh" target="_blank">functions</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh" target="_blank">and</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh" target="_blank">their</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh" target="_blank">inverses</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt" target="_blank">Math.cbrt(x)</a></code> for computing cube roots, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot" target="_blank">Math.hypot(x, y)</a></code> for computing the hypotenuse of a right triangle, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2" target="_blank">Math.log2(x)</a></code> and <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10" target="_blank">Math.log10(x)</a></code> for computing logarithms in common bases, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32" target="_blank">Math.clz32(x)</a></code> to help compute integer logarithms, and a few others.</p>
 
-    <p><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign">Math.sign(x)</a></code> gets the sign of a number.</p>
+    <p><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign" target="_blank">Math.sign(x)</a></code> gets the sign of a number.</p>
 
-    <p>ES6 also adds <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul">Math.imul(x, y)</a></code>, which does signed multiplication modulo 2<sup>32</sup>. This is a very strange thing to want... unless you are working around the fact that JS does not have 64-bit integers or big integers. In that case it's very handy. This helps compilers. Emscripten uses this function to implement 64-bit integer multiplication in JS.</p>
+    <p>ES6 also adds <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul" target="_blank">Math.imul(x, y)</a></code>, which does signed multiplication modulo 2<sup>32</sup>. This is a very strange thing to want... unless you are working around the fact that JS does not have 64-bit integers or big integers. In that case it’s very handy. This helps compilers. Emscripten uses this function to implement 64-bit integer multiplication in JS.</p>
 
-    <p>Similarly <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround">Math.fround(x)</a></code> is handy for compilers that need to support 32-bit floating-point numbers.</p>
+    <p>Similarly <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround" target="_blank">Math.fround(x)</a></code> is handy for compilers that need to support 32-bit floating-point numbers.</p>
   </li>
 </ul>
 
@@ -246,46 +240,47 @@ log("Kicks:", ...kicks, "Trids:", ...trids);
 
 <p>Is this everything?</p>
 
-<p>Well, no. I didn't even mention the object that's the <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-%iteratorprototype%-object">common prototype of all built-in iterators</a>, the top-secret <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generatorfunction-constructor">GeneratorFunction constructor</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is">Object.is(v1, v2)</a></code>, how <code>Symbol.species</code> helps support subclassing builtins like <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-arrayspeciescreate">Array</a> and <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-promise.prototype.then">Promise</a>, or how ES6 specifies details of how <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-code-realms">multiple globals</a> work that have never been standardized before.</p>
+<p>Well, no. I didn’t even mention the object that’s the <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-%iteratorprototype%-object" target="_blank">common prototype of all built-in iterators</a>, the top-secret <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generatorfunction-constructor" target="_blank">GeneratorFunction constructor</a>, <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is" target="_blank">Object.is(v1, v2)</a></code>, how <code>Symbol.species</code> helps support subclassing builtins like <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-arrayspeciescreate" target="_blank">Array</a> and <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-promise.prototype.then" target="_blank">Promise</a>, or how ES6 specifies details of how <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-code-realms" target="_blank">multiple globals</a> work that have never been standardized before.</p>
 
-<p>I'm sure I missed a few things, too.</p>
+<p>I’m sure I missed a few things, too.</p>
 
-<p>But if you've been following along, you have a pretty good picture of where we're going. You know you can use ES6 features today, and if you do, you'll be opting in to a better language.</p>
+<p>But if you’ve been following along, you have a pretty good picture of where we’re going. You know <a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/" target="_blank">you can use ES6 features today</a>, and if you do, you’ll be opting in to a better language.</p>
 
-<p>A few days ago, <a href="https://twitter.com/JoshMock">Josh Mock</a> remarked to me that he had just used eight different ES6 features in about <a href="https://gist.github.com/JoshMock/98f187c7a8bf745e4cf6">50 lines of code</a>, without even really thinking about it. Modules, classes, argument defaults, <code>Set</code>, <code>Map</code>, template strings, arrow functions, and <code>let</code>. (He forgot the <code>for</code>-<code>of</code> loop.)</p>
+<p>A few days ago, <a href="https://twitter.com/JoshMock" target="_blank">Josh Mock</a> remarked to me that he had just used <a href="https://gist.github.com/JoshMock/98f187c7a8bf745e4cf6" target="_blank">eight different ES6 features in about 50 lines of code</a>, without even really thinking about it. Modules, classes, argument defaults, <code>Set</code>, <code>Map</code>, template strings, arrow functions, and <code>let</code>. (He missed the <code>for</code>-<code>of</code> loop.)</p>
 
-<p>The new features hang together really well. They end up transforming the way you write JS code.</p>
+<p>This has been my experience, too. The new features hang together very well. They end up affecting almost every line of JS code you write.</p>
 
-<p>Meanwhile, every JS engine is hurrying to implement and optimize the features we've been discussing for the past few months.</p>
+<p>Meanwhile, every JS engine is hurrying to implement and optimize the features we’ve been discussing for the past few months.</p>
 
-<p>And once we're done, the language will be complete. We'll never have to change anything again. I'll have to find something else to work on.</p>
+<p>Once we’re done, the language will be complete. We’ll never have to change anything again. I’ll have to find something else to work on.</p>
 
-<p>Just kidding. <a href="https://github.com/tc39/ecma262">Proposals for ES7</a> are already picking up steam. Just to pick a few:</p>
+<p>Just kidding. <a href="https://github.com/tc39/ecma262" target="_blank">Proposals for ES7</a> are already picking up steam. Just to pick a few:</p>
 
 <ul>
   <li>
-    <p><strong><a href="https://github.com/rwaldron/exponentiation-operator">Exponentation operator.</a></strong> <code>2 ** 8</code> will return 256. Implemented in Firefox Nightly.</p>
+    <p><strong><a href="https://github.com/rwaldron/exponentiation-operator" target="_blank">Exponentation operator.</a></strong> <code>2 ** 8</code> will return 256. Implemented in <a href="https://nightly.mozilla.org/" target="_blank">Firefox Nightly</a>.</p>
   </li>
 
   <li>
-    <p><strong><code><a href="https://github.com/tc39/Array.prototype.includes/">Array.prototype.includes</a></code>.</strong> Returns true if the array contains the given value. Implemented in Firefox Nightly; polyfillable.</p>
+    <p><strong><code><a href="https://github.com/tc39/Array.prototype.includes/" target="_blank">Array.prototype.includes(value)</a></code>.</strong> Returns true if this array contains the given value. Implemented in Firefox Nightly; polyfillable.</p>
   </li>
 
   <li>
-    <p><strong><a href="https://docs.google.com/presentation/d/1MY9NHrHmL7ma7C8dyNXvmYNNGgVmmxXk8ZIiQtPlfH4/edit?usp=sharing">SIMD.</a></strong> Exposes 128-bit <a href="https://en.wikipedia.org/wiki/SIMD">SIMD instructions</a> provided by modern CPUs. These instructions do an arithmetic operation on 2, or 4, or 8 adjacent array elements at a time. They can dramatically speed up a wide variety of algorithms for streaming audio and video, cryptography, games, image processing, and more. Very low-level, very cool. Implemented in Firefox Nightly; polyfillable.</p>
+    <p><strong><a href="https://docs.google.com/presentation/d/1MY9NHrHmL7ma7C8dyNXvmYNNGgVmmxXk8ZIiQtPlfH4/edit?usp=sharing" target="_blank">SIMD.</a></strong> Exposes 128-bit <a href="https://en.wikipedia.org/wiki/SIMD" target="_blank">SIMD instructions</a> provided by modern CPUs. These instructions do an arithmetic operation on 2, or 4, or 8 adjacent array elements at a time. They can dramatically speed up a wide variety of algorithms for streaming audio and video, cryptography, games, image processing, and more. Very low-level, very powerful. Implemented in Firefox Nightly; polyfillable.</p>
   </li>
 
   <li>
-    <p><strong><a href="https://github.com/tc39/ecmascript-asyncawait">Async functions.</a></strong> We hinted at this feature in the <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">post on generators</a>. Async functions are like generators, but specialized for asynchronous programming. When you call a generator, it returns an iterator. When you call an async function, it returns a promise. Generators use the <code>yield</code> keyword to pause and produce a value; async functions instead use the <code>await</code> keyword to pause and wait for a promise.</p>
+    <p><strong><a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank">Async functions.</a></strong> We hinted at this feature in the <a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/" target="_blank">post on generators</a>. Async functions are like generators, but specialized for asynchronous programming. When you call a generator, it returns an iterator. When you call an async function, it returns a promise. Generators use the <code>yield</code> keyword to pause and produce a value; async functions instead use the <code>await</code> keyword to pause and wait for a promise.</p>
 
-    <p>It's hard to describe them in a few sentences, but async functions will be the landmark feature in ES7.</p>
+    <p>It’s hard to describe them in a few sentences, but async functions will be the landmark feature in ES7.</p>
   </li>
 
   <li>
-    <p><strong><a href="https://github.com/dslomov/typed-objects-es7">Typed Objects.</a></strong> This is a follow-up to typed arrays. Typed arrays have elements that are typed. A typed object is simply an object whose properties are typed.</p>
+    <p><strong><a href="https://github.com/dslomov/typed-objects-es7" target="_blank">Typed Objects.</a></strong> This is a follow-up to typed arrays. Typed arrays have elements that are typed. A typed object is simply an object whose properties are typed.</p>
 
 <code class="js"><pre>
-// Create a new struct type. Every Point has two fields, x and y.
+// Create a new struct type. Every Point has two fields
+// named x and y.
 var Point = new TypedObject.StructType({
   x: TypedObject.int32,
   y: TypedObject.int32
@@ -296,15 +291,15 @@ var p = new Point({x: 800, y: 600});
 console.log(p.x); // 800
 </pre></code>
 
-    <p>You would only do this for performance reasons. Typed objects offer a few of the benefits of typing (compact memory usage and speed), but on a per-object, opt-in basis, in contrast to languages where everything is statically typed.</p>
+    <p>You would only do this for performance reasons. Like typed arrays, typed objects offer a few of the benefits of typing (compact memory usage and speed), but on a per-object, opt-in basis, in contrast to languages where everything is statically typed.</p>
 
-    <p>They're are also interesting for JS as a compilation target.</p>
+    <p>They’re are also interesting for JS as a compilation target.</p>
 
     <p>Implemented in Firefox Nightly.</p>
   </li>
 
   <li>
-    <p><strong><a href="https://github.com/wycats/javascript-decorators/blob/master/README.md">Class and property decorators.</a></strong> Decorators are tags you add to a property, class, or method. An example shows what this is about:</p>
+    <p><strong><a href="https://github.com/wycats/javascript-decorators/blob/master/README.md" target="_blank">Class and property decorators.</a></strong> Decorators are tags you add to a property, class, or method. An example shows what this is about:</p>
 
 <code class="js"><pre>
 import debug from "jsdebug";
@@ -320,17 +315,14 @@ class Person {
 
     <p><code>@debug.logWhenCalled</code> is the decorator here. You can imagine what it does to the method.</p>
 
-    <p><a href="https://github.com/wycats/javascript-decorators/blob/master/README.md">The proposal</a> explains how this would work in detail, with many examples.</p>
+    <p><a href="https://github.com/wycats/javascript-decorators/blob/master/README.md" target="_blank">The proposal</a> explains how this would work in detail, with many examples.</p>
   </li>
 </ul>
 
-<p>There's one more exciting development I have to mention. This one is not a language feature.</p>
+<p>There’s one more exciting development I have to mention. This one is not a language feature.</p>
 
-<p>TC39, the ECMAScript standard committee, is moving toward more frequent releases and a more public process. Six years passed between ES5 and ES6. There's no due date for ES7, but my guess is we'll see it in one or two years, and after that ECMAScript standards will be released on a 12-month cadence. Some of the features listed above will be ready in time. They will "catch the train" and become part of ES7. Those that aren't finished in that timeframe can catch the next train.</p>
+<p>TC39, the ECMAScript standard committee, is moving toward more frequent releases and <a href="https://tc39.github.io/process-document/" target="_blank">a more public process</a>. Six years passed between ES5 and ES6. The committee aims to ship ES7 just 12 months after ES6. Subsequent editions of the standard will be released on a 12-month cadence. Some of the features listed above will be ready in time. They will “catch the train” and become part of ES7. Those that aren’t finished in that timeframe can catch the next train.</p>
 
-<p>It's been great fun sharing the staggering amount of good stuff in ES6. It's also a pleasure to be able to say that a feature dump of this size will probably never happen again.</p>
+<p>It’s been great fun sharing the staggering amount of good stuff in ES6. It’s also a pleasure to be able to say that a feature dump of this size will probably never happen again.</p>
 
-
-???
-
-
+<p>Thanks for joining us for ES6 In Depth! I hope you enjoyed it. Keep in touch.</p>
